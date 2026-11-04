@@ -6,8 +6,6 @@ import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
 import type { Task, TaskStatus } from "@/lib/types";
 
-const POINT_OPTIONS = [0, 5, 10, 15, 20, 30, 50];
-
 export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () => void }) {
   const { t, userId, household, members } = useApp();
   const isNew = !task;
@@ -19,7 +17,6 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
   const [assignee, setAssignee] = useState<string>(task ? task.assignee_id ?? "" : "");
   const [due, setDue] = useState(task?.due_date ?? "");
   const [repeat, setRepeat] = useState<string>(task?.repeat ?? "");
-  const [points, setPoints] = useState<number>(task?.points ?? 10);
   const [status, setStatus] = useState<TaskStatus>(task?.status ?? "todo");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +39,6 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
       assignee_id: assignee || null,
       due_date: due || null,
       repeat: repeat || null,
-      points,
       status,
     };
     const sb = supabase();
@@ -109,7 +105,7 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
           />
         </label>
 
-        <div className="two">
+        <div>
           <label className="field">
             <span>{t("assignee")}</span>
             <select className="select" value={assignee} onChange={(e) => setAssignee(e.target.value)}>
@@ -121,16 +117,6 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
                     {m.profile.display_name}
                   </option>
                 ))}
-            </select>
-          </label>
-          <label className="field">
-            <span>{t("points")}</span>
-            <select className="select" value={points} onChange={(e) => setPoints(Number(e.target.value))}>
-              {(POINT_OPTIONS.includes(points) ? POINT_OPTIONS : [...POINT_OPTIONS, points].sort((a, b) => a - b)).map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
             </select>
           </label>
         </div>

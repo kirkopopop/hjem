@@ -1,9 +1,11 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
 import { guessLocale, rememberLocale, translate, type Key, type Locale } from "@/lib/i18n";
+import { badgeName } from "@/lib/badges";
+import { Icon } from "./Icon";
 
 export type Profile = { id: string; display_name: string; color: string; locale: Locale };
 export type Member = { user_id: string; role: "owner" | "member" | "device"; profile: Profile };
@@ -21,6 +23,8 @@ type Ctx = {
   updateProfile: (patch: Partial<Pick<Profile, "display_name" | "color">>) => Promise<string | null>;
   reload: () => Promise<void>;
   member: (id: string | null | undefined) => Member | undefined;
+  notify: (msg: string, ms?: number) => void;
+  badgeTick: number;
 };
 
 const AppContext = createContext<Ctx | null>(null);
@@ -38,6 +42,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [household, setHousehold] = useState<Household | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [locale, setLocaleState] = useState<Locale>("en");
+  const [toast, setToast] = useState<string | null>(null);
+  const [badgeTick, setBadgeTick] = useState(0);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const notify = useCallback((msg: string, ms = 2400) => {
+    setToast(msg);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), ms);
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- load on mount
@@ -120,6 +133,39 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, [household, reload]);
 
+  // Celebrate new badges on every device in the household.
+  const membersRef = useRef<Member[]>([]);
+  const localeRef = useRef<Locale>("en");
+  useEffect(() => {
+    membersRef.current = members;
+    localeRef.current = locale;
+  }, [members, locale]);
+  useEffect(() => {
+    if (!household || !userId) return;
+    const ch = supabase()
+      .channel(`badges-${household.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "badges", filter: `household_id=eq.${household.id}` },
+        (payload: { new: { user_id: string | null; badge_key: string } }) => {
+          const { user_id, badge_key } = payload.new;
+          const l = localeRef.current;
+          const name = translate(l, badgeName(badge_key));
+          if (user_id === null) notify(translate(l, "newBadgeTogether", { name }), 4200);
+          else if (user_id === userId) notify(translate(l, "newBadge", { name }), 4200);
+          else {
+            const who = membersRef.current.find((m) => m.user_id === user_id)?.profile.display_name ?? "";
+            notify(translate(l, "partnerBadge", { who, name }), 4200);
+          }
+          setBadgeTick((n) => n + 1);
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase().removeChannel(ch);
+    };
+  }, [household, userId, notify]);
+
   const setLocale = useCallback(
     async (l: Locale) => {
       setLocaleState(l);
@@ -153,13 +199,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       updateProfile,
       reload,
       member: (id) => members.find((m) => m.user_id === id),
+      notify,
+      badgeTick,
     }),
-    [ready, userId, profile, household, members, locale, setLocale, updateProfile, reload],
+    [ready, userId, profile, household, members, locale, setLocale, updateProfile, reload, notify, badgeTick],
   );
 
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+      {toast && (
+        <div className="toast" role="status">
+          <span className="star">
+            <Icon name="star" size={18} />
+          </span>
+          {toast}
+        </div>
+      )}
+    </AppContext.Provider>
+  );
 }

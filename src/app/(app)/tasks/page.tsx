@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
@@ -18,15 +18,12 @@ function byDueThenCreated(a: Task, b: Task) {
 }
 
 export default function TasksPage() {
-  const { t, locale, userId, household, member } = useApp();
+  const { t, locale, userId, household, member, notify } = useApp();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [tab, setTab] = useState<Tab>("todo");
   const [mineOnly, setMineOnly] = useState(false);
-  const [myPoints, setMyPoints] = useState(0);
   const [editing, setEditing] = useState<Task | null | "new">(null);
-  const [toast, setToast] = useState<string | null>(null);
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hid = household?.id;
 
   const loadTasks = useCallback(async () => {
@@ -48,22 +45,10 @@ export default function TasksPage() {
     setLoaded(true);
   }, [hid]);
 
-  const loadPoints = useCallback(async () => {
-    if (!hid || !userId) return;
-    const { data } = await supabase()
-      .from("points_ledger")
-      .select("amount")
-      .eq("household_id", hid)
-      .eq("user_id", userId)
-      .gte("created_at", startOfWeekISO());
-    setMyPoints((data ?? []).reduce((s: number, r: { amount: number }) => s + r.amount, 0));
-  }, [hid, userId]);
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- load on mount
     loadTasks();
-    loadPoints();
-  }, [loadTasks, loadPoints]);
+  }, [loadTasks]);
 
   // Live sync: any change on another device refreshes this list.
   useEffect(() => {
@@ -72,15 +57,11 @@ export default function TasksPage() {
     let pending: ReturnType<typeof setTimeout> | null = null;
     const refresh = () => {
       if (pending) clearTimeout(pending);
-      pending = setTimeout(() => {
-        loadTasks();
-        loadPoints();
-      }, 150);
+      pending = setTimeout(loadTasks, 150);
     };
     const ch = sb
       .channel(`tasks-${hid}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "tasks", filter: `household_id=eq.${hid}` }, refresh)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "points_ledger", filter: `household_id=eq.${hid}` }, refresh)
       .subscribe();
     const onFocus = () => document.visibilityState === "visible" && refresh();
     document.addEventListener("visibilitychange", onFocus);
@@ -89,19 +70,13 @@ export default function TasksPage() {
       document.removeEventListener("visibilitychange", onFocus);
       sb.removeChannel(ch);
     };
-  }, [hid, loadTasks, loadPoints]);
-
-  function showToast(msg: string) {
-    setToast(msg);
-    if (toastTimer.current) clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToast(null), 2200);
-  }
+  }, [hid, loadTasks]);
 
   async function patch(task: Task, fields: Partial<Task>) {
     setTasks((prev) => prev.map((x) => (x.id === task.id ? { ...x, ...fields } : x)));
     const { error } = await supabase().from("tasks").update(fields).eq("id", task.id);
     if (error) {
-      showToast(t("somethingWrong", { msg: error.message }));
+      notify(t("somethingWrong", { msg: error.message }));
       loadTasks();
       return false;
     }
@@ -113,7 +88,7 @@ export default function TasksPage() {
       await patch(task, { status: "todo", completed_at: null, completed_by: null });
     } else {
       const ok = await patch(task, { status: "done", completed_at: new Date().toISOString(), completed_by: userId });
-      if (ok && task.points > 0) showToast(t("earned", { n: task.points }));
+      if (ok) notify(t("niceDone"));
     }
   }
 
@@ -168,7 +143,6 @@ export default function TasksPage() {
             {task.repeat && <span className="chip">{t("repeats")}</span>}
           </span>
         </button>
-        {task.points > 0 && <span className="pts">+{task.points}</span>}
       </li>
     );
   }
@@ -179,10 +153,6 @@ export default function TasksPage() {
     <>
       <div className="page-head">
         <h1 className="page-title">{t("tasks")}</h1>
-        <span className="pill" aria-live="polite">
-          <Icon name="star" size={16} />
-          {t("ptsThisWeek", { n: myPoints })}
-        </span>
       </div>
 
       <div className="row" style={{ marginBottom: 14 }}>
@@ -220,8 +190,7 @@ export default function TasksPage() {
                 >
                   <span style={{ fontSize: 15, fontWeight: 700 }}>{task.title}</span>
                   <span className="sub">
-                    {task.due_date ? formatShortDate(task.due_date, locale) : t("nobody")}
-                    {task.points > 0 ? ` · +${task.points}` : ""}
+                    {task.due_date ? formatShortDate(task.due_date, locale) : t("unclaimedHint")}
                   </span>
                 </button>
                 <button type="button" className="btn small" onClick={() => patch(task, { assignee_id: userId })}>
@@ -249,14 +218,6 @@ export default function TasksPage() {
           }}
         />}
 
-      {toast && (
-        <div className="toast" role="status">
-          <span className="star">
-            <Icon name="star" size={18} />
-          </span>
-          {toast}
-        </div>
-      )}
     </>
   );
 }

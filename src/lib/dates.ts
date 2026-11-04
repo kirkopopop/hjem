@@ -34,3 +34,33 @@ export function startOfWeekISO() {
   d.setDate(d.getDate() - diff);
   return d.toISOString();
 }
+
+export function addDays(iso: string, n: number) {
+  const d = parseISODate(iso);
+  d.setDate(d.getDate() + n);
+  return localISODate(d);
+}
+
+/** The 7 dates (Mon–Sun) of the week `offset` weeks from this one. */
+export function weekDates(offset = 0) {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + offset * 7);
+  const monday = localISODate(d);
+  return Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+}
+
+export function isoWeekNumber(iso: string) {
+  const d = parseISODate(iso);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const firstThursday = new Date(d.getFullYear(), 0, 4);
+  return 1 + Math.round(((d.getTime() - firstThursday.getTime()) / 86_400_000 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7);
+}
+
+export function formatWeekday(iso: string, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { weekday: "long" }).format(parseISODate(iso));
+}
+
+export function formatDayMonth(iso: string, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short" }).format(parseISODate(iso));
+}

@@ -48,6 +48,55 @@ const PATHS: Record<string, React.ReactNode> = {
     </>
   ),
   close: <path d="M6 6l12 12M18 6L6 18" />,
+  chevronLeft: <path d="M15 5l-7 7 7 7" />,
+  chevronRight: <path d="M9 5l7 7-7 7" />,
+  flag: (
+    <>
+      <path d="M5 21V4" />
+      <path d="M5 4h11l-2 4 2 4H5" />
+    </>
+  ),
+  medal: (
+    <>
+      <circle cx="12" cy="15" r="5" />
+      <path d="M8.5 11.5L6 3h4l2 5 2-5h4l-2.5 8.5" />
+    </>
+  ),
+  flame: <path d="M12 3c.5 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.6 1.6-3.8 2.3-6 1 1 1.6 2 1.9 3.3C12.6 8 12.2 5.4 12 3z" />,
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+    </>
+  ),
+  moon: <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />,
+  heart: <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />,
+  pan: (
+    <>
+      <circle cx="10" cy="13" r="6" />
+      <path d="M16 13h6" />
+    </>
+  ),
+  cart: (
+    <>
+      <circle cx="9" cy="20" r="1.4" />
+      <circle cx="18" cy="20" r="1.4" />
+      <path d="M3 4h2l2.4 11h11.2l2-8H6.4" />
+    </>
+  ),
+  sparkle: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z" />,
+  calendarCheck: (
+    <>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4" />
+    </>
+  ),
+  lock: (
+    <>
+      <rect x="5" y="11" width="14" height="10" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </>
+  ),
   share: (
     <>
       <path d="M12 3v12M8 7l4-4 4 4" />

@@ -8,6 +8,8 @@ import { Icon } from "./Icon";
 
 const LINKS = [
   { href: "/tasks", icon: "tasks", label: "navTasks" },
+  { href: "/meals", icon: "meals", label: "navMeals" },
+  { href: "/badges", icon: "medal", label: "navBadges" },
   { href: "/household", icon: "people", label: "navHousehold" },
 ] as const;
 
