@@ -6,7 +6,7 @@ import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
 import type { Task, TaskStatus } from "@/lib/types";
 
-export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () => void }) {
+export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Task | null; onClose: () => void; initialStatus?: TaskStatus }) {
   const { t, userId, household, members } = useApp();
   const isNew = !task;
   const titleId = useId();
@@ -17,7 +17,7 @@ export function TaskSheet({ task, onClose }: { task: Task | null; onClose: () =>
   const [assignee, setAssignee] = useState<string>(task ? task.assignee_id ?? "" : "");
   const [due, setDue] = useState(task?.due_date ?? "");
   const [repeat, setRepeat] = useState<string>(task?.repeat ?? "");
-  const [status, setStatus] = useState<TaskStatus>(task?.status ?? "todo");
+  const [status, setStatus] = useState<TaskStatus>(task?.status ?? initialStatus);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
