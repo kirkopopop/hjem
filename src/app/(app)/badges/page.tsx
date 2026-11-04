@@ -6,6 +6,7 @@ import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { BADGES, badgeDesc, badgeName, type BadgeDef, type Metric } from "@/lib/badges";
 import type { BadgeRow } from "@/lib/types";
+import { ProgressRing } from "@/components/ui";
 
 type Counts = Record<Metric, number>;
 const ZERO: Counts = { myDone: 0, teamDone: 0, myCooked: 0, myPlanned: 0, myTicked: 0 };
@@ -83,17 +84,38 @@ export default function BadgesPage() {
   const me = members.find((m) => m.user_id === userId);
   const others = members.filter((m) => m.user_id !== userId && m.role !== "device");
 
+  // Your shelf: shared badges plus your own.
+  const mineEarned = together.filter((d) => find(d.key, null)).length + personal.filter((d) => find(d.key, userId)).length;
+  const shelf = together.length + personal.length;
+  const next = BADGES.filter((d) => d.metric && d.target && d.target > 1 && !find(d.key, d.scope === "together" ? null : userId))
+    .map((d) => ({ d, p: counts[d.metric!] / d.target! }))
+    .sort((a, b) => b.p - a.p)[0];
+
   return (
     <>
       <div className="page-head">
         <h1 className="page-title">{t("badges")}</h1>
       </div>
-      <p className="lead">{t("badgesLead")}</p>
 
-      {loaded && earned.length === 0 && <p className="notice" style={{ marginBottom: 8 }}>{t("noBadgesYet")}</p>}
+      <section className="card badges-hero">
+        <ProgressRing value={loaded ? mineEarned / shelf : 0} size={78} stroke={8} label={t("badgesEarnedOf", { n: mineEarned, total: shelf })}>
+          <span className="badges-hero-num">{loaded ? mineEarned : "–"}</span>
+        </ProgressRing>
+        <span className="badges-hero-text">
+          <b>{t("badgesEarnedOf", { n: mineEarned, total: shelf })}</b>
+          <span className="small muted" style={{ lineHeight: 1.45 }}>
+            {loaded && earned.length === 0 ? t("noBadgesYet") : t("badgesLead")}
+          </span>
+          {loaded && next && (
+            <span className="small" style={{ color: "var(--accent-ink)", fontWeight: 700 }}>
+              {t("badgesNextUp", { name: t(badgeName(next.d.key)) })} · {Math.round(next.p * 100)}%
+            </span>
+          )}
+        </span>
+      </section>
 
       <h2 className="section-label">{t("together")}</h2>
-      <ul className="badge-grid">{together.map((d) => tile(d, find(d.key, null), true))}</ul>
+      <ul className="badge-grid stagger">{together.map((d) => tile(d, find(d.key, null), true))}</ul>
 
       {me && (
         <>
@@ -101,7 +123,7 @@ export default function BadgesPage() {
             <Avatar name={me.profile.display_name} color={me.profile.color} size={22} />
             {t("personalBadges", { name: me.profile.display_name })}
           </h2>
-          <ul className="badge-grid">
+          <ul className="badge-grid stagger">
             {[...personal]
               .sort((a, b) => Number(!!find(b.key, userId)) - Number(!!find(a.key, userId)))
               .map((d) => tile(d, find(d.key, userId), true))}

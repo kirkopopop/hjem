@@ -15,7 +15,7 @@ export function RecipeArt({ recipe, title, className = "" }: { recipe?: Pick<Rec
       <circle cx="80" cy="64" r="50" fill="rgba(40,60,45,0.12)" />
       <circle cx="80" cy="60" r="50" fill="#FFFFFF" stroke="#DDE3DB" strokeWidth="1.2" />
       <circle cx="80" cy="60" r="39" fill="none" stroke="#DDE3DB" strokeWidth="1" />
-      <text x="80" y="71" textAnchor="middle" fontSize="30" fontWeight="800" fill="#8A958D" fontFamily="Manrope, system-ui, sans-serif">
+      <text x="80" y="71" textAnchor="middle" fontSize="30" fontWeight="800" fill="#1e6b5c" fontFamily="'Plus Jakarta Sans', system-ui, sans-serif">
         {name.trim().charAt(0).toUpperCase()}
       </text>
     </svg>

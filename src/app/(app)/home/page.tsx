@@ -6,17 +6,28 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { EventRow } from "@/components/EventRow";
+import { EventSheet } from "@/components/EventSheet";
+import { TaskSheet } from "@/components/TaskSheet";
 import { WhoPicker } from "@/components/WhoPicker";
+import { RecipeArt } from "@/components/RecipeBits";
+import { EmptyState, ProgressRing, Skeleton, SkeletonRows } from "@/components/ui";
 import { eventsOnDay, useCalendarData, useHiddenCalendars } from "@/lib/calendar";
 import { addDays, daysFromToday, formatDayMonth, formatWeekday, localISODate, weekDates } from "@/lib/dates";
 import { BADGES, badgeName } from "@/lib/badges";
-import type { BadgeRow, Meal, Task } from "@/lib/types";
+import type { BadgeRow, Meal, Recipe, Task } from "@/lib/types";
 
 const AGENDA_DAYS = 4;
 const MAX_EVENTS = 9;
 
+function greetingKey(h: number) {
+  if (h >= 5 && h < 12) return "greetMorning" as const;
+  if (h >= 12 && h < 18) return "greetAfternoon" as const;
+  if (h >= 18 && h < 23) return "greetEvening" as const;
+  return "greetLate" as const;
+}
+
 export default function HomePage() {
-  const { t, locale, userId, household, members, member, notify, badgeTick } = useApp();
+  const { t, locale, userId, profile, household, members, member, notify, celebrate, badgeTick } = useApp();
   const hid = household?.id;
   const [now, setNow] = useState(() => new Date());
   const today = localISODate(now);
@@ -25,9 +36,14 @@ export default function HomePage() {
   const { calendars, events, loaded: calLoaded } = useCalendarData(today, agendaDays[AGENDA_DAYS - 1]);
   const { hidden } = useHiddenCalendars();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [doneToday, setDoneToday] = useState(0);
   const [meals, setMeals] = useState<Meal[]>([]);
+  const [art, setArt] = useState<Record<string, Pick<Recipe, "image_url" | "title">>>({});
   const [badges, setBadges] = useState<BadgeRow[]>([]);
-  const [picking, setPicking] = useState<Task | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [leaving, setLeaving] = useState<string[]>([]);
+  const [picking, setPicking] = useState<{ task: Task; el: Element | null } | null>(null);
+  const [sheet, setSheet] = useState<"task" | "event" | null>(null);
   const isDevice = member(userId)?.role === "device";
 
   // Clock: refresh every 20 seconds.
@@ -39,14 +55,30 @@ export default function HomePage() {
   const load = useCallback(async () => {
     if (!hid) return;
     const sb = supabase();
-    const [tk, ml, bd] = await Promise.all([
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    const [tk, dn, ml, bd] = await Promise.all([
       sb.from("tasks").select("*").eq("household_id", hid).neq("status", "done"),
+      sb
+        .from("tasks")
+        .select("id", { count: "exact", head: true })
+        .eq("household_id", hid)
+        .eq("status", "done")
+        .gte("completed_at", midnight.toISOString()),
       sb.from("meals").select("*").eq("household_id", hid).gte("date", week[0]).lte("date", week[6]),
       sb.from("badges").select("*").eq("household_id", hid).order("earned_at", { ascending: false }).limit(3),
     ]);
+    const mealRows = (ml.data ?? []) as Meal[];
     setTasks((tk.data ?? []) as Task[]);
-    setMeals((ml.data ?? []) as Meal[]);
+    setDoneToday(dn.count ?? 0);
+    setMeals(mealRows);
     setBadges((bd.data ?? []) as BadgeRow[]);
+    setLoaded(true);
+    const ids = [...new Set(mealRows.map((m) => m.recipe_id).filter(Boolean))] as string[];
+    if (ids.length) {
+      const { data } = await sb.from("recipes").select("id, title, image_url").in("id", ids);
+      setArt(Object.fromEntries((data ?? []).map((r: Pick<Recipe, "id" | "title" | "image_url">) => [r.id, r])));
+    }
   }, [hid, week]);
 
   useEffect(() => {
@@ -74,8 +106,14 @@ export default function HomePage() {
     };
   }, [hid, load]);
 
-  async function complete(task: Task, by: string | null) {
-    setTasks((prev) => prev.filter((x) => x.id !== task.id));
+  async function complete(task: Task, by: string | null, el: Element | null) {
+    celebrate(el);
+    setLeaving((l) => [...l, task.id]);
+    setDoneToday((n) => n + 1);
+    setTimeout(() => {
+      setTasks((prev) => prev.filter((x) => x.id !== task.id));
+      setLeaving((l) => l.filter((x) => x !== task.id));
+    }, 260);
     const { error } = await supabase()
       .from("tasks")
       .update({ status: "done", completed_by: by ?? userId })
@@ -108,26 +146,32 @@ export default function HomePage() {
     .filter((x) => !x.due_date)
     .sort((a, b) => (a.created_at < b.created_at ? -1 : 1))
     .slice(0, 8);
+  const openToday = todayTasks.filter((x) => !leaving.includes(x.id)).length;
+  const totalToday = openToday + doneToday;
 
   function renderTask(task: Task) {
     const who = member(task.assignee_id);
     const overdue = task.due_date && daysFromToday(task.due_date) < 0;
     return (
-      <li key={task.id} className="home-task">
+      <li key={task.id} className={`home-task${leaving.includes(task.id) ? " is-leaving" : ""}`}>
         <button
           type="button"
           className={`check${task.status === "doing" ? " doing" : ""}`}
           aria-label={t("markDone", { title: task.title })}
-          onClick={() => (isDevice ? setPicking(task) : complete(task, null))}
+          onClick={(e) => {
+            const el = e.currentTarget;
+            if (isDevice) setPicking({ task, el });
+            else complete(task, null, el);
+          }}
         />
         <span className="grow" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <span className="task-title" style={{ fontSize: 15 }}>{task.title}</span>
-          {overdue && <span className="small" style={{ color: "#8c1d16" }}>{t("overdue")}</span>}
+          {overdue && <span className="small" style={{ color: "var(--danger-ink)" }}>{t("overdue")}</span>}
         </span>
         {who ? (
           <Avatar name={who.profile.display_name} color={who.profile.color} size={26} />
         ) : (
-          <span className="chip">{t("unclaimedHint")}</span>
+          <span className="chip unclaimed-chip">{t("unclaimedHint")}</span>
         )}
       </li>
     );
@@ -136,6 +180,7 @@ export default function HomePage() {
   const dinner = (d: string) => meals.find((m) => m.date === d && m.slot === "dinner");
   const tonight = dinner(today);
   const tonightCook = member(tonight?.cook_id);
+  const tonightArt = tonight?.recipe_id ? art[tonight.recipe_id] : null;
 
   const dayLabel = (iso: string) => {
     const n = daysFromToday(iso);
@@ -146,41 +191,87 @@ export default function HomePage() {
   const shortDow = (iso: string) =>
     new Intl.DateTimeFormat("en-GB", { weekday: "short" }).format(new Date(`${iso}T12:00:00`));
   const clock = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(now);
-  const dateLong = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long" }).format(now);
+  const dateLong = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" }).format(now);
   const people = members.filter((m) => m.role !== "device");
+  const greeting = t(greetingKey(now.getHours()));
+  const title = !isDevice && profile?.display_name ? t("greetName", { greeting, name: profile.display_name }) : greeting;
+  const leftLine =
+    totalToday === 0 ? t("heroNothing") : openToday === 0 ? t("heroAllDone") : openToday === 1 ? t("heroLeftOne") : t("heroLeft", { n: openToday });
 
   return (
     <div className="home">
-      <header className="home-head">
+      <section className="hero" aria-labelledby="h-hello">
         <div>
-          <span className="eyebrow home-weekday">{formatWeekday(today, locale)}</span>
-          <h1 className="home-date">
-            {dateLong} <span className="home-clock">{clock}</span>
-          </h1>
-        </div>
-        <div className="row" style={{ gap: 8 }}>
-          {people.map((m) => (
-            <span key={m.user_id} className="person-pill">
-              <Avatar name={m.profile.display_name} color={m.profile.color} size={34} />
-              <span>{m.profile.display_name}</span>
+          <span className="hero-eyebrow">
+            <span>{dateLong}</span>
+            <span aria-hidden="true">·</span>
+            <span className="hero-clock">{clock}</span>
+          </span>
+          <h1 id="h-hello" className="hero-title">{title}</h1>
+          <p className="hero-sub">
+            <span>
+              <Icon name="check" size={15} stroke={2.4} />
+              {loaded ? leftLine : t("loading")}
             </span>
+            <span>
+              <Icon name="meals" size={15} stroke={2} />
+              {tonight ? t("heroDinner", { meal: tonight.title }) : t("heroNoDinner")}
+            </span>
+          </p>
+        </div>
+        <ProgressRing
+          value={totalToday ? doneToday / totalToday : loaded ? 1 : 0}
+          size={84}
+          stroke={8}
+          label={t("ringLabel", { done: doneToday, total: totalToday })}
+        >
+          <span className="hero-ring-num">{loaded ? (totalToday ? `${doneToday}/${totalToday}` : "✓") : "–"}</span>
+          <span className="hero-ring-sub">{t("ringToday")}</span>
+        </ProgressRing>
+        <div className="quick" role="group" aria-label={t("quickActions")}>
+          <button type="button" className="quick-btn primary" onClick={() => setSheet("task")}>
+            <Icon name="plus" size={18} stroke={2.3} />
+            {t("newTask")}
+          </button>
+          {calendars.some((c) => c.can_write) && (
+            <button type="button" className="quick-btn" onClick={() => setSheet("event")}>
+              <Icon name="calendar" size={18} />
+              {t("addEvent")}
+            </button>
+          )}
+          <Link href="/meals" className="quick-btn">
+            <Icon name="meals" size={18} />
+            {t("quickMeal")}
+          </Link>
+          <Link href="/meals?view=groceries" className="quick-btn">
+            <Icon name="cart" size={18} />
+            {t("groceries")}
+          </Link>
+        </div>
+        <div className="hero-people" aria-hidden="true">
+          {people.map((m) => (
+            <Avatar key={m.user_id} name={m.profile.display_name} color={m.profile.color} size={36} />
           ))}
         </div>
-      </header>
+      </section>
 
-      <div className="home-grid">
+      <div className="home-grid stagger">
         <section className="card home-card" aria-labelledby="h-agenda">
           <div className="card-head">
             <h2 id="h-agenda">{t("agenda")}</h2>
             <Link href="/calendar" className="small">{t("seeAll")}</Link>
           </div>
-          {calLoaded && calendars.length === 0 ? (
-            <p className="small muted" style={{ margin: 0 }}>
-              {t("noCalendarsYet")}{" "}
-              {!isDevice && <Link href="/settings#calendars">{t("connectGoogle")}</Link>}
-            </p>
+          {!calLoaded ? (
+            <SkeletonRows n={3} h={44} />
+          ) : calendars.length === 0 ? (
+            <EmptyState
+              compact
+              icon="calendar"
+              title={t("noCalendarsYet")}
+              action={!isDevice ? <Link href="/settings#calendars" className="btn small soft">{t("connectGoogle")}</Link> : undefined}
+            />
           ) : agenda.length === 0 ? (
-            <p className="small muted" style={{ margin: 0 }}>{t("noEvents")}</p>
+            <EmptyState compact icon="sun" title={t("noEvents")} />
           ) : (
             agenda.map(({ d, list }) => (
               <div key={d} className="stack" style={{ gap: 6 }}>
@@ -198,8 +289,10 @@ export default function HomePage() {
             <h2 id="h-tasks">{t("tasksToday")}</h2>
             <Link href="/tasks" className="small">{t("openTasks", { n: tasks.length })}</Link>
           </div>
-          {todayTasks.length === 0 ? (
-            <p className="small muted" style={{ margin: 0 }}>{t("allClear")}</p>
+          {!loaded ? (
+            <SkeletonRows n={3} h={50} />
+          ) : todayTasks.length === 0 ? (
+            <EmptyState compact icon="sparkle" title={t("allClearTitle")} hint={t("allClear")} />
           ) : (
             <ul className="stack" style={{ listStyle: "none", padding: 0, margin: 0, gap: 8 }}>
               {todayTasks.map(renderTask)}
@@ -216,31 +309,40 @@ export default function HomePage() {
         </section>
 
         <div className="home-side">
-          <section className="card home-card dark" aria-labelledby="h-tonight">
-            <div className="card-head">
-              <h2 id="h-tonight" className="mini-label" style={{ color: "#c3cdca" }}>{t("tonight")}</h2>
-              {tonightCook && <span className="small" style={{ color: "#c3cdca" }}>{t("cooks", { name: tonightCook.profile.display_name })}</span>}
+          <section className="card home-card" aria-labelledby="h-tonight">
+            <div className="tonight">
+              <div style={{ minWidth: 0 }}>
+                <h2 id="h-tonight" className="mini-label" style={{ margin: 0 }}>{t("tonight")}</h2>
+                {!loaded ? (
+                  <Skeleton h={24} w="70%" style={{ marginTop: 6 }} />
+                ) : tonight ? (
+                  <p className="tonight-title">{tonight.title}</p>
+                ) : (
+                  <Link href="/meals" className="tonight-title">
+                    + {t("nothingPlannedTonight")}
+                  </Link>
+                )}
+                {tonightCook && <span className="small muted">{t("cooks", { name: tonightCook.profile.display_name })}</span>}
+              </div>
+              {tonight && (
+                <span className="tonight-art">
+                  <RecipeArt recipe={tonightArt} title={tonight.title} />
+                </span>
+              )}
             </div>
-            {tonight ? (
-              <p className="tonight-title">{tonight.title}</p>
-            ) : (
-              <Link href="/meals" className="tonight-title" style={{ color: "#f2b48a", textDecoration: "none" }}>
-                + {t("nothingPlannedTonight")}
-              </Link>
-            )}
             <div className="dinner-strip">
               {week.map((d) => {
                 const m = dinner(d);
                 const isToday = d === today;
                 return (
-                  <div key={d} className={`dinner-cell${isToday ? " is-today" : ""}`}>
+                  <div key={d} className={`dinner-cell${isToday ? " is-today" : ""}${m ? "" : " is-empty"}`}>
                     <span className="dinner-dow">{shortDow(d)}</span>
                     <span className="dinner-meal">{m?.title ?? "—"}</span>
                   </div>
                 );
               })}
             </div>
-            <Link href="/meals" className="btn small" style={{ background: "#2e3d3b", textDecoration: "none" }}>
+            <Link href="/meals?view=groceries" className="btn small soft" style={{ alignSelf: "flex-start" }}>
               <Icon name="cart" size={16} />
               {t("groceries")}
             </Link>
@@ -251,15 +353,17 @@ export default function HomePage() {
               <h2 id="h-badges">{t("latestBadges")}</h2>
               <Link href="/badges" className="small">{t("seeAll")}</Link>
             </div>
-            {badges.length === 0 ? (
-              <p className="small muted" style={{ margin: 0 }}>{t("noBadgesYet")}</p>
+            {!loaded ? (
+              <SkeletonRows n={2} h={44} />
+            ) : badges.length === 0 ? (
+              <EmptyState compact icon="medal" title={t("noBadgesYet")} />
             ) : (
-              <ul className="stack" style={{ listStyle: "none", padding: 0, margin: 0, gap: 10 }}>
+              <ul className="stack stagger" style={{ listStyle: "none", padding: 0, margin: 0, gap: 6 }}>
                 {badges.map((b) => {
                   const def = BADGES.find((x) => x.key === b.badge_key);
                   const who = member(b.user_id);
                   return (
-                    <li key={b.id} className="row">
+                    <li key={b.id} className="badge-row">
                       <span className="badge-icon small-badge">
                         <Icon name={def?.icon ?? "star"} size={20} stroke={1.9} />
                       </span>
@@ -280,12 +384,22 @@ export default function HomePage() {
         <WhoPicker
           onClose={() => setPicking(null)}
           onPick={(uid) => {
-            const task = picking;
+            const { task, el } = picking;
             setPicking(null);
-            complete(task, uid);
+            complete(task, uid, el);
           }}
         />
       )}
+      {sheet === "task" && (
+        <TaskSheet
+          task={null}
+          onClose={() => {
+            setSheet(null);
+            load();
+          }}
+        />
+      )}
+      {sheet === "event" && <EventSheet date={today} calendars={calendars} onClose={() => setSheet(null)} />}
     </div>
   );
 }

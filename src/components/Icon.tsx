@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 const PATHS: Record<string, React.ReactNode> = {
   home: (
     <>
@@ -109,6 +111,57 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
     </>
   ),
+  monitor: (
+    <>
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <path d="M8 20h8M12 16v4" />
+    </>
+  ),
+  vibrate: (
+    <>
+      <rect x="8" y="4" width="8" height="16" rx="2" />
+      <path d="M4 9v6M20 9v6" />
+    </>
+  ),
+  wave: <path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0" />,
+  party: (
+    <>
+      <path d="M4 20l4.5-12L16 15.5z" />
+      <path d="M13 4c.5 1.5 0 2.5-1 3M20 11c-1.5-.5-2.5 0-3 1M17 3.5v.01M21 7v.01M19.5 15v.01" />
+    </>
+  ),
+  palette: (
+    <>
+      <path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.3-1-1.6-1-2.6 0-.9.7-1.6 1.7-1.6H17a4 4 0 0 0 4-4c0-4.4-4-8.1-9-8.1z" />
+      <circle cx="7.5" cy="11" r="1.2" />
+      <circle cx="10.5" cy="7" r="1.2" />
+      <circle cx="15" cy="7.5" r="1.2" />
+    </>
+  ),
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </>
+  ),
+  phone: (
+    <>
+      <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
+      <path d="M11 18.5h2" />
+    </>
+  ),
+  logout: (
+    <>
+      <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+      <path d="M10 8l-4 4 4 4M6 12h10" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
   copy: (
     <>
       <rect x="9" y="9" width="12" height="12" rx="2" />
@@ -143,6 +196,33 @@ export function Avatar({ name, color, size = 32 }: { name: string; color: string
       aria-hidden="true"
     >
       {(name || "?").trim().charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
+/** The hjem mark: a little house in a rounded tile. */
+export function LogoMark({ size = 32 }: { size?: number }) {
+  const id = useId().replace(/:/g, "");
+  return (
+    <svg className="logo-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+      <defs>
+        <linearGradient id={`hjem-g${id}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#2a8a76" />
+          <stop offset="1" stopColor="#17564a" />
+        </linearGradient>
+      </defs>
+      <rect width="32" height="32" rx="9.5" fill={`url(#hjem-g${id})`} />
+      <path d="M8.5 15.2 16 9l7.5 6.2V22a1.6 1.6 0 0 1-1.6 1.6H10.1A1.6 1.6 0 0 1 8.5 22z" fill="#fff" />
+      <path d="M13.6 23.6v-3.4a2.4 2.4 0 0 1 4.8 0v3.4z" fill="#f3b48a" />
+    </svg>
+  );
+}
+
+export function Logo({ size = 32 }: { size?: number }) {
+  return (
+    <span className="logo">
+      <LogoMark size={size} />
+      <span className="logo-word" style={{ fontSize: Math.round(size * 0.82) }}>hjem</span>
     </span>
   );
 }

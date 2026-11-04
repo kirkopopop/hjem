@@ -2,24 +2,25 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "./AppProvider";
-import { Icon } from "./Icon";
+import { Avatar, Icon, Logo, LogoMark } from "./Icon";
 import { useWakeLock } from "./CalendarSettings";
 
+// Five sections in the bottom bar; Settings sits behind your avatar on phones.
 const LINKS = [
   { href: "/home", icon: "home", label: "navHome" },
   { href: "/calendar", icon: "calendar", label: "navCalendar" },
   { href: "/tasks", icon: "tasks", label: "navTasks" },
   { href: "/meals", icon: "meals", label: "navMeals" },
   { href: "/badges", icon: "medal", label: "navBadges" },
-  { href: "/settings", icon: "settings", label: "navSettings" },
 ] as const;
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  const { ready, userId, household, t } = useApp();
+  const { ready, userId, profile, household, t } = useApp();
   const pathname = usePathname();
   const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
   useWakeLock();
 
   useEffect(() => {
@@ -28,26 +29,70 @@ export function Shell({ children }: { children: React.ReactNode }) {
     else if (!household) router.replace("/onboarding");
   }, [ready, userId, household, router]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   if (!ready || !household) {
     return (
-      <div className="splash">
-        <span className="logo">hjem</span>
+      <div className="splash" role="status" aria-label={t("loading")}>
+        <span className="splash-mark">
+          <LogoMark size={64} />
+        </span>
       </div>
     );
   }
 
+  const onSettings = pathname.startsWith("/settings");
+
   return (
     <div className="frame">
       <nav className="nav" aria-label="Sections">
-        <span className="brand">hjem</span>
-        {LINKS.map((l) => (
-          <Link key={l.href} href={l.href} aria-current={pathname.startsWith(l.href) ? "page" : undefined}>
-            <Icon name={l.icon} />
-            {t(l.label)}
-          </Link>
-        ))}
+        <Link href="/home" className="brand" aria-label="hjem">
+          <LogoMark size={40} />
+        </Link>
+        {LINKS.map((l) => {
+          const active = pathname.startsWith(l.href);
+          return (
+            <Link key={l.href} href={l.href} className="nav-link" aria-current={active ? "page" : undefined}>
+              <span className="nav-ico">
+                <Icon name={l.icon} size={22} stroke={active ? 2.1 : 1.8} />
+              </span>
+              <span className="nav-label">{t(l.label)}</span>
+            </Link>
+          );
+        })}
+        <span className="nav-spacer" />
+        <Link href="/settings" className="nav-link nav-settings" aria-current={onSettings ? "page" : undefined}>
+          <span className="nav-ico">
+            {profile ? <Avatar name={profile.display_name} color={profile.color} size={28} /> : <Icon name="settings" />}
+          </span>
+          <span className="nav-label">{t("navSettings")}</span>
+        </Link>
       </nav>
-      <main className="content">{children}</main>
+
+      <div className="main-col">
+        <header className={`topbar${scrolled ? " is-scrolled" : ""}`}>
+          <Link href="/home" className="topbar-brand" aria-label="hjem">
+            <Logo size={28} />
+          </Link>
+          <span className="topbar-house">{household.name}</span>
+          <Link
+            href="/settings"
+            className={`topbar-me${onSettings ? " is-active" : ""}`}
+            aria-label={t("navSettings")}
+            aria-current={onSettings ? "page" : undefined}
+          >
+            {profile ? <Avatar name={profile.display_name} color={profile.color} size={34} /> : <Icon name="settings" />}
+          </Link>
+        </header>
+        <main key={pathname} className="content page-enter">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

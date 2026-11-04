@@ -18,6 +18,7 @@ import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { TaskSheet } from "@/components/TaskSheet";
 import { WhoPicker } from "@/components/WhoPicker";
+import { Skeleton } from "@/components/ui";
 import { daysFromToday, formatShortDate, startOfWeekISO } from "@/lib/dates";
 import type { Task, TaskStatus } from "@/lib/types";
 
@@ -75,7 +76,7 @@ function Draggable({ task, className, children }: { task: Task; className: strin
 }
 
 export default function TasksPage() {
-  const { t, locale, userId, household, member, notify } = useApp();
+  const { t, locale, userId, household, member, notify, celebrate } = useApp();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [mineOnly, setMineOnly] = useState(false);
@@ -150,13 +151,14 @@ export default function TasksPage() {
   }
 
   /** Moves a task to a column; finishing on the wall tablet asks who did it first. */
-  async function moveTo(task: Task, status: TaskStatus, by?: string) {
+  async function moveTo(task: Task, status: TaskStatus, by?: string, from?: Element | { x: number; y: number } | null) {
     if (task.status === status) return;
     if (status === "done") {
       if (isDevice && !by) {
         setPicking(task);
         return;
       }
+      celebrate(from ?? null);
       const ok = await patch(task, { status: "done", completed_at: new Date().toISOString(), completed_by: by ?? userId });
       if (ok) notify(t("niceDone"));
     } else {
@@ -170,7 +172,10 @@ export default function TasksPage() {
   function onDragEnd(e: DragEndEvent) {
     const task = tasks.find((x) => x.id === e.active.id);
     setDragging(null);
-    if (task && e.over) moveTo(task, e.over.id as TaskStatus);
+    if (task && e.over) {
+      const r = e.over.rect;
+      moveTo(task, e.over.id as TaskStatus, undefined, { x: r.left + r.width / 2, y: r.top + Math.min(r.height / 2, 120) });
+    }
   }
 
   const filtered = useMemo(() => tasks.filter((x) => !mineOnly || x.assignee_id === userId), [tasks, mineOnly, userId]);
@@ -201,7 +206,7 @@ export default function TasksPage() {
           type="button"
           className={`check${done ? " on" : task.status === "doing" ? " doing" : ""}`}
           aria-label={done ? t("markNotDone", { title: task.title }) : t("markDone", { title: task.title })}
-          onClick={() => moveTo(task, done ? "todo" : "done")}
+          onClick={(e) => moveTo(task, done ? "todo" : "done", undefined, e.currentTarget)}
         >
           {done && <Icon name="check" size={18} stroke={2.6} />}
         </button>
@@ -276,6 +281,16 @@ export default function TasksPage() {
                 setEditing("new");
               }}
             >
+              {!loaded &&
+                [0, 1, 2].slice(0, s === "todo" ? 3 : 2).map((i) => (
+                  <li key={`sk-${i}`} className="sk-card" aria-hidden="true">
+                    <Skeleton w={30} h={30} r={15} />
+                    <span className="grow stack" style={{ gap: 8 }}>
+                      <Skeleton h={15} w={`${80 - i * 15}%`} />
+                      <Skeleton h={11} w="40%" />
+                    </span>
+                  </li>
+                ))}
               {(s === "done" ? doneShown : columns[s]).map(card)}
               {s === "done" && columns.done.length > DONE_PREVIEW && (
                 <li>

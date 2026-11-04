@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
+import { Icon, Logo, LogoMark } from "@/components/Icon";
 
 export default function OnboardingPage() {
   const { ready, userId, profile, household, t, reload } = useApp();
@@ -60,25 +61,28 @@ export default function OnboardingPage() {
   if (!ready || !userId || household) {
     return (
       <div className="splash">
-        <span className="logo">hjem</span>
+        <span className="splash-mark">
+          <LogoMark size={64} />
+        </span>
       </div>
     );
   }
 
   return (
     <main className="auth-wrap">
-      <div className="row" style={{ justifyContent: "space-between", marginBottom: 20 }}>
-        <span className="logo">
-          hjem<span className="logo-dot">.</span>
-        </span>
+      <div style={{ marginBottom: 26 }}>
+        <Logo size={34} />
       </div>
       <h1 className="page-title">{t("welcome", { name: profile?.display_name ?? "" })}</h1>
       <p className="lead" style={{ marginTop: 6 }}>{t("onboardingLead")}</p>
 
       {error && <p className="error" role="alert" style={{ marginBottom: 12 }}>{error}</p>}
 
-      <form className="card stack" onSubmit={join} style={{ marginBottom: 14 }}>
-        <h2>{t("joinHousehold")}</h2>
+      <form className="card stack stagger" onSubmit={join} style={{ marginBottom: 14 }}>
+        <h2 className="card-title">
+          <span className="set-ico"><Icon name="people" size={18} /></span>
+          {t("joinHousehold")}
+        </h2>
         <label className="field">
           <span>{t("inviteCode")}</span>
           <input
@@ -110,7 +114,10 @@ export default function OnboardingPage() {
       </form>
 
       <form className="card stack" onSubmit={create}>
-        <h2>{t("createHousehold")}</h2>
+        <h2 className="card-title">
+          <span className="set-ico"><Icon name="home" size={18} /></span>
+          {t("createHousehold")}
+        </h2>
         <label className="field">
           <span>{t("householdName")}</span>
           <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("defaultHouseholdName")} maxLength={60} />

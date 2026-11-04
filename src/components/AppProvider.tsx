@@ -4,8 +4,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { supabase } from "@/lib/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
 import { translate, type Key, type Locale } from "@/lib/i18n";
-import { badgeName } from "@/lib/badges";
+import { badgeDesc, badgeName } from "@/lib/badges";
+import { applyPrefs, buzz, getPrefs, motionReduced } from "@/lib/prefs";
 import { Icon } from "./Icon";
+import { BadgePop, Confetti, makeBurst, type BadgeNews, type Burst } from "./Celebrate";
 
 export type Profile = { id: string; display_name: string; color: string; locale: Locale };
 export type Member = { user_id: string; role: "owner" | "member" | "device"; profile: Profile };
@@ -23,6 +25,8 @@ type Ctx = {
   reload: () => Promise<void>;
   member: (id: string | null | undefined) => Member | undefined;
   notify: (msg: string, ms?: number) => void;
+  /** Confetti from an element (or point) plus a short buzz. */
+  celebrate: (from?: Element | { x: number; y: number } | null, big?: boolean) => void;
   badgeTick: number;
 };
 
@@ -44,11 +48,52 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
   const [badgeTick, setBadgeTick] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [bursts, setBursts] = useState<Burst[]>([]);
+  const [badgeQueue, setBadgeQueue] = useState<BadgeNews[]>([]);
+  const burstId = useRef(0);
 
   const notify = useCallback((msg: string, ms = 2400) => {
     setToast(msg);
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), ms);
+  }, []);
+
+  const celebrate = useCallback((from?: Element | { x: number; y: number } | null, big = false) => {
+    buzz(big ? [14, 60, 22] : 14);
+    if (!getPrefs().celebrations || motionReduced()) return;
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight * 0.42;
+    if (from instanceof Element) {
+      const r = from.getBoundingClientRect();
+      x = r.left + r.width / 2;
+      y = r.top + r.height / 2;
+    } else if (from) {
+      x = from.x;
+      y = from.y;
+    }
+    const id = ++burstId.current;
+    setBursts((b) => [...b, makeBurst(id, x, y, big)]);
+    setTimeout(() => setBursts((b) => b.filter((z) => z.id !== id)), 1600);
+  }, []);
+
+  // Theme and motion preferences: apply now, and follow the system theme when set to "System".
+  useEffect(() => {
+    applyPrefs();
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => applyPrefs();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // Escape closes the top-most sheet; the page behind can't scroll while one is open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      const layers = document.querySelectorAll<HTMLElement>(".sheet-backdrop, .badge-pop-backdrop");
+      layers[layers.length - 1]?.click();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
 
@@ -144,9 +189,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           const { user_id, badge_key } = payload.new;
           const l = localeRef.current;
           const name = translate(l, badgeName(badge_key));
-          if (user_id === null) notify(translate(l, "newBadgeTogether", { name }), 4200);
-          else if (user_id === userId) notify(translate(l, "newBadge", { name }), 4200);
-          else {
+          if (user_id === null || user_id === userId) {
+            setBadgeQueue((q) => [
+              ...q,
+              {
+                id: Date.now() + Math.random(),
+                key: badge_key,
+                title: translate(l, user_id === null ? "badgeUnlockedTogether" : "badgeUnlocked"),
+                name,
+                desc: translate(l, badgeDesc(badge_key)),
+                button: translate(l, "lovely"),
+              },
+            ]);
+          } else {
             const who = membersRef.current.find((m) => m.user_id === user_id)?.profile.display_name ?? "";
             notify(translate(l, "partnerBadge", { who, name }), 4200);
           }
@@ -183,10 +238,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       reload,
       member: (id) => members.find((m) => m.user_id === id),
       notify,
+      celebrate,
       badgeTick,
     }),
-    [ready, userId, profile, household, members, locale, updateProfile, reload, notify, badgeTick],
+    [ready, userId, profile, household, members, locale, updateProfile, reload, notify, celebrate, badgeTick],
   );
+
+  const dismissBadge = useCallback(() => setBadgeQueue((q) => q.slice(1)), []);
+  const shownBadge = badgeQueue[0]?.id;
+  useEffect(() => {
+    if (shownBadge) celebrate(null, true);
+  }, [shownBadge, celebrate]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -196,12 +258,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={value}>
       {children}
       {toast && (
-        <div className="toast" role="status">
-          <span className="star">
-            <Icon name="star" size={18} />
+        <div className="toast" role="status" key={toast}>
+          <span className="toast-ico">
+            <Icon name="sparkle" size={16} stroke={2} />
           </span>
           {toast}
         </div>
+      )}
+      <Confetti bursts={bursts} />
+      {badgeQueue[0] && (
+        <BadgePop
+          key={badgeQueue[0].id}
+          news={badgeQueue[0]}
+          onClose={dismissBadge}
+        />
       )}
     </AppContext.Provider>
   );

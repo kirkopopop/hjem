@@ -76,7 +76,10 @@ export function CalendarSettings() {
   return (
     <section id="calendars" className="card stack" aria-labelledby="cal-h">
       <div className="card-head">
-        <h2 id="cal-h">{t("calendarsTitle")}</h2>
+        <h2 id="cal-h" className="card-title">
+          <span className="set-ico"><Icon name="calendar" size={18} /></span>
+          {t("calendarsTitle")}
+        </h2>
         {accounts.length > 0 && (
           <button type="button" className="icon-btn small" aria-label={t("refresh")} onClick={() => sync(true)} disabled={syncing}>
             <span className={syncing ? "spin" : ""} style={{ display: "inline-flex" }}>
@@ -96,7 +99,7 @@ export function CalendarSettings() {
               {owner && <Avatar name={owner.profile.display_name} color={owner.profile.color} size={28} />}
               <div className="grow" style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
                 <span style={{ fontWeight: 700, overflowWrap: "anywhere" }}>{a.google_email}</span>
-                <span className="small" style={{ color: a.sync_error ? "#8c1d16" : "var(--muted)" }}>
+                <span className="small" style={{ color: a.sync_error ? "var(--danger-ink)" : "var(--muted)" }}>
                   {a.sync_error ? t("syncError") : a.last_synced_at ? t("lastSynced", { time: fmt(a.last_synced_at) }) : t("syncing")}
                 </span>
               </div>
@@ -162,12 +165,20 @@ export function WallSettings() {
   }
   return (
     <section className="card stack" aria-labelledby="wall-h">
-      <h2 id="wall-h">{t("wallSettings")}</h2>
-      <div className="row" style={{ minHeight: 44 }}>
-        <span className="grow" style={{ fontWeight: 600 }}>{t("keepAwake")}</span>
-        <button type="button" role="switch" aria-checked={on} aria-label={t("keepAwake")} className={`switch${on ? " on" : ""}`} onClick={toggle}>
-          <span />
-        </button>
+      <h2 id="wall-h" className="card-title">
+        <span className="set-ico"><Icon name="monitor" size={18} /></span>
+        {t("wallSettings")}
+      </h2>
+      <div className="set-list">
+        <div className="set-row">
+          <span className="set-ico"><Icon name="sun" size={20} /></span>
+          <span className="set-text">
+            <span className="set-title">{t("keepAwake")}</span>
+          </span>
+          <button type="button" role="switch" aria-checked={on} aria-label={t("keepAwake")} className={`switch${on ? " on" : ""}`} onClick={toggle}>
+            <span />
+          </button>
+        </div>
       </div>
     </section>
   );

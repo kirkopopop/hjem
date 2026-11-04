@@ -8,6 +8,8 @@ import { MealSheet } from "@/components/MealSheet";
 import { RecipeSheet } from "@/components/RecipeSheet";
 import { RecipeView } from "@/components/RecipeView";
 import { RecipeArt, RecipeMeta } from "@/components/RecipeBits";
+import { EmptyState, Skeleton } from "@/components/ui";
+import { buzz } from "@/lib/prefs";
 import { seedPlatesOnce, seedPlatesRecipes } from "@/lib/recipeSeed";
 import { daysFromToday, formatDayMonth, formatWeekday, isoWeekNumber, localISODate, weekDates } from "@/lib/dates";
 import { CATEGORY_ORDER, guessCategory } from "@/lib/grocery";
@@ -20,8 +22,10 @@ type View = "plan" | "groceries" | "recipes";
 type Editing = { meal: Meal | null; date: string; slot: MealSlot; recipe?: Recipe | null };
 
 export default function MealsPage() {
-  const { t, locale, userId, household, member, notify } = useApp();
+  const { t, locale, userId, household, member, notify, celebrate } = useApp();
   const [view, setView] = useState<View>("plan");
+  const [recipesLoaded, setRecipesLoaded] = useState(false);
+  const [itemsLoaded, setItemsLoaded] = useState(false);
   const [offset, setOffset] = useState(0);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [items, setItems] = useState<GroceryItem[]>([]);
@@ -43,13 +47,22 @@ export default function MealsPage() {
     if (!hid) return;
     const { data } = await supabase().from("grocery_items").select("*").eq("household_id", hid).eq("archived", false).order("created_at");
     setItems((data ?? []) as GroceryItem[]);
+    setItemsLoaded(true);
   }, [hid]);
 
   const loadRecipes = useCallback(async () => {
     if (!hid) return;
     const { data } = await supabase().from("recipes").select("*").eq("household_id", hid).order("title");
     setRecipes((data ?? []) as Recipe[]);
+    setRecipesLoaded(true);
   }, [hid]);
+
+  // Deep links such as /meals?view=groceries from the home screen.
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("view");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- read the URL once on mount
+    if (v === "groceries" || v === "recipes" || v === "plan") setView(v);
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- load on mount
@@ -108,7 +121,8 @@ export default function MealsPage() {
   const fmtN = (n: number) => new Intl.NumberFormat("en-GB").format(n);
   const openCount = items.filter((i) => !i.checked).length;
 
-  async function toggleCooked(meal: Meal) {
+  async function toggleCooked(meal: Meal, el?: Element) {
+    if (!meal.cooked) celebrate(el);
     setMeals((prev) => prev.map((m) => (m.id === meal.id ? { ...m, cooked: !m.cooked } : m)));
     const { error } = await supabase().from("meals").update({ cooked: !meal.cooked }).eq("id", meal.id);
     if (error) {
@@ -189,7 +203,7 @@ export default function MealsPage() {
             className={`check small${m.cooked ? " on" : ""}`}
             aria-label={t("markCooked", { title: m.title })}
             aria-pressed={m.cooked}
-            onClick={() => toggleCooked(m)}
+            onClick={(e) => toggleCooked(m, e.currentTarget)}
           >
             {m.cooked && <Icon name="check" size={14} stroke={2.8} />}
           </button>
@@ -252,7 +266,7 @@ export default function MealsPage() {
             {t("weekSummary", { planned: meals.length })}
             {weekAvg != null && <> · {t("weekKcal", { n: fmtN(weekAvg) })}</>}
           </p>
-          <ul className="plan-grid">
+          <ul className="plan-grid stagger" key={offset}>
             {days.map((date) => {
               const today = daysFromToday(date) === 0;
               const dayMeals = SLOTS.map((s) => mealAt(date, s)).filter(Boolean) as Meal[];
@@ -283,7 +297,7 @@ export default function MealsPage() {
 
       {view === "groceries" && (
         <>
-          <Groceries items={items} reload={loadItems} label={label} unitLabel={unitLabel} />
+          <Groceries items={items} loaded={itemsLoaded} reload={loadItems} label={label} unitLabel={unitLabel} />
           <button type="button" className="btn soft block" style={{ marginTop: 14 }} onClick={updateGroceries} disabled={syncing}>
             <Icon name="repeat" size={18} />
             {syncing ? t("working") : t("updateGroceries")}
@@ -294,6 +308,7 @@ export default function MealsPage() {
       {view === "recipes" && (
         <Recipes
           recipes={recipes}
+          loaded={recipesLoaded}
           onOpen={setRecipeViewing}
           onNew={() => setRecipeEditing("new")}
           onRestore={async () => {
@@ -361,11 +376,13 @@ type Filter = "all" | "breakfast" | "main" | "healthy" | "everyday" | "comfort" 
 
 function Recipes({
   recipes,
+  loaded,
   onOpen,
   onNew,
   onRestore,
 }: {
   recipes: Recipe[];
+  loaded: boolean;
   onOpen: (r: Recipe) => void;
   onNew: () => void;
   onRestore: () => void;
@@ -419,9 +436,26 @@ function Recipes({
           </button>
         ))}
       </div>
-      {recipes.length === 0 && <p className="empty">{t("noRecipes")}</p>}
-      {recipes.length > 0 && list.length === 0 && <p className="empty">{t("noRecipeMatch")}</p>}
-      <ul className="recipe-grid">
+      {!loaded && (
+        <ul className="recipe-grid" aria-label={t("loading")}>
+          {Array.from({ length: 8 }, (_, i) => (
+            <li key={i} className="recipe-card" style={{ pointerEvents: "none" }}>
+              <Skeleton h="auto" r={0} style={{ aspectRatio: "4 / 3" }} />
+              <span className="recipe-text">
+                <Skeleton h={15} w="80%" />
+                <Skeleton h={11} w="50%" />
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {loaded && recipes.length === 0 && (
+        <EmptyState icon="pan" title={t("emptyRecipesTitle")} hint={t("noRecipes")} />
+      )}
+      {recipes.length > 0 && list.length === 0 && (
+        <EmptyState icon="sparkle" title={t("emptyMatchTitle")} hint={t("noRecipeMatch")} />
+      )}
+      <ul className="recipe-grid stagger" key={filter}>
         {list.map((r) => (
           <li key={r.id}>
             <button type="button" className="recipe-card" onClick={() => onOpen(r)}>
@@ -446,11 +480,13 @@ function Recipes({
 
 function Groceries({
   items,
+  loaded,
   reload,
   label,
   unitLabel,
 }: {
   items: GroceryItem[];
+  loaded: boolean;
   reload: () => Promise<void>;
   label: (c: GroceryCategory) => string;
   unitLabel: (u: string) => string;
@@ -479,6 +515,7 @@ function Groceries({
 
   async function toggle(i: GroceryItem) {
     const next = !isChecked(i);
+    if (next) buzz(10);
     setLocal((s) => ({ ...s, [i.id]: next }));
     const { error } = await supabase().from("grocery_items").update({ checked: next }).eq("id", i.id);
     if (error) notify(t("somethingWrong", { msg: error.message }));
@@ -547,7 +584,17 @@ function Groceries({
         )}
       </form>
 
-      {groups.length === 0 && <p className="empty">{t("emptyGroceries")}</p>}
+      {loaded && groups.length === 0 && <EmptyState icon="cart" title={t("emptyGroceriesTitle")} hint={t("emptyGroceries")} />}
+      {!loaded && (
+        <div className="card stack" style={{ marginTop: 14, padding: 14 }} aria-label={t("loading")}>
+          {[70, 55, 80, 45].map((w, i) => (
+            <div key={i} className="row">
+              <Skeleton w={24} h={24} r={8} />
+              <Skeleton w={`${w}%`} h={14} />
+            </div>
+          ))}
+        </div>
+      )}
 
       {groups.map((g) => (
         <section key={g.c}>
