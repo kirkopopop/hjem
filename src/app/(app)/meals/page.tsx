@@ -110,6 +110,11 @@ export default function MealsPage() {
   }, [hid, loadMeals, loadItems, loadRecipes]);
 
   const mealAt = (date: string, slot: MealSlot) => meals.find((m) => m.date === date && m.slot === slot);
+  // A slot can hold several meals (e.g. porridge and a smoothie for breakfast); oldest first.
+  const mealsAt = (date: string, slot: MealSlot) =>
+    meals
+      .filter((m) => m.date === date && m.slot === slot)
+      .sort((a, b) => (a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0));
   const recipeById = useMemo(() => new Map(recipes.map((r) => [r.id, r])), [recipes]);
   const kcalOf = (m: Meal) => (m.recipe_id ? recipeById.get(m.recipe_id)?.kcal ?? null : null);
   const dayKcal = (date: string) => {
@@ -192,11 +197,11 @@ export default function MealsPage() {
     return (["dinner", "lunch", "breakfast"] as MealSlot[]).find((s) => !mealAt(date, s)) ?? "dinner";
   }
 
-  function renderMeal(m: Meal) {
+  function renderMeal(m: Meal, firstInSlot: boolean) {
     const cook = member(m.cook_id);
     const past = daysFromToday(m.date) <= 0;
     return (
-      <div key={m.id} className={`meal-row${m.slot === "dinner" ? " is-dinner" : ""}`}>
+      <div key={m.id} className={`meal-row${m.slot === "dinner" ? " is-dinner" : ""}${firstInSlot ? "" : " is-more"}`}>
         {past && (
           <button
             type="button"
@@ -212,7 +217,7 @@ export default function MealsPage() {
           <RecipeArt recipe={m.recipe_id ? recipeById.get(m.recipe_id) : null} title={m.title} />
         </span>
         <button type="button" className="meal-main" onClick={() => setEditing({ meal: m, date: m.date, slot: m.slot })}>
-          <span className="meal-slot">{t(m.slot)}</span>
+          {firstInSlot && <span className="meal-slot">{t(m.slot)}</span>}
           <span className="meal-title">{m.title}</span>
           <span className="meal-portions">{t("portionsShort", { n: m.portions })}</span>
         </button>
@@ -269,7 +274,7 @@ export default function MealsPage() {
           <ul className="plan-grid stagger" key={offset}>
             {days.map((date) => {
               const today = daysFromToday(date) === 0;
-              const dayMeals = SLOTS.map((s) => mealAt(date, s)).filter(Boolean) as Meal[];
+              const groups = SLOTS.map((s) => mealsAt(date, s));
               return (
                 <li key={date} className={`day-card${today ? " is-today" : ""}`}>
                   <div className="day-head">
@@ -278,12 +283,21 @@ export default function MealsPage() {
                     <span className="grow" />
                     {dayKcal(date) != null && <span className="day-kcal">{t("dayKcal", { n: fmtN(dayKcal(date)!) })}</span>}
                   </div>
-                  {dayMeals.map(renderMeal)}
-                  {dayMeals.length < 3 && (
-                    <button type="button" className="plan-empty" onClick={() => setEditing({ meal: null, date, slot: freeSlot(date) })}>
-                      + {t("planMeals")}
-                    </button>
-                  )}
+                  {groups.map((list) => list.map((m, i) => renderMeal(m, i === 0)))}
+                  <div className="plan-add" role="group" aria-label={t("planMeals")}>
+                    {SLOTS.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        className="plan-empty"
+                        aria-label={t("addSlotOn", { slot: t(s), day: formatWeekday(date, locale) })}
+                        onClick={() => setEditing({ meal: null, date, slot: s })}
+                      >
+                        <Icon name="plus" size={14} stroke={2.4} />
+                        {t(s)}
+                      </button>
+                    ))}
+                  </div>
                 </li>
               );
             })}

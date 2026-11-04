@@ -170,7 +170,7 @@ const en = {
   methodHint: "One step per line.",
   edit: "Edit",
   dayKcal: "≈ {n} kcal per person",
-  weekSummary: "{planned} of 21 meals planned",
+  weekSummary: "{planned} meals planned",
   weekKcal: "≈ {n} kcal a day per person",
   blurb: "Short description",
   addPlatesRecipes: "Add the Today's Plates recipes",
@@ -374,6 +374,7 @@ const en = {
   allClearTitle: "All clear",
   loading: "Loading…",
   membersAndInvite: "People",
+  addSlotOn: "Add {slot} on {day}",
 };
 
 export type Key = keyof typeof en;

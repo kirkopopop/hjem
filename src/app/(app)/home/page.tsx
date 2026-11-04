@@ -177,8 +177,11 @@ export default function HomePage() {
     );
   }
 
-  const dinner = (d: string) => meals.find((m) => m.date === d && m.slot === "dinner");
-  const tonight = dinner(today);
+  const dinners = (d: string) =>
+    meals.filter((m) => m.date === d && m.slot === "dinner").sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+  const titles = (list: Meal[]) => list.map((m) => m.title).join(" + ");
+  const tonightAll = dinners(today);
+  const tonight = tonightAll[0];
   const tonightCook = member(tonight?.cook_id);
   const tonightArt = tonight?.recipe_id ? art[tonight.recipe_id] : null;
 
@@ -215,7 +218,7 @@ export default function HomePage() {
             </span>
             <span>
               <Icon name="meals" size={15} stroke={2} />
-              {tonight ? t("heroDinner", { meal: tonight.title }) : t("heroNoDinner")}
+              {tonight ? t("heroDinner", { meal: titles(tonightAll) }) : t("heroNoDinner")}
             </span>
           </p>
         </div>
@@ -316,7 +319,7 @@ export default function HomePage() {
                 {!loaded ? (
                   <Skeleton h={24} w="70%" style={{ marginTop: 6 }} />
                 ) : tonight ? (
-                  <p className="tonight-title">{tonight.title}</p>
+                  <p className="tonight-title">{titles(tonightAll)}</p>
                 ) : (
                   <Link href="/meals" className="tonight-title">
                     + {t("nothingPlannedTonight")}
@@ -332,12 +335,13 @@ export default function HomePage() {
             </div>
             <div className="dinner-strip">
               {week.map((d) => {
-                const m = dinner(d);
+                const list = dinners(d);
+                const m = list[0];
                 const isToday = d === today;
                 return (
                   <div key={d} className={`dinner-cell${isToday ? " is-today" : ""}${m ? "" : " is-empty"}`}>
                     <span className="dinner-dow">{shortDow(d)}</span>
-                    <span className="dinner-meal">{m?.title ?? "—"}</span>
+                    <span className="dinner-meal">{m ? titles(list) : "—"}</span>
                   </div>
                 );
               })}

@@ -1100,3 +1100,14 @@ a.ev.compact:hover { background: var(--ground-2); }
 :root[data-motion="reduced"] .confetti-layer { display: none; }
 .logo-dot { color: var(--accent); }
 .card h2.card-title { margin-bottom: 0; }
+/* Several meals per slot */
+.meal-row.is-more { margin-top: -4px; }
+.plan-add { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 2px; }
+.plan-add .plan-empty {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 6px;
+  font-size: 13px; text-align: center; white-space: nowrap;
+}
+.meal-main { flex-direction: column; align-items: flex-start; gap: 1px; padding: 6px 0; }
+.meal-main .meal-slot { min-width: 0; font-size: 10.5px; }
+.meal-main .meal-portions { margin-left: 0; padding-left: 0; }
+.meal-row.is-more { margin-top: -2px; }

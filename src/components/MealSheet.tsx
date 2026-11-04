@@ -123,7 +123,7 @@ export function MealSheet({
       ? await sb.from("meals").insert({ ...fields, household_id: household.id, created_by: userId })
       : await sb.from("meals").update(fields).eq("id", meal!.id);
     if (error) {
-      setError(error.code === "23505" ? t("slotTaken") : t("somethingWrong", { msg: error.message }));
+      setError(t("somethingWrong", { msg: error.message }));
       setBusy(false);
       return;
     }
