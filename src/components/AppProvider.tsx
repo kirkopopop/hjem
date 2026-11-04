@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import type { AuthChangeEvent } from "@supabase/supabase-js";
-import { guessLocale, rememberLocale, translate, type Key, type Locale } from "@/lib/i18n";
+import { translate, type Key, type Locale } from "@/lib/i18n";
 import { badgeName } from "@/lib/badges";
 import { Icon } from "./Icon";
 
@@ -19,7 +19,6 @@ type Ctx = {
   members: Member[];
   locale: Locale;
   t: (key: Key, vars?: Record<string, string | number>) => string;
-  setLocale: (l: Locale) => Promise<void>;
   updateProfile: (patch: Partial<Pick<Profile, "display_name" | "color">>) => Promise<string | null>;
   reload: () => Promise<void>;
   member: (id: string | null | undefined) => Member | undefined;
@@ -41,7 +40,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [household, setHousehold] = useState<Household | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const locale: Locale = "en";
   const [toast, setToast] = useState<string | null>(null);
   const [badgeTick, setBadgeTick] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -52,10 +51,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toastTimer.current = setTimeout(() => setToast(null), ms);
   }, []);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- load on mount
-    setLocaleState(guessLocale());
-  }, []);
 
   const reload = useCallback(async () => {
     const sb = supabase();
@@ -72,8 +67,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const { data: me } = await sb.from("profiles").select("id, display_name, color, locale").eq("id", uid).maybeSingle();
     if (me) {
       setProfile(me as Profile);
-      setLocaleState(me.locale as Locale);
-      rememberLocale(me.locale as Locale);
     }
     const { data: membership } = await sb
       .from("household_members")
@@ -166,15 +159,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, [household, userId, notify]);
 
-  const setLocale = useCallback(
-    async (l: Locale) => {
-      setLocaleState(l);
-      rememberLocale(l);
-      if (userId) await supabase().from("profiles").update({ locale: l }).eq("id", userId);
-    },
-    [userId],
-  );
-
   const updateProfile = useCallback(
     async (patch: Partial<Pick<Profile, "display_name" | "color">>) => {
       if (!userId) return "not signed in";
@@ -195,14 +179,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       members,
       locale,
       t: (key, vars) => translate(locale, key, vars),
-      setLocale,
       updateProfile,
       reload,
       member: (id) => members.find((m) => m.user_id === id),
       notify,
       badgeTick,
     }),
-    [ready, userId, profile, household, members, locale, setLocale, updateProfile, reload, notify, badgeTick],
+    [ready, userId, profile, household, members, locale, updateProfile, reload, notify, badgeTick],
   );
 
   useEffect(() => {

@@ -111,8 +111,8 @@ export function eventsOnDay(events: CalendarEvent[], iso: string) {
     .sort((a, b) => (a.all_day === b.all_day ? (a.starts_at < b.starts_at ? -1 : 1) : a.all_day ? -1 : 1));
 }
 
-export function fmtTime(iso: string, locale: Locale) {
-  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+export function fmtTime(iso: string, _locale: Locale) {
+  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
 
 const HIDDEN_KEY = "hjem-hidden-calendars";

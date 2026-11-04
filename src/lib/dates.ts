@@ -18,8 +18,8 @@ export function daysFromToday(iso: string) {
   return Math.round((parseISODate(iso).getTime() - today.getTime()) / 86_400_000);
 }
 
-export function formatShortDate(iso: string, locale: Locale) {
-  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", {
+export function formatShortDate(iso: string, _locale: Locale) {
+  return new Intl.DateTimeFormat("en-GB", {
     weekday: "short",
     day: "numeric",
     month: "short",
@@ -57,12 +57,12 @@ export function isoWeekNumber(iso: string) {
   return 1 + Math.round(((d.getTime() - firstThursday.getTime()) / 86_400_000 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7);
 }
 
-export function formatWeekday(iso: string, locale: Locale) {
-  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { weekday: "long" }).format(parseISODate(iso));
+export function formatWeekday(iso: string, _locale: Locale) {
+  return new Intl.DateTimeFormat("en-GB", { weekday: "long" }).format(parseISODate(iso));
 }
 
-export function formatDayMonth(iso: string, locale: Locale) {
-  return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short" }).format(parseISODate(iso));
+export function formatDayMonth(iso: string, _locale: Locale) {
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(parseISODate(iso));
 }
 
 /** Monday of the week containing the given date. */

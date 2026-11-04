@@ -17,7 +17,7 @@ const NOTICES: Record<string, "calConnected" | "calCancelled" | "calError"> = {
 };
 
 export function CalendarSettings() {
-  const { t, locale, userId, member, notify } = useApp();
+  const { t, userId, member, notify } = useApp();
   const today = localISODate();
   const { calendars, accounts, sync, syncing, reload } = useCalendarData(today, today);
   const [busy, setBusy] = useState(false);
@@ -29,7 +29,7 @@ export function CalendarSettings() {
     const status = p.get("calendar");
     if (status) {
       notify(t(NOTICES[status] ?? "calError"), 3500);
-      window.history.replaceState(null, "", "/household#calendars");
+      window.history.replaceState(null, "", "/settings#calendars");
       document.getElementById("calendars")?.scrollIntoView({ behavior: "smooth" });
     }
     // Run once when the page opens after returning from Google.
@@ -69,7 +69,7 @@ export function CalendarSettings() {
   }
 
   const fmt = (iso: string) =>
-    new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }).format(
+    new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }).format(
       new Date(iso),
     );
 

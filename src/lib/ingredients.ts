@@ -130,6 +130,6 @@ export function groceryKey(name: string, qty: number | null, unit: string) {
 
 export function fmtQty(qty: number | null, unit: string, locale: Locale, unitLabel: (u: string) => string) {
   if (qty == null) return "";
-  const n = new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-GB", { maximumFractionDigits: 2 }).format(qty);
+  const n = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 2 }).format(qty);
   return unit ? `${n} ${unitLabel(unit)}` : n;
 }

@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
-import { LangSwitch } from "@/components/LangSwitch";
 
 export default function LoginPage() {
-  const { t, locale } = useApp();
+  const { t } = useApp();
   const [mode, setMode] = useState<"in" | "up">("in");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,7 +37,7 @@ export default function LoginPage() {
         email: email.trim(),
         password,
         options: {
-          data: { display_name: name.trim(), locale },
+          data: { display_name: name.trim() },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
@@ -68,7 +67,6 @@ export default function LoginPage() {
         <span className="logo">
           hjem<span className="logo-dot">.</span>
         </span>
-        <LangSwitch />
       </div>
       <p className="lead" style={{ fontSize: 16 }}>{t("authTagline")}</p>
 

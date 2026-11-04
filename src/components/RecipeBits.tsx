@@ -26,9 +26,9 @@ const MACRO_COLORS = { p: "#4F63B8", f: "#D99A1E", c: "#5E9E4C" };
 
 /** kcal plus protein / fat / carbs per portion, with a bar showing where the energy comes from. */
 export function Nutrition({ recipe, compact = false }: { recipe: Pick<Recipe, "kcal" | "protein_g" | "fat_g" | "carbs_g">; compact?: boolean }) {
-  const { t, locale } = useApp();
+  const { t } = useApp();
   if (recipe.kcal == null) return null;
-  const fmt = (n: number) => new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-GB", { maximumFractionDigits: 0 }).format(n);
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { maximumFractionDigits: 0 }).format(n);
   const p = recipe.protein_g ?? 0;
   const f = recipe.fat_g ?? 0;
   const c = recipe.carbs_g ?? 0;
@@ -60,8 +60,8 @@ export function Nutrition({ recipe, compact = false }: { recipe: Pick<Recipe, "k
 
 /** Small labels: time, kcal, style, takeaway, weekend. */
 export function RecipeMeta({ recipe }: { recipe: Recipe }) {
-  const { t, locale } = useApp();
-  const fmt = (n: number) => new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-GB").format(n);
+  const { t } = useApp();
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB").format(n);
   const bits: React.ReactNode[] = [];
   if (recipe.kind === "order") bits.push(<span key="k" className="rtag order">{t("takeaway")}</span>);
   if (recipe.kind === "work") bits.push(<span key="k" className="rtag work">{t("fromWork")}</span>);

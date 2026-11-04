@@ -11,7 +11,7 @@ type Counts = Record<Metric, number>;
 const ZERO: Counts = { myDone: 0, teamDone: 0, myCooked: 0, myPlanned: 0, myTicked: 0 };
 
 export default function BadgesPage() {
-  const { t, locale, userId, household, members, badgeTick } = useApp();
+  const { t, userId, household, members, badgeTick } = useApp();
   const [earned, setEarned] = useState<BadgeRow[]>([]);
   const [counts, setCounts] = useState<Counts>(ZERO);
   const [loaded, setLoaded] = useState(false);
@@ -51,7 +51,7 @@ export default function BadgesPage() {
   }, [load, badgeTick]);
 
   const fmt = (iso: string) =>
-    new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
+    new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
 
   const find = (key: string, uid: string | null) => earned.find((e) => e.badge_key === key && e.user_id === uid);
 

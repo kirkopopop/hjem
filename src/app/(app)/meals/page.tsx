@@ -105,7 +105,7 @@ export default function MealsPage() {
   };
   const weekKcals = days.map(dayKcal).filter((k): k is number => k != null);
   const weekAvg = weekKcals.length ? Math.round(weekKcals.reduce((a, b) => a + b, 0) / weekKcals.length) : null;
-  const fmtN = (n: number) => new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-GB").format(n);
+  const fmtN = (n: number) => new Intl.NumberFormat("en-GB").format(n);
   const openCount = items.filter((i) => !i.checked).length;
 
   async function toggleCooked(meal: Meal) {

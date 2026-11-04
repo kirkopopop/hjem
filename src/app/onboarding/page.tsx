@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
-import { LangSwitch } from "@/components/LangSwitch";
 
 export default function OnboardingPage() {
   const { ready, userId, profile, household, t, reload } = useApp();
@@ -72,7 +71,6 @@ export default function OnboardingPage() {
         <span className="logo">
           hjem<span className="logo-dot">.</span>
         </span>
-        <LangSwitch />
       </div>
       <h1 className="page-title">{t("welcome", { name: profile?.display_name ?? "" })}</h1>
       <p className="lead" style={{ marginTop: 6 }}>{t("onboardingLead")}</p>

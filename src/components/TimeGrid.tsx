@@ -115,7 +115,7 @@ export function TimeGrid({
   const perDay = useMemo(() => days.map((d) => ({ d, timed: layoutDay(events, d), allDay: allDayOn(events, d) })), [days, events]);
   const anyAllDay = perDay.some((x) => x.allDay.length);
   const cols = `52px repeat(${days.length}, minmax(0, 1fr))`;
-  const loc = locale === "ru" ? "ru-RU" : "en-GB";
+  const loc = "en-GB";
   const hourLabel = (h: number) => new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit" }).format(new Date(2026, 0, 1, h));
   const nowMin = now.getHours() * 60 + now.getMinutes();
 

@@ -45,7 +45,7 @@ export default function CalendarPage() {
     [events, byId, hidden],
   );
 
-  const loc = locale === "ru" ? "ru-RU" : "en-GB";
+  const loc = "en-GB";
   const title =
     view === "day"
       ? daysFromToday(selected) === 0
@@ -65,7 +65,7 @@ export default function CalendarPage() {
         <section className="card stack">
           <h2>{t("connectCalendarTitle")}</h2>
           <p className="lead" style={{ margin: 0 }}>{t("connectCalendarLead")}</p>
-          <Link href="/household#calendars" className="btn" style={{ textDecoration: "none" }}>
+          <Link href="/settings#calendars" className="btn" style={{ textDecoration: "none" }}>
             {t("connectGoogle")}
           </Link>
         </section>

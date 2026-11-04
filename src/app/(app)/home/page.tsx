@@ -144,9 +144,9 @@ export default function HomePage() {
     return `${formatWeekday(iso, locale)} · ${formatDayMonth(iso, locale)}`;
   };
   const shortDow = (iso: string) =>
-    new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { weekday: "short" }).format(new Date(`${iso}T12:00:00`));
-  const clock = new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit" }).format(now);
-  const dateLong = new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "long" }).format(now);
+    new Intl.DateTimeFormat("en-GB", { weekday: "short" }).format(new Date(`${iso}T12:00:00`));
+  const clock = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(now);
+  const dateLong = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long" }).format(now);
   const people = members.filter((m) => m.role !== "device");
 
   return (
@@ -177,7 +177,7 @@ export default function HomePage() {
           {calLoaded && calendars.length === 0 ? (
             <p className="small muted" style={{ margin: 0 }}>
               {t("noCalendarsYet")}{" "}
-              {!isDevice && <Link href="/household#calendars">{t("connectGoogle")}</Link>}
+              {!isDevice && <Link href="/settings#calendars">{t("connectGoogle")}</Link>}
             </p>
           ) : agenda.length === 0 ? (
             <p className="small muted" style={{ margin: 0 }}>{t("noEvents")}</p>

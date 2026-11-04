@@ -4,12 +4,11 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
-import { LangSwitch } from "@/components/LangSwitch";
 import { CalendarSettings, WallSettings } from "@/components/CalendarSettings";
 
 const COLORS = ["#2F62C8", "#C2621B", "#24695C", "#7A4FB8", "#B0306A", "#5C6B12"];
 
-export default function HouseholdPage() {
+export default function SettingsPage() {
   const { t, userId, profile, household, members, updateProfile } = useApp();
   const [code, setCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -74,8 +73,8 @@ export default function HouseholdPage() {
     <>
       <div className="page-head">
         <div>
-          <span className="eyebrow">{t("household")}</span>
-          <h1 className="page-title">{household?.name}</h1>
+          <span className="eyebrow">{household?.name}</span>
+          <h1 className="page-title">{t("settings")}</h1>
         </div>
       </div>
 
@@ -152,10 +151,6 @@ export default function HouseholdPage() {
                 />
               ))}
             </div>
-          </div>
-          <div className="field">
-            <span>{t("language")}</span>
-            <LangSwitch />
           </div>
         </section>
 
