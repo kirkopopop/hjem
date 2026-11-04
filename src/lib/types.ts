@@ -18,6 +18,22 @@ export type Task = {
 
 export type MealSlot = "breakfast" | "lunch" | "dinner";
 
+export type Unit = "" | "pcs" | "g" | "kg" | "ml" | "l" | "tbsp" | "tsp" | "pack" | "can" | "bunch" | "clove";
+
+export type Ingredient = { name: string; qty: number | null; unit: Unit };
+
+export type Recipe = {
+  id: string;
+  household_id: string;
+  title: string;
+  servings: number;
+  ingredients: Ingredient[];
+  method: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Meal = {
   id: string;
   household_id: string;
@@ -25,7 +41,9 @@ export type Meal = {
   slot: MealSlot;
   title: string;
   cook_id: string | null;
-  ingredients: string[];
+  recipe_id: string | null;
+  portions: number;
+  ingredients: Ingredient[];
   notes: string | null;
   cooked: boolean;
   created_by: string | null;
@@ -54,6 +72,11 @@ export type GroceryItem = {
   checked_at: string | null;
   archived: boolean;
   meal_id: string | null;
+  qty: number | null;
+  unit: string;
+  from_plan: boolean;
+  plan_week: string | null;
+  note: string | null;
   created_by: string | null;
   created_at: string;
 };

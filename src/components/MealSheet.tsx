@@ -1,74 +1,82 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
+import { IngredientEditor, PortionStepper } from "./IngredientEditor";
 import { daysFromToday } from "@/lib/dates";
-import type { Meal, MealSlot } from "@/lib/types";
-
-type Remembered = { title: string; ingredients: string[] };
+import { cleanIngredients, scaleIngredients } from "@/lib/ingredients";
+import type { Ingredient, Meal, MealSlot, Recipe } from "@/lib/types";
 
 export function MealSheet({
   meal,
   date: initialDate,
   slot: initialSlot,
+  recipe: initialRecipe,
   onClose,
 }: {
   meal: Meal | null;
   date: string;
   slot: MealSlot;
+  recipe?: Recipe | null;
   onClose: () => void;
 }) {
-  const { t, userId, household, members } = useApp();
+  const { t, userId, household, members, notify } = useApp();
   const isNew = !meal;
   const titleId = useId();
-  const listId = useId();
-  const firstField = useRef<HTMLInputElement>(null);
 
-  const [title, setTitle] = useState(meal?.title ?? "");
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [mode, setMode] = useState<"recipe" | "new">(meal ? (meal.recipe_id ? "recipe" : "new") : "recipe");
+  const [query, setQuery] = useState("");
+  const [recipeId, setRecipeId] = useState<string | null>(meal?.recipe_id ?? initialRecipe?.id ?? null);
+  const [title, setTitle] = useState(meal?.title ?? initialRecipe?.title ?? "");
+  const [portions, setPortions] = useState(meal?.portions ?? initialRecipe?.servings ?? 2);
+  const [ingredients, setIngredients] = useState<Ingredient[]>(meal?.ingredients ?? initialRecipe?.ingredients ?? []);
   const [date, setDate] = useState(meal?.date ?? initialDate);
   const [slot, setSlot] = useState<MealSlot>(meal?.slot ?? initialSlot);
   const [cook, setCook] = useState(meal?.cook_id ?? "");
-  const [ingredients, setIngredients] = useState((meal?.ingredients ?? []).join("\n"));
   const [notes, setNotes] = useState(meal?.notes ?? "");
   const [cooked, setCooked] = useState(meal?.cooked ?? false);
-  const [remembered, setRemembered] = useState<Remembered[]>([]);
+  const [saveAsRecipe, setSaveAsRecipe] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Past meals become suggestions; picking one brings its ingredients along.
   useEffect(() => {
     if (!household) return;
     supabase()
-      .from("meals")
-      .select("title, ingredients, date")
+      .from("recipes")
+      .select("*")
       .eq("household_id", household.id)
-      .order("date", { ascending: false })
-      .limit(300)
-      .then(({ data }: { data: { title: string; ingredients: string[] }[] | null }) => {
-        const seen = new Map<string, Remembered>();
-        for (const m of data ?? []) {
-          const k = m.title.trim().toLowerCase();
-          if (!seen.has(k)) seen.set(k, { title: m.title, ingredients: m.ingredients });
-        }
-        setRemembered([...seen.values()]);
+      .order("title")
+      .then(({ data }: { data: Recipe[] | null }) => {
+        const list = data ?? [];
+        setRecipes(list);
+        if (!meal && !initialRecipe && list.length === 0) setMode("new");
       });
-  }, [household]);
+  }, [household, meal, initialRecipe]);
 
   useEffect(() => {
-    if (isNew) firstField.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isNew, onClose]);
+  }, [onClose]);
 
-  const byTitle = useMemo(() => new Map(remembered.map((r) => [r.title.trim().toLowerCase(), r])), [remembered]);
+  const chosen = recipes.find((r) => r.id === recipeId) ?? (initialRecipe?.id === recipeId ? initialRecipe : null);
+  const matches = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return q ? recipes.filter((r) => r.title.toLowerCase().includes(q)) : recipes;
+  }, [recipes, query]);
 
-  function onTitle(v: string) {
-    setTitle(v);
-    const hit = byTitle.get(v.trim().toLowerCase());
-    if (hit && !ingredients.trim() && hit.ingredients.length) setIngredients(hit.ingredients.join("\n"));
+  function pickRecipe(r: Recipe) {
+    setRecipeId(r.id);
+    setTitle(r.title);
+    setIngredients(scaleIngredients(r.ingredients, r.servings, portions));
+  }
+
+  function changePortions(n: number) {
+    setIngredients((list) => scaleIngredients(list, portions, n));
+    setPortions(n);
   }
 
   async function save(e: React.FormEvent) {
@@ -76,20 +84,35 @@ export function MealSheet({
     if (!household || !userId) return;
     setBusy(true);
     setError(null);
+    const sb = supabase();
+    const cleaned = cleanIngredients(ingredients);
+    let linkRecipe = mode === "recipe" ? recipeId : null;
+
+    if (mode === "new" && saveAsRecipe) {
+      const { data, error } = await sb
+        .from("recipes")
+        .insert({ household_id: household.id, created_by: userId, title: title.trim(), servings: portions, ingredients: cleaned })
+        .select("id")
+        .single();
+      if (error) {
+        setError(t("somethingWrong", { msg: error.message }));
+        setBusy(false);
+        return;
+      }
+      linkRecipe = data.id;
+    }
+
     const fields = {
       title: title.trim(),
       date,
       slot,
       cook_id: cook || null,
-      ingredients: ingredients
-        .split("\n")
-        .map((x) => x.trim())
-        .filter(Boolean)
-        .slice(0, 60),
+      recipe_id: linkRecipe,
+      portions,
+      ingredients: cleaned,
       notes: notes.trim() || null,
       cooked,
     };
-    const sb = supabase();
     const { error } = isNew
       ? await sb.from("meals").insert({ ...fields, household_id: household.id, created_by: userId })
       : await sb.from("meals").update(fields).eq("id", meal!.id);
@@ -98,6 +121,7 @@ export function MealSheet({
       setBusy(false);
       return;
     }
+    if (saveAsRecipe) notify(t("saved"));
     onClose();
   }
 
@@ -114,36 +138,17 @@ export function MealSheet({
   }
 
   const canBeCooked = daysFromToday(date) <= 0;
+  const showDetails = mode === "new" || !!recipeId;
 
   return (
     <div className="sheet-backdrop" onClick={onClose}>
-      <form className="sheet" role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()} onSubmit={save}>
+      <form className="sheet wide" role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()} onSubmit={save}>
         <div className="sheet-head">
           <h2 id={titleId}>{isNew ? t("newMeal") : t("editMeal")}</h2>
           <button type="button" className="icon-btn" aria-label={t("cancel")} onClick={onClose}>
             <Icon name="close" />
           </button>
         </div>
-
-        <label className="field">
-          <span>{t("mealTitle")}</span>
-          <input
-            ref={firstField}
-            className="input"
-            value={title}
-            onChange={(e) => onTitle(e.target.value)}
-            placeholder={t("mealPlaceholder")}
-            list={listId}
-            required
-            maxLength={120}
-            autoComplete="off"
-          />
-          <datalist id={listId}>
-            {remembered.map((r) => (
-              <option key={r.title} value={r.title} />
-            ))}
-          </datalist>
-        </label>
 
         <div className="two">
           <label className="field">
@@ -160,36 +165,107 @@ export function MealSheet({
           </label>
         </div>
 
-        <label className="field">
-          <span>{t("cook")}</span>
-          <select className="select" value={cook} onChange={(e) => setCook(e.target.value)}>
-            <option value="">{t("noCook")}</option>
-            {members
-              .filter((m) => m.role !== "device")
-              .map((m) => (
-                <option key={m.user_id} value={m.user_id}>
-                  {m.profile.display_name}
-                </option>
-              ))}
-          </select>
-        </label>
+        <div className="segmented" role="group" aria-label={t("meal")}>
+          <button type="button" aria-pressed={mode === "recipe"} onClick={() => setMode("recipe")}>
+            {t("fromRecipes")}
+          </button>
+          <button
+            type="button"
+            aria-pressed={mode === "new"}
+            onClick={() => {
+              setMode("new");
+              setRecipeId(null);
+            }}
+          >
+            {t("somethingNew")}
+          </button>
+        </div>
 
-        <label className="field">
-          <span>{t("ingredients")}</span>
-          <textarea className="textarea" rows={5} value={ingredients} onChange={(e) => setIngredients(e.target.value)} />
-          <small className="small muted">{t("ingredientsHint")}</small>
-        </label>
+        {mode === "recipe" && !recipeId && (
+          <div className="stack" style={{ gap: 8 }}>
+            {recipes.length === 0 ? (
+              <p className="notice">{t("noRecipes")}</p>
+            ) : (
+              <>
+                <input className="input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("searchRecipes")} aria-label={t("searchRecipes")} />
+                <ul className="recipe-pick">
+                  {matches.map((r) => (
+                    <li key={r.id}>
+                      <button type="button" onClick={() => pickRecipe(r)}>
+                        <span className="grow" style={{ fontWeight: 700 }}>{r.title}</span>
+                        <span className="small muted">{t("portionsShort", { n: r.servings })}</span>
+                      </button>
+                    </li>
+                  ))}
+                  {matches.length === 0 && <li className="small muted" style={{ padding: 10 }}>{t("noRecipeMatch")}</li>}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
 
-        <label className="field">
-          <span>{t("notes")}</span>
-          <textarea className="textarea" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={2000} />
-        </label>
+        {mode === "recipe" && recipeId && (
+          <div className="chosen-recipe">
+            <Icon name="meals" size={20} />
+            <span className="grow" style={{ fontWeight: 800 }}>{chosen?.title ?? title}</span>
+            <button type="button" className="btn small secondary" onClick={() => setRecipeId(null)}>
+              {t("change")}
+            </button>
+          </div>
+        )}
 
-        {canBeCooked && (
-          <label className="row" style={{ gap: 10, fontWeight: 700 }}>
-            <input type="checkbox" checked={cooked} onChange={(e) => setCooked(e.target.checked)} style={{ width: 22, height: 22, accentColor: "var(--accent)" }} />
-            {t("cooked")}
+        {mode === "new" && (
+          <label className="field">
+            <span>{t("mealTitle")}</span>
+            <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("mealPlaceholder")} required maxLength={120} autoFocus={isNew} />
           </label>
+        )}
+
+        {showDetails && (
+          <>
+            <div className="row" style={{ alignItems: "flex-end", flexWrap: "wrap" }}>
+              <div className="field">
+                <span>{t("servings")}</span>
+                <PortionStepper value={portions} onChange={changePortions} />
+              </div>
+              <label className="field grow" style={{ minWidth: 160 }}>
+                <span>{t("cook")}</span>
+                <select className="select" value={cook} onChange={(e) => setCook(e.target.value)}>
+                  <option value="">{t("noCook")}</option>
+                  {members
+                    .filter((m) => m.role !== "device")
+                    .map((m) => (
+                      <option key={m.user_id} value={m.user_id}>
+                        {m.profile.display_name}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="field">
+              <span>{t("ingredients")}</span>
+              <IngredientEditor value={ingredients} onChange={setIngredients} />
+            </div>
+
+            <label className="field">
+              <span>{t("notes")}</span>
+              <textarea className="textarea" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={2000} />
+            </label>
+
+            {mode === "new" && (
+              <label className="row" style={{ gap: 10, fontWeight: 700 }}>
+                <input type="checkbox" checked={saveAsRecipe} onChange={(e) => setSaveAsRecipe(e.target.checked)} style={{ width: 22, height: 22, accentColor: "var(--accent)" }} />
+                {t("saveAsRecipe")}
+              </label>
+            )}
+            {canBeCooked && (
+              <label className="row" style={{ gap: 10, fontWeight: 700 }}>
+                <input type="checkbox" checked={cooked} onChange={(e) => setCooked(e.target.checked)} style={{ width: 22, height: 22, accentColor: "var(--accent)" }} />
+                {t("cooked")}
+              </label>
+            )}
+          </>
         )}
 
         {error && <p className="error" role="alert">{error}</p>}
@@ -201,7 +277,7 @@ export function MealSheet({
             </button>
           )}
           <span className="grow" />
-          <button type="submit" className="btn" disabled={busy || !title.trim()}>
+          <button type="submit" className="btn" disabled={busy || !title.trim() || (mode === "recipe" && !recipeId)}>
             {busy ? t("working") : t("save")}
           </button>
         </div>
