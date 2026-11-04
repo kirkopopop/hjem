@@ -1102,7 +1102,7 @@ a.ev.compact:hover { background: var(--ground-2); }
 .card h2.card-title { margin-bottom: 0; }
 /* Several meals per slot */
 .meal-row.is-more { margin-top: -4px; }
-.plan-add { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 2px; }
+.plan-add { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: auto; padding-top: 2px; }
 .plan-add .plan-empty {
   display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 6px;
   font-size: 13px; text-align: center; white-space: nowrap;
@@ -1111,3 +1111,15 @@ a.ev.compact:hover { background: var(--ground-2); }
 .meal-main .meal-slot { min-width: 0; font-size: 10.5px; }
 .meal-main .meal-portions { margin-left: 0; padding-left: 0; }
 .meal-row.is-more { margin-top: -2px; }
+/* Week summary card in the plan grid's eighth cell */
+.week-card {
+  border-radius: var(--radius); padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px;
+  background: linear-gradient(150deg, var(--accent-soft), color-mix(in srgb, var(--accent-soft) 45%, var(--surface)));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+}
+.week-card-num { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--accent-ink); }
+.week-card-stats { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.week-card-stats > span { display: flex; flex-direction: column; gap: 6px; }
+.week-card .bar { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.week-card .btn { margin-top: auto; background: var(--accent); color: var(--on-accent); }
+.week-card .btn:hover:not(:disabled) { background: var(--accent-hover); }

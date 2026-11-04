@@ -125,6 +125,7 @@ export default function MealsPage() {
   const weekAvg = weekKcals.length ? Math.round(weekKcals.reduce((a, b) => a + b, 0) / weekKcals.length) : null;
   const fmtN = (n: number) => new Intl.NumberFormat("en-GB").format(n);
   const openCount = items.filter((i) => !i.checked).length;
+  const dinnerDays = new Set(meals.filter((m) => m.slot === "dinner" && days.includes(m.date)).map((m) => m.date)).size;
 
   async function toggleCooked(meal: Meal, el?: Element) {
     if (!meal.cooked) celebrate(el);
@@ -267,10 +268,6 @@ export default function MealsPage() {
 
       {view === "plan" && (
         <>
-          <p className="week-summary">
-            {t("weekSummary", { planned: meals.length })}
-            {weekAvg != null && <> · {t("weekKcal", { n: fmtN(weekAvg) })}</>}
-          </p>
           <ul className="plan-grid stagger" key={offset}>
             {days.map((date) => {
               const today = daysFromToday(date) === 0;
@@ -301,11 +298,27 @@ export default function MealsPage() {
                 </li>
               );
             })}
+            {/* Eighth cell: fills the gap next to Sunday with the week's summary. */}
+            <li className="week-card" aria-labelledby="week-card-h">
+              <span className="mini-label" style={{ margin: 0 }}>{t("weekAtAGlance")}</span>
+              <h2 id="week-card-h" className="week-card-num">
+                {t("weekSummary", { planned: meals.length })}
+              </h2>
+              <div className="week-card-stats">
+                <span>
+                  <span className="bar" aria-hidden="true">
+                    <span style={{ width: `${(dinnerDays / 7) * 100}%` }} />
+                  </span>
+                  {t("dinnersPlanned", { n: dinnerDays })}
+                </span>
+                {weekAvg != null && <span>{t("weekKcal", { n: fmtN(weekAvg) })}</span>}
+              </div>
+              <button type="button" className="btn soft block" onClick={updateGroceries} disabled={syncing}>
+                <Icon name="cart" size={18} />
+                {syncing ? t("working") : t("updateGroceriesShort")}
+              </button>
+            </li>
           </ul>
-          <button type="button" className="btn soft block" style={{ marginTop: 14 }} onClick={updateGroceries} disabled={syncing}>
-            <Icon name="cart" size={18} />
-            {syncing ? t("working") : t("updateGroceries")}
-          </button>
         </>
       )}
 

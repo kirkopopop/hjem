@@ -375,6 +375,9 @@ const en = {
   loading: "Loading…",
   membersAndInvite: "People",
   addSlotOn: "Add {slot} on {day}",
+  weekAtAGlance: "Week at a glance",
+  dinnersPlanned: "{n} of 7 dinners planned",
+  updateGroceriesShort: "Update groceries",
 };
 
 export type Key = keyof typeof en;
