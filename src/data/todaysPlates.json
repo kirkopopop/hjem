@@ -1,0 +1,2411 @@
+[
+ {
+  "source_key": "tp:cottage",
+  "title": "Cottage cheese with jam",
+  "blurb": "Cold, quick, high in protein.",
+  "meal_type": "breakfast",
+  "style": "healthy",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 3,
+  "servings": 2,
+  "kcal": 300,
+  "protein_g": 25,
+  "fat_g": 10,
+  "carbs_g": 30,
+  "ingredients": [
+   {
+    "name": "Cottage cheese",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Jam (strawberry or raspberry)",
+    "qty": 4,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Berries (optional) (1 handful)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Granola or chopped nuts (optional)",
+    "qty": 2,
+    "unit": "tbsp"
+   }
+  ],
+  "method": "Spoon the cottage cheese into two bowls.\nAdd 2 tbsp jam to each and swirl it in lightly.\nTop with berries and granola if you like.",
+  "image_url": "/recipe-art/cottage.svg"
+ },
+ {
+  "source_key": "tp:toastie",
+  "title": "Hot ham & cheese sandwich",
+  "blurb": "Golden, crisp, melted in the middle.",
+  "meal_type": "breakfast",
+  "style": "comfort",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 10,
+  "servings": 2,
+  "kcal": 420,
+  "protein_g": 25,
+  "fat_g": 22,
+  "carbs_g": 31,
+  "ingredients": [
+   {
+    "name": "Bread (slices)",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Ham (slices)",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Cheese (Havarti or cheddar) (slices)",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Soft butter",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Dijon mustard (optional)",
+    "qty": 1,
+    "unit": "tsp"
+   }
+  ],
+  "method": "Butter one side of each bread slice.\nBuild two sandwiches, butter side out: mustard, ham, cheese.\nCook in a pan over medium heat with a lid on, 3–4 min per side, until golden and the cheese melts.\nCut diagonally and serve hot.",
+  "image_url": "/recipe-art/toastie.svg"
+ },
+ {
+  "source_key": "tp:pbj",
+  "title": "Peanut butter & jelly open sandwich",
+  "blurb": "Toasted bread, nutty and sweet.",
+  "meal_type": "breakfast",
+  "style": "everyday",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 5,
+  "servings": 2,
+  "kcal": 290,
+  "protein_g": 9,
+  "fat_g": 9,
+  "carbs_g": 44,
+  "ingredients": [
+   {
+    "name": "Whole-grain or rye bread (slices)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Peanut butter",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Jelly or jam",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Banana, sliced (optional)",
+    "qty": 1,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Toast the bread.\nSpread 1 tbsp peanut butter on each slice while warm.\nAdd 1 tbsp jelly on top and finish with banana slices.",
+  "image_url": "/recipe-art/pbj.svg"
+ },
+ {
+  "source_key": "tp:eggs",
+  "title": "Fried eggs on toast",
+  "blurb": "Two eggs each, with toast and tomatoes.",
+  "meal_type": "breakfast",
+  "style": "everyday",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 8,
+  "servings": 2,
+  "kcal": 290,
+  "protein_g": 16,
+  "fat_g": 17,
+  "carbs_g": 18,
+  "ingredients": [
+   {
+    "name": "Eggs",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Butter or oil",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Bread (slices)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Cherry tomatoes",
+    "qty": 6,
+    "unit": "pcs"
+   },
+   {
+    "name": "Salt and black pepper",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Toast the bread.\nHeat a pan over medium-low heat and melt the butter.\nCrack in the eggs and cook 3–4 min until the whites are set. Cover with a lid for 1 min for firmer yolks.\nSeason with salt and pepper and serve with toast and halved tomatoes.",
+  "image_url": "/recipe-art/eggs.svg"
+ },
+ {
+  "source_key": "tp:salmon",
+  "title": "Salmon, rice & broccoli",
+  "blurb": "Crispy-skinned salmon with soy and lemon.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "fish",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 715,
+  "protein_g": 41,
+  "fat_g": 29,
+  "carbs_g": 68,
+  "ingredients": [
+   {
+    "name": "Jasmine rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Salmon fillets (about 150 g each)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Broccoli (head)",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Oil",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Soy sauce",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Lemon",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Salt and pepper",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Rinse the rice, add 225 ml water and a pinch of salt. Bring to a boil, cover and simmer on low 12 min, then rest 10 min off the heat.\nCut the broccoli into florets and steam 4–5 min.\nPat the salmon dry and season. Fry skin-side down in hot oil for 4 min, flip and cook 2–3 min more.\nDrizzle the salmon with soy sauce and a squeeze of lemon. Serve with rice and broccoli.",
+  "image_url": "/recipe-art/salmon.svg"
+ },
+ {
+  "source_key": "tp:cod",
+  "title": "Baked cod with potatoes & green beans",
+  "blurb": "Oven-baked, light, with butter and dill.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "fish",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 35,
+  "servings": 2,
+  "kcal": 510,
+  "protein_g": 34,
+  "fat_g": 21,
+  "carbs_g": 50,
+  "ingredients": [
+   {
+    "name": "Cod fillets (about 150 g each)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Small potatoes",
+    "qty": 500,
+    "unit": "g"
+   },
+   {
+    "name": "Green beans",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Olive oil",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Lemon",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Butter",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Dill or parsley (a few sprigs)",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Heat the oven to 200°C. Halve the potatoes, toss with 1 tbsp oil and salt and roast 30 min.\nAfter 16 min, add the cod to the tray. Brush with oil, season and lay lemon slices on top. Bake 12–14 min until it flakes.\nBoil the green beans 4 min, drain and toss with butter.\nServe with chopped dill and a squeeze of lemon.",
+  "image_url": "/recipe-art/cod.svg"
+ },
+ {
+  "source_key": "tp:chickenrice",
+  "title": "Chicken thighs, rice & fresh salad",
+  "blurb": "Paprika chicken with cucumber and tomato.",
+  "meal_type": "main",
+  "style": "everyday",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 30,
+  "servings": 2,
+  "kcal": 790,
+  "protein_g": 47,
+  "fat_g": 36,
+  "carbs_g": 66,
+  "ingredients": [
+   {
+    "name": "Jasmine rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Boneless chicken thighs",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Smoked paprika",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Garlic, grated",
+    "qty": 1,
+    "unit": "clove"
+   },
+   {
+    "name": "Oil",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Cucumber",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Cherry tomatoes",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Olive oil",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Vinegar",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Cook the rice (see salmon recipe, step 1).\nRub the chicken with paprika, garlic, salt and pepper.\nFry in oil over medium-high heat 6 min, flip and cook 5–6 min more until cooked through (75°C inside). Rest 3 min.\nChop cucumber and tomatoes, dress with olive oil, vinegar and salt. Serve together.",
+  "image_url": "/recipe-art/chickenrice.svg"
+ },
+ {
+  "source_key": "tp:chickenstir",
+  "title": "Chicken & vegetable stir-fry",
+  "blurb": "Quick wok dinner with a soy-honey glaze.",
+  "meal_type": "main",
+  "style": "everyday",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 660,
+  "protein_g": 49,
+  "fat_g": 12,
+  "carbs_g": 86,
+  "ingredients": [
+   {
+    "name": "Jasmine rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Chicken breasts, sliced thin",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red pepper",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Carrot, sliced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Sugar snap peas",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Soy sauce",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Honey",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Cornstarch",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Garlic, grated",
+    "qty": 1,
+    "unit": "clove"
+   },
+   {
+    "name": "Ginger, grated (2 cm)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Oil",
+    "qty": 1,
+    "unit": "tbsp"
+   }
+  ],
+  "method": "Cook the rice.\nToss the chicken with 1 tbsp soy sauce and the cornstarch.\nStir-fry the chicken in hot oil 4–5 min until golden. Take it out.\nStir-fry carrot, pepper and snap peas 3 min. Add garlic and ginger for 30 sec.\nReturn the chicken, add remaining soy sauce and honey, toss 1 min. Serve over rice.",
+  "image_url": "/recipe-art/chickenstir.svg"
+ },
+ {
+  "source_key": "tp:beefstir",
+  "title": "Beef & pepper stir-fry",
+  "blurb": "Seared strips, peppers, spring onion.",
+  "meal_type": "main",
+  "style": "everyday",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 660,
+  "protein_g": 40,
+  "fat_g": 20,
+  "carbs_g": 77,
+  "ingredients": [
+   {
+    "name": "Jasmine rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Beef (flank or sirloin), thin strips",
+    "qty": 300,
+    "unit": "g"
+   },
+   {
+    "name": "Peppers",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Soy sauce",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Cornstarch",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Garlic",
+    "qty": 1,
+    "unit": "clove"
+   },
+   {
+    "name": "Spring onions",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Oil",
+    "qty": 1,
+    "unit": "tbsp"
+   }
+  ],
+  "method": "Cook the rice.\nToss the beef with 1 tbsp soy sauce and the cornstarch.\nSear the beef in a very hot pan in one layer, 1–2 min. Take it out.\nStir-fry onion and peppers 3 min, add garlic, then the beef and remaining soy sauce. Toss 1 min.\nTop with sliced spring onion and serve with rice.",
+  "image_url": "/recipe-art/beefstir.svg"
+ },
+ {
+  "source_key": "tp:steak",
+  "title": "Steak with roasted vegetables",
+  "blurb": "Pan-seared steak, tray-roasted veg.",
+  "meal_type": "main",
+  "style": "everyday",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 35,
+  "servings": 2,
+  "kcal": 670,
+  "protein_g": 46,
+  "fat_g": 44,
+  "carbs_g": 20,
+  "ingredients": [
+   {
+    "name": "Steaks (sirloin or ribeye, about 200 g each)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Courgette",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Pepper",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Cherry tomatoes",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Olive oil",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Butter",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Garlic, crushed",
+    "qty": 1,
+    "unit": "clove"
+   }
+  ],
+  "method": "Heat the oven to 200°C. Chop the vegetables, toss with oil and salt and roast 25 min.\nTake the steaks out of the fridge 20 min before cooking. Pat dry and salt well.\nSear in a very hot pan 3 min per side for medium-rare. Add butter and garlic for the last minute and baste.\nRest the steaks 5 min, slice and serve with the vegetables.",
+  "image_url": "/recipe-art/steak.svg"
+ },
+ {
+  "source_key": "tp:tacos",
+  "title": "Beef tacos",
+  "blurb": "Spiced beef, crisp toppings, lime.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "beef",
+  "is_special": true,
+  "kind": "cook",
+  "cook_minutes": 30,
+  "servings": 2,
+  "kcal": 1070,
+  "protein_g": 61,
+  "fat_g": 53,
+  "carbs_g": 81,
+  "ingredients": [
+   {
+    "name": "Minced beef",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Onion, finely chopped",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Taco spice (cumin, paprika, chilli, oregano)",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Tomato paste",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Small tortillas",
+    "qty": 8,
+    "unit": "pcs"
+   },
+   {
+    "name": "Iceberg lettuce, shredded",
+    "qty": 0.25,
+    "unit": "pcs"
+   },
+   {
+    "name": "Tomatoes, diced",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Avocado",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Grated cheese",
+    "qty": 50,
+    "unit": "g"
+   },
+   {
+    "name": "Sour cream",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Lime",
+    "qty": 1,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Fry the onion 4 min, add the beef and brown it, breaking it up.\nAdd garlic, taco spice and tomato paste, stir 1 min, then add 100 ml water and simmer 5 min.\nWarm the tortillas in a dry pan or the oven.\nFill with beef and top with lettuce, tomato, avocado, cheese, sour cream and lime.",
+  "image_url": "/recipe-art/tacos.svg"
+ },
+ {
+  "source_key": "tp:burger",
+  "title": "Homemade burgers",
+  "blurb": "Juicy patties with oven fries.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "beef",
+  "is_special": true,
+  "kind": "cook",
+  "cook_minutes": 35,
+  "servings": 2,
+  "kcal": 1160,
+  "protein_g": 55,
+  "fat_g": 63,
+  "carbs_g": 88,
+  "ingredients": [
+   {
+    "name": "Minced beef (15–20% fat)",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Burger buns",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Cheddar (slices)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Lettuce leaves",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Tomato, sliced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red onion, sliced",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Pickles",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Mayo",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Ketchup",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Mustard",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Large potatoes, for fries",
+    "qty": 2,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Heat the oven to 220°C. Cut the potatoes into fries, toss with oil and salt and bake 25–30 min, turning once.\nShape two patties slightly wider than the buns and press a dimple in the middle.\nSalt and pepper just before cooking. Sear in a hot pan 3–4 min per side. Add cheese for the last minute with a lid on.\nToast the buns, spread the sauce and build: lettuce, patty, tomato, onion, pickles.",
+  "image_url": "/recipe-art/burger.svg"
+ },
+ {
+  "source_key": "tp:fajitas",
+  "title": "Chicken fajitas",
+  "blurb": "Sizzling chicken and peppers, wrap your own.",
+  "meal_type": "main",
+  "style": "everyday",
+  "protein": "chicken",
+  "is_special": true,
+  "kind": "cook",
+  "cook_minutes": 30,
+  "servings": 2,
+  "kcal": 690,
+  "protein_g": 52,
+  "fat_g": 24,
+  "carbs_g": 66,
+  "ingredients": [
+   {
+    "name": "Chicken breasts, in strips",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Peppers, sliced",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Onion, sliced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Fajita spice",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Lime",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Tortillas",
+    "qty": 6,
+    "unit": "pcs"
+   },
+   {
+    "name": "Sour cream",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Salsa or guacamole",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Toss the chicken with fajita spice, a squeeze of lime and 1 tbsp oil.\nCook the chicken in a hot pan 5–6 min until done. Take it out.\nFry the peppers and onion 4–5 min until soft with some char, then return the chicken.\nServe in warm tortillas with sour cream, salsa and lime.",
+  "image_url": "/recipe-art/fajitas.svg"
+ },
+ {
+  "source_key": "tp:oats",
+  "title": "Overnight oats with berries",
+  "blurb": "Made the night before, ready when you wake up.",
+  "meal_type": "breakfast",
+  "style": "healthy",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 5,
+  "servings": 2,
+  "kcal": 380,
+  "protein_g": 19,
+  "fat_g": 9,
+  "carbs_g": 52,
+  "ingredients": [
+   {
+    "name": "Rolled oats",
+    "qty": 100,
+    "unit": "g"
+   },
+   {
+    "name": "Milk",
+    "qty": 250,
+    "unit": "ml"
+   },
+   {
+    "name": "Greek yogurt",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Chia seeds",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Honey",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Berries",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Banana (optional)",
+    "qty": 0.5,
+    "unit": "pcs"
+   }
+  ],
+  "method": "In the evening, mix oats, milk, yogurt, chia and honey and split between two jars.\nCover and refrigerate for at least 6 hours.\nIn the morning, stir, loosen with a splash of milk if thick, and top with berries and banana.",
+  "image_url": "/recipe-art/oats.svg"
+ },
+ {
+  "source_key": "tp:yogurt",
+  "title": "Greek yogurt bowl",
+  "blurb": "Creamy yogurt, fruit, crunch and a little honey.",
+  "meal_type": "breakfast",
+  "style": "healthy",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 5,
+  "servings": 2,
+  "kcal": 360,
+  "protein_g": 22,
+  "fat_g": 10,
+  "carbs_g": 45,
+  "ingredients": [
+   {
+    "name": "Greek yogurt",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Banana, sliced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Berries",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Granola",
+    "qty": 4,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Chopped nuts",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Honey",
+    "qty": 2,
+    "unit": "tsp"
+   }
+  ],
+  "method": "Spoon the yogurt into two bowls.\nTop with banana, berries, granola and nuts.\nDrizzle with honey.",
+  "image_url": "/recipe-art/yogurt.svg"
+ },
+ {
+  "source_key": "tp:avotoast",
+  "title": "Avocado toast with poached egg",
+  "blurb": "Sourdough, smashed avocado, runny egg.",
+  "meal_type": "breakfast",
+  "style": "healthy",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 12,
+  "servings": 2,
+  "kcal": 330,
+  "protein_g": 13,
+  "fat_g": 17,
+  "carbs_g": 31,
+  "ingredients": [
+   {
+    "name": "Sourdough (slices)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Ripe avocado",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Eggs",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Lemon",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Vinegar",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Chilli flakes",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Salt and pepper",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Bring a small pan of water to a gentle simmer and add the vinegar.\nToast the bread. Mash the avocado with lemon juice, salt and pepper.\nStir the water into a slow swirl, crack in the eggs one at a time and poach 3 min. Lift out with a slotted spoon.\nSpread the avocado on the toast, top with an egg and a pinch of chilli flakes.",
+  "image_url": "/recipe-art/avotoast.svg"
+ },
+ {
+  "source_key": "tp:omelette",
+  "title": "Veggie omelette",
+  "blurb": "Spinach, pepper, tomato and feta.",
+  "meal_type": "breakfast",
+  "style": "healthy",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 12,
+  "servings": 2,
+  "kcal": 230,
+  "protein_g": 16,
+  "fat_g": 15,
+  "carbs_g": 6,
+  "ingredients": [
+   {
+    "name": "Eggs",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red pepper, diced",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Spinach (1 handful)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Cherry tomatoes, quartered",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Feta",
+    "qty": 30,
+    "unit": "g"
+   },
+   {
+    "name": "Butter",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Salt and pepper",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Whisk the eggs with salt and pepper.\nMelt the butter in a non-stick pan over medium heat and soften the pepper 2 min. Add spinach and tomatoes for 30 sec.\nPour in the eggs and cook on low 3 min, lifting the edges so the raw egg runs under.\nCrumble over the feta, fold in half and cut in two.",
+  "image_url": "/recipe-art/omelette.svg"
+ },
+ {
+  "source_key": "tp:salmonrye",
+  "title": "Scrambled eggs & smoked salmon on rye",
+  "blurb": "Soft eggs, salmon and dill on dark rye.",
+  "meal_type": "breakfast",
+  "style": "everyday",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 10,
+  "servings": 2,
+  "kcal": 390,
+  "protein_g": 27,
+  "fat_g": 22,
+  "carbs_g": 20,
+  "ingredients": [
+   {
+    "name": "Eggs",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Milk",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Butter",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Rye bread (slices)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Smoked salmon",
+    "qty": 100,
+    "unit": "g"
+   },
+   {
+    "name": "Dill",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Black pepper",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Whisk the eggs with milk and a pinch of salt.\nMelt the butter over low heat, add the eggs and stir gently for 3–4 min until just set.\nPile onto the rye with the salmon, dill and black pepper.",
+  "image_url": "/recipe-art/salmonrye.svg"
+ },
+ {
+  "source_key": "tp:pancakes",
+  "title": "Fluffy pancakes with berries",
+  "blurb": "Thick American-style stack with syrup.",
+  "meal_type": "breakfast",
+  "style": "comfort",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 590,
+  "protein_g": 15,
+  "fat_g": 16,
+  "carbs_g": 96,
+  "ingredients": [
+   {
+    "name": "Plain flour",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Sugar",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Baking powder",
+    "qty": 2,
+    "unit": "tsp"
+   },
+   {
+    "name": "Salt (1 pinch)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Egg",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Milk",
+    "qty": 200,
+    "unit": "ml"
+   },
+   {
+    "name": "Melted butter",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Berries",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Maple syrup",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Whisk flour, sugar, baking powder and salt in a bowl.\nWhisk the egg, milk and melted butter, pour into the dry mix and stir until just combined. Small lumps are fine.\nHeat a lightly buttered pan over medium heat. Add 3 tbsp batter per pancake and cook until bubbles appear, about 2 min, then flip for 1 min.\nStack and serve with berries and syrup.",
+  "image_url": "/recipe-art/pancakes.svg"
+ },
+ {
+  "source_key": "tp:frenchtoast",
+  "title": "French toast",
+  "blurb": "Cinnamon-egg bread, golden in butter.",
+  "meal_type": "breakfast",
+  "style": "comfort",
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 15,
+  "servings": 2,
+  "kcal": 480,
+  "protein_g": 15,
+  "fat_g": 20,
+  "carbs_g": 60,
+  "ingredients": [
+   {
+    "name": "Brioche or day-old bread (slices)",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Eggs",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Milk",
+    "qty": 100,
+    "unit": "ml"
+   },
+   {
+    "name": "Cinnamon",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Vanilla sugar",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Butter",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Berries",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Maple syrup or icing sugar",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Whisk eggs, milk, cinnamon and vanilla sugar in a wide dish.\nSoak each slice for 10–15 sec per side.\nFry in butter over medium heat, 2–3 min per side until golden.\nServe with berries and syrup or a dusting of icing sugar.",
+  "image_url": "/recipe-art/frenchtoast.svg"
+ },
+ {
+  "source_key": "tp:shakshuka",
+  "title": "Shakshuka",
+  "blurb": "Eggs poached in spiced tomato sauce. A weekend pan.",
+  "meal_type": "breakfast",
+  "style": "comfort",
+  "protein": null,
+  "is_special": true,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 430,
+  "protein_g": 22,
+  "fat_g": 24,
+  "carbs_g": 32,
+  "ingredients": [
+   {
+    "name": "Olive oil",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Onion, sliced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red pepper, sliced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Ground cumin",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Smoked paprika",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Chopped tomatoes",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Eggs",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Feta",
+    "qty": 50,
+    "unit": "g"
+   },
+   {
+    "name": "Parsley",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Bread, to serve",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Soften the onion and pepper in oil over medium heat for 6–7 min.\nAdd garlic, cumin and paprika for 1 min, then the tomatoes. Simmer 8 min until thick. Season.\nMake four hollows, crack in the eggs, cover and cook 5–7 min until the whites set.\nTop with feta and parsley and serve from the pan with bread.",
+  "image_url": "/recipe-art/shakshuka.svg"
+ },
+ {
+  "source_key": "tp:salmonbowl",
+  "title": "Glazed salmon rice bowl",
+  "blurb": "Soy-honey salmon, edamame, cucumber, avocado.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "fish",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 850,
+  "protein_g": 46,
+  "fat_g": 38,
+  "carbs_g": 77,
+  "ingredients": [
+   {
+    "name": "Jasmine or sushi rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Salmon fillets, skinless, cubed",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Frozen edamame",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Cucumber",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Avocado",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Soy sauce",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Sesame oil",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Honey",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Sesame seeds",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Spring onions",
+    "qty": 2,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Cook the rice.\nMix soy sauce, sesame oil and honey.\nSear the salmon cubes in a hot pan 3–4 min, then add half the sauce and toss until glazed.\nBoil the edamame 3 min. Slice the cucumber and avocado.\nBuild the bowls, drizzle over the rest of the sauce and add sesame and spring onion.",
+  "image_url": "/recipe-art/salmonbowl.svg"
+ },
+ {
+  "source_key": "tp:fishchips",
+  "title": "Oven fish & chips",
+  "blurb": "Crunchy panko cod, chips, peas and tartare.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "fish",
+  "is_special": true,
+  "kind": "cook",
+  "cook_minutes": 40,
+  "servings": 2,
+  "kcal": 850,
+  "protein_g": 44,
+  "fat_g": 32,
+  "carbs_g": 90,
+  "ingredients": [
+   {
+    "name": "Cod fillets",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Large potatoes",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Flour",
+    "qty": 50,
+    "unit": "g"
+   },
+   {
+    "name": "Egg, beaten",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Panko breadcrumbs",
+    "qty": 60,
+    "unit": "g"
+   },
+   {
+    "name": "Paprika",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Frozen peas",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Lemon",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Mayo (tartare)",
+    "qty": 3,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Pickles, chopped",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Dill",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Heat the oven to 220°C. Cut the potatoes into chips, toss with oil and salt and bake 30–35 min, turning once.\nSeason the cod. Dip in flour, then egg, then panko mixed with paprika.\nBake the fish on an oiled tray for the last 15 min of the chips.\nBoil the peas 3 min. Stir together the tartare. Serve with lemon wedges.",
+  "image_url": "/recipe-art/fishchips.svg"
+ },
+ {
+  "source_key": "tp:salmonpasta",
+  "title": "Creamy salmon pasta",
+  "blurb": "Lemony cream sauce with spinach.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "fish",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 20,
+  "servings": 2,
+  "kcal": 785,
+  "protein_g": 45,
+  "fat_g": 33,
+  "carbs_g": 76,
+  "ingredients": [
+   {
+    "name": "Penne or tagliatelle",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Salmon, skinless, cubed",
+    "qty": 250,
+    "unit": "g"
+   },
+   {
+    "name": "Garlic",
+    "qty": 1,
+    "unit": "clove"
+   },
+   {
+    "name": "Cooking cream",
+    "qty": 150,
+    "unit": "ml"
+   },
+   {
+    "name": "Spinach",
+    "qty": 60,
+    "unit": "g"
+   },
+   {
+    "name": "Lemon, zest and juice",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Parmesan",
+    "qty": 25,
+    "unit": "g"
+   },
+   {
+    "name": "Black pepper",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Cook the pasta. Keep a cup of the water.\nSear the salmon in a little oil 3 min. Add garlic for 30 sec.\nPour in the cream, bring to a simmer and stir in the spinach until wilted.\nToss with the pasta, lemon and parmesan, loosening with pasta water. Finish with pepper.",
+  "image_url": "/recipe-art/salmonpasta.svg"
+ },
+ {
+  "source_key": "tp:fishcurry",
+  "title": "Coconut fish curry",
+  "blurb": "Mild, fragrant curry with white fish and rice.",
+  "meal_type": "main",
+  "style": "everyday",
+  "protein": "fish",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 30,
+  "servings": 2,
+  "kcal": 850,
+  "protein_g": 43,
+  "fat_g": 39,
+  "carbs_g": 78,
+  "ingredients": [
+   {
+    "name": "Jasmine rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Cod or other white fish, in chunks",
+    "qty": 350,
+    "unit": "g"
+   },
+   {
+    "name": "Onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Ginger (2 cm)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Red or yellow curry paste",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Coconut milk",
+    "qty": 400,
+    "unit": "ml"
+   },
+   {
+    "name": "Red pepper",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Spinach",
+    "qty": 100,
+    "unit": "g"
+   },
+   {
+    "name": "Lime",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Coriander",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Cook the rice.\nSoften the onion 5 min. Add garlic, ginger and curry paste and fry 1 min.\nAdd coconut milk and pepper and simmer 8 min.\nAdd the fish and simmer gently 5 min without stirring much. Stir in the spinach.\nFinish with lime juice and coriander and serve with the rice.",
+  "image_url": "/recipe-art/fishcurry.svg"
+ },
+ {
+  "source_key": "tp:caesar",
+  "title": "Chicken Caesar salad",
+  "blurb": "Crisp romaine with a lighter yogurt dressing.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 470,
+  "protein_g": 50,
+  "fat_g": 18,
+  "carbs_g": 19,
+  "ingredients": [
+   {
+    "name": "Chicken breasts",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Romaine lettuce",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Bread (croutons) (slices)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Parmesan",
+    "qty": 25,
+    "unit": "g"
+   },
+   {
+    "name": "Greek yogurt",
+    "qty": 3,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Mayo",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Dijon mustard",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Garlic, grated",
+    "qty": 1,
+    "unit": "clove"
+   },
+   {
+    "name": "Lemon",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Worcestershire sauce",
+    "qty": 1,
+    "unit": "tsp"
+   }
+  ],
+  "method": "Season and pan-fry the chicken 5–6 min per side until cooked through. Rest, then slice.\nCube the bread, toss with a little oil and toast in the pan until crisp.\nWhisk yogurt, mayo, mustard, garlic, lemon and Worcestershire into a dressing.\nToss the lettuce with the dressing, then top with chicken, croutons and shaved parmesan.",
+  "image_url": "/recipe-art/caesar.svg"
+ },
+ {
+  "source_key": "tp:souvlaki",
+  "title": "Chicken souvlaki with tzatziki",
+  "blurb": "Lemon-oregano skewers, Greek salad, pita.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 35,
+  "servings": 2,
+  "kcal": 605,
+  "protein_g": 57,
+  "fat_g": 21,
+  "carbs_g": 46,
+  "ingredients": [
+   {
+    "name": "Chicken breasts, cubed",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Olive oil",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Lemon",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Dried oregano",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Greek yogurt",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Cucumber, grated and squeezed",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Tomatoes",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Cucumber",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red onion",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Pita breads",
+    "qty": 2,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Marinate the chicken in oil, lemon juice, oregano, 1 garlic clove and salt for at least 15 min.\nThread onto skewers and cook in a hot grill pan 10–12 min, turning, until cooked through.\nMix yogurt, grated cucumber, remaining garlic, salt and dill for the tzatziki.\nServe with a chopped salad and warm pita.",
+  "image_url": "/recipe-art/souvlaki.svg"
+ },
+ {
+  "source_key": "tp:traybake",
+  "title": "Chicken & sweet potato tray bake",
+  "blurb": "One tray, very little washing up.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 40,
+  "servings": 2,
+  "kcal": 720,
+  "protein_g": 47,
+  "fat_g": 36,
+  "carbs_g": 53,
+  "ingredients": [
+   {
+    "name": "Chicken thighs",
+    "qty": 4,
+    "unit": "pcs"
+   },
+   {
+    "name": "Sweet potatoes, cubed",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red pepper",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Broccoli",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Olive oil",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Smoked paprika",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Dried thyme",
+    "qty": 1,
+    "unit": "tsp"
+   }
+  ],
+  "method": "Heat the oven to 210°C.\nToss the sweet potato with oil, paprika, thyme and salt on a tray. Add the chicken, season, and roast 25 min.\nAdd pepper, onion and broccoli and roast 12–15 min more until the chicken is cooked through (75°C).",
+  "image_url": "/recipe-art/traybake.svg"
+ },
+ {
+  "source_key": "tp:soup",
+  "title": "Chicken noodle soup",
+  "blurb": "Clear broth, soft noodles, lots of vegetables.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 35,
+  "servings": 2,
+  "kcal": 490,
+  "protein_g": 49,
+  "fat_g": 13,
+  "carbs_g": 42,
+  "ingredients": [
+   {
+    "name": "Chicken breasts or 3 thighs",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Chicken stock",
+    "qty": 1,
+    "unit": "l"
+   },
+   {
+    "name": "Carrots, sliced",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Celery, sliced (sticks)",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Onion, diced",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 1,
+    "unit": "clove"
+   },
+   {
+    "name": "Egg noodles",
+    "qty": 80,
+    "unit": "g"
+   },
+   {
+    "name": "Parsley",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Lemon",
+    "qty": 0.5,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Soften onion, carrot and celery in a little oil for 5 min. Add garlic.\nAdd the stock and whole chicken, bring to a simmer and cook 15 min.\nLift out the chicken and shred it. Add the noodles to the pot for 4 min.\nReturn the chicken, season, and finish with parsley and a squeeze of lemon.",
+  "image_url": "/recipe-art/soup.svg"
+ },
+ {
+  "source_key": "tp:butterchicken",
+  "title": "Butter chicken",
+  "blurb": "Rich tomato-cream curry with rice and naan.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "chicken",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 40,
+  "servings": 2,
+  "kcal": 1240,
+  "protein_g": 56,
+  "fat_g": 56,
+  "carbs_g": 120,
+  "ingredients": [
+   {
+    "name": "Chicken thighs, in chunks",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Greek yogurt",
+    "qty": 100,
+    "unit": "g"
+   },
+   {
+    "name": "Garam masala",
+    "qty": 2,
+    "unit": "tsp"
+   },
+   {
+    "name": "Turmeric",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Ginger (2 cm)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Butter",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Chopped tomatoes",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Cream",
+    "qty": 100,
+    "unit": "ml"
+   },
+   {
+    "name": "Basmati rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Naan breads",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Coriander",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Marinate the chicken with yogurt, 1 tsp garam masala, turmeric and salt for 15 min or more.\nCook the rice.\nFry the chicken in 1 tbsp butter until browned. Take it out.\nSoften the onion in the rest of the butter, add garlic, ginger and remaining garam masala, then the tomatoes. Simmer 10 min and blend if you like it smooth.\nStir in the cream and chicken and simmer 8 min. Serve with rice, naan and coriander.",
+  "image_url": "/recipe-art/butterchicken.svg"
+ },
+ {
+  "source_key": "tp:bolognese",
+  "title": "Spaghetti bolognese",
+  "blurb": "Slow-simmered meat sauce, parmesan on top.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 45,
+  "servings": 2,
+  "kcal": 840,
+  "protein_g": 51,
+  "fat_g": 27,
+  "carbs_g": 92,
+  "ingredients": [
+   {
+    "name": "Spaghetti",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Minced beef",
+    "qty": 300,
+    "unit": "g"
+   },
+   {
+    "name": "Onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Carrot",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Celery (sticks)",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Tomato paste",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Chopped tomatoes",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Dried oregano",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Parmesan",
+    "qty": 25,
+    "unit": "g"
+   },
+   {
+    "name": "Basil",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Finely chop onion, carrot and celery and soften in oil 8 min.\nAdd the beef and brown well. Add garlic and tomato paste for 1 min.\nAdd tomatoes, oregano and 100 ml water. Simmer 25 min, stirring now and then.\nCook the spaghetti, toss with the sauce and top with parmesan and basil.",
+  "image_url": "/recipe-art/bolognese.svg"
+ },
+ {
+  "source_key": "tp:chili",
+  "title": "Chili con carne",
+  "blurb": "Smoky beef and beans with rice.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 45,
+  "servings": 2,
+  "kcal": 1070,
+  "protein_g": 65,
+  "fat_g": 43,
+  "carbs_g": 98,
+  "ingredients": [
+   {
+    "name": "Minced beef",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Onion",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red pepper",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Garlic",
+    "qty": 2,
+    "unit": "clove"
+   },
+   {
+    "name": "Chilli powder",
+    "qty": 2,
+    "unit": "tsp"
+   },
+   {
+    "name": "Ground cumin",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Smoked paprika",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Tomato paste",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Chopped tomatoes",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Kidney beans, drained",
+    "qty": 1,
+    "unit": "can"
+   },
+   {
+    "name": "Rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Sour cream",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Cheddar",
+    "qty": 50,
+    "unit": "g"
+   },
+   {
+    "name": "Spring onions",
+    "qty": 2,
+    "unit": "pcs"
+   }
+  ],
+  "method": "Soften onion and pepper 5 min. Add the beef and brown.\nAdd garlic, spices and tomato paste for 1 min, then tomatoes and beans.\nSimmer 25 min until thick. Cook the rice meanwhile.\nServe with sour cream, grated cheddar and spring onion.",
+  "image_url": "/recipe-art/chili.svg"
+ },
+ {
+  "source_key": "tp:meatballs",
+  "title": "Meatballs with mash & gravy",
+  "blurb": "Nordic-style, with lingonberry jam.",
+  "meal_type": "main",
+  "style": "comfort",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 45,
+  "servings": 2,
+  "kcal": 950,
+  "protein_g": 55,
+  "fat_g": 44,
+  "carbs_g": 83,
+  "ingredients": [
+   {
+    "name": "Minced beef",
+    "qty": 400,
+    "unit": "g"
+   },
+   {
+    "name": "Egg",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Breadcrumbs",
+    "qty": 3,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Onion, grated",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Allspice (1 pinch)",
+    "qty": null,
+    "unit": ""
+   },
+   {
+    "name": "Floury potatoes",
+    "qty": 600,
+    "unit": "g"
+   },
+   {
+    "name": "Milk",
+    "qty": 50,
+    "unit": "ml"
+   },
+   {
+    "name": "Butter (mash and gravy)",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Flour",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Beef stock",
+    "qty": 300,
+    "unit": "ml"
+   },
+   {
+    "name": "Green beans",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Lingonberry jam",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Boil the potatoes 18–20 min, then mash with warm milk, butter and salt.\nMix beef, egg, breadcrumbs, onion, allspice, salt and pepper and roll into walnut-size balls.\nFry the meatballs 8–10 min, turning, until browned and cooked through. Set aside.\nIn the same pan, cook butter and flour 1 min, whisk in the stock and simmer 3 min. Return the meatballs.\nBoil the beans 4 min. Serve with mash, gravy and lingonberry.",
+  "image_url": "/recipe-art/meatballs.svg"
+ },
+ {
+  "source_key": "tp:burritobowl",
+  "title": "Beef burrito bowl",
+  "blurb": "Lean spiced beef, beans, corn, fresh salsa.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 785,
+  "protein_g": 46,
+  "fat_g": 20,
+  "carbs_g": 106,
+  "ingredients": [
+   {
+    "name": "Lean minced beef (5–10%)",
+    "qty": 250,
+    "unit": "g"
+   },
+   {
+    "name": "Ground cumin",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Smoked paprika",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Rice",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Black beans, drained",
+    "qty": 1,
+    "unit": "can"
+   },
+   {
+    "name": "Sweetcorn",
+    "qty": 150,
+    "unit": "g"
+   },
+   {
+    "name": "Avocado",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Tomatoes",
+    "qty": 2,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red onion",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Lime",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Greek yogurt",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Coriander",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Cook the rice.\nBrown the beef with the spices and a pinch of salt, 6–8 min.\nWarm the beans and corn.\nDice tomato and red onion, mix with lime juice and coriander for a quick salsa.\nBuild the bowls with rice, beef, beans, corn, salsa, avocado and a spoon of yogurt.",
+  "image_url": "/recipe-art/burritobowl.svg"
+ },
+ {
+  "source_key": "tp:steaksalad",
+  "title": "Steak salad",
+  "blurb": "Sliced sirloin over crunchy leaves.",
+  "meal_type": "main",
+  "style": "healthy",
+  "protein": "beef",
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 25,
+  "servings": 2,
+  "kcal": 535,
+  "protein_g": 38,
+  "fat_g": 36,
+  "carbs_g": 16,
+  "ingredients": [
+   {
+    "name": "Sirloin steak (about 300 g)",
+    "qty": 1,
+    "unit": "pcs"
+   },
+   {
+    "name": "Mixed leaves or romaine",
+    "qty": 100,
+    "unit": "g"
+   },
+   {
+    "name": "Cherry tomatoes",
+    "qty": 200,
+    "unit": "g"
+   },
+   {
+    "name": "Cucumber",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Red onion",
+    "qty": 0.5,
+    "unit": "pcs"
+   },
+   {
+    "name": "Feta",
+    "qty": 40,
+    "unit": "g"
+   },
+   {
+    "name": "Olive oil",
+    "qty": 2,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Balsamic vinegar",
+    "qty": 1,
+    "unit": "tbsp"
+   },
+   {
+    "name": "Dijon mustard",
+    "qty": 1,
+    "unit": "tsp"
+   },
+   {
+    "name": "Honey",
+    "qty": 1,
+    "unit": "tsp"
+   }
+  ],
+  "method": "Bring the steak to room temperature, pat dry and salt well.\nSear in a very hot pan 3 min per side for medium-rare. Rest 5 min, then slice thinly.\nWhisk oil, balsamic, mustard and honey.\nToss the leaves, tomatoes, cucumber and onion with the dressing. Top with steak and crumbled feta.",
+  "image_url": "/recipe-art/steaksalad.svg"
+ },
+ {
+  "source_key": "tp:coffee",
+  "title": "Coffee for two",
+  "blurb": "French press, every morning.",
+  "meal_type": "breakfast",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "cook",
+  "cook_minutes": 5,
+  "servings": 2,
+  "kcal": 20,
+  "protein_g": 1,
+  "fat_g": 1,
+  "carbs_g": 1.5,
+  "ingredients": [
+   {
+    "name": "Coarsely ground coffee",
+    "qty": 30,
+    "unit": "g"
+   },
+   {
+    "name": "Water, just off the boil (about 94°C)",
+    "qty": 500,
+    "unit": "ml"
+   },
+   {
+    "name": "Milk (optional)",
+    "qty": null,
+    "unit": ""
+   }
+  ],
+  "method": "Warm the press with hot water and pour it out.\nAdd the coffee and pour in the water. Stir once.\nPut the lid on and steep 4 min.\nPress slowly and pour right away.",
+  "image_url": "/recipe-art/coffee.svg"
+ },
+ {
+  "source_key": "tp:o-burger",
+  "title": "Burgers (takeaway)",
+  "blurb": "Ordered in, no cooking tonight.",
+  "meal_type": "main",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "order",
+  "cook_minutes": null,
+  "servings": 2,
+  "kcal": 1200,
+  "protein_g": 50,
+  "fat_g": 60,
+  "carbs_g": 110,
+  "ingredients": [],
+  "method": null,
+  "image_url": "/recipe-art/o-burger.svg"
+ },
+ {
+  "source_key": "tp:o-sushi",
+  "title": "Sushi (takeaway)",
+  "blurb": "Ordered in, no cooking tonight.",
+  "meal_type": "main",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "order",
+  "cook_minutes": null,
+  "servings": 2,
+  "kcal": 650,
+  "protein_g": 30,
+  "fat_g": 15,
+  "carbs_g": 100,
+  "ingredients": [],
+  "method": null,
+  "image_url": "/recipe-art/o-sushi.svg"
+ },
+ {
+  "source_key": "tp:o-pizza",
+  "title": "Pizza (takeaway)",
+  "blurb": "Ordered in, no cooking tonight.",
+  "meal_type": "main",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "order",
+  "cook_minutes": null,
+  "servings": 2,
+  "kcal": 1100,
+  "protein_g": 45,
+  "fat_g": 40,
+  "carbs_g": 135,
+  "ingredients": [],
+  "method": null,
+  "image_url": "/recipe-art/o-pizza.svg"
+ },
+ {
+  "source_key": "tp:o-indian",
+  "title": "Indian (takeaway)",
+  "blurb": "Ordered in, no cooking tonight.",
+  "meal_type": "main",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "order",
+  "cook_minutes": null,
+  "servings": 2,
+  "kcal": 1200,
+  "protein_g": 45,
+  "fat_g": 55,
+  "carbs_g": 130,
+  "ingredients": [],
+  "method": null,
+  "image_url": "/recipe-art/o-indian.svg"
+ },
+ {
+  "source_key": "tp:o-chinese",
+  "title": "Chinese (takeaway)",
+  "blurb": "Ordered in, no cooking tonight.",
+  "meal_type": "main",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "order",
+  "cook_minutes": null,
+  "servings": 2,
+  "kcal": 1000,
+  "protein_g": 40,
+  "fat_g": 40,
+  "carbs_g": 120,
+  "ingredients": [],
+  "method": null,
+  "image_url": "/recipe-art/o-chinese.svg"
+ },
+ {
+  "source_key": "tp:work",
+  "title": "Food from work",
+  "blurb": "Lunch or dinner brought home from work.",
+  "meal_type": "main",
+  "style": null,
+  "protein": null,
+  "is_special": false,
+  "kind": "work",
+  "cook_minutes": null,
+  "servings": 2,
+  "kcal": null,
+  "protein_g": null,
+  "fat_g": null,
+  "carbs_g": null,
+  "ingredients": [],
+  "method": null,
+  "image_url": "/recipe-art/work.svg"
+ }
+]

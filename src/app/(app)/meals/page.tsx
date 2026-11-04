@@ -6,6 +6,9 @@ import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { MealSheet } from "@/components/MealSheet";
 import { RecipeSheet } from "@/components/RecipeSheet";
+import { RecipeView } from "@/components/RecipeView";
+import { RecipeArt, RecipeMeta } from "@/components/RecipeBits";
+import { seedPlatesOnce, seedPlatesRecipes } from "@/lib/recipeSeed";
 import { daysFromToday, formatDayMonth, formatWeekday, isoWeekNumber, localISODate, weekDates } from "@/lib/dates";
 import { CATEGORY_ORDER, guessCategory } from "@/lib/grocery";
 import { aggregateIngredients, fmtQty, groceryKey, parseIngredient } from "@/lib/ingredients";
@@ -25,6 +28,7 @@ export default function MealsPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [editing, setEditing] = useState<Editing | null>(null);
   const [recipeEditing, setRecipeEditing] = useState<Recipe | "new" | null>(null);
+  const [recipeViewing, setRecipeViewing] = useState<Recipe | null>(null);
   const [syncing, setSyncing] = useState(false);
   const hid = household?.id;
   const days = useMemo(() => weekDates(offset), [offset]);
@@ -57,6 +61,18 @@ export default function MealsPage() {
     loadRecipes();
   }, [loadItems, loadRecipes]);
 
+  // First visit: bring in the Today's Plates recipe library (once per household).
+  useEffect(() => {
+    if (!hid || !userId) return;
+    seedPlatesOnce(hid, userId).then((res) => {
+      if (res?.ok) {
+        notify(t("addedRecipes", { n: res.count }));
+        loadRecipes();
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hid, userId]);
+
   useEffect(() => {
     if (!hid) return;
     const sb = supabase();
@@ -81,6 +97,15 @@ export default function MealsPage() {
   }, [hid, loadMeals, loadItems, loadRecipes]);
 
   const mealAt = (date: string, slot: MealSlot) => meals.find((m) => m.date === date && m.slot === slot);
+  const recipeById = useMemo(() => new Map(recipes.map((r) => [r.id, r])), [recipes]);
+  const kcalOf = (m: Meal) => (m.recipe_id ? recipeById.get(m.recipe_id)?.kcal ?? null : null);
+  const dayKcal = (date: string) => {
+    const known = meals.filter((m) => m.date === date).map(kcalOf).filter((k): k is number => k != null);
+    return known.length ? known.reduce((a, b) => a + b, 0) : null;
+  };
+  const weekKcals = days.map(dayKcal).filter((k): k is number => k != null);
+  const weekAvg = weekKcals.length ? Math.round(weekKcals.reduce((a, b) => a + b, 0) / weekKcals.length) : null;
+  const fmtN = (n: number) => new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "en-GB").format(n);
   const openCount = items.filter((i) => !i.checked).length;
 
   async function toggleCooked(meal: Meal) {
@@ -169,6 +194,9 @@ export default function MealsPage() {
             {m.cooked && <Icon name="check" size={14} stroke={2.8} />}
           </button>
         )}
+        <span className="meal-thumb">
+          <RecipeArt recipe={m.recipe_id ? recipeById.get(m.recipe_id) : null} title={m.title} />
+        </span>
         <button type="button" className="meal-main" onClick={() => setEditing({ meal: m, date: m.date, slot: m.slot })}>
           <span className="meal-slot">{t(m.slot)}</span>
           <span className="meal-title">{m.title}</span>
@@ -220,6 +248,10 @@ export default function MealsPage() {
 
       {view === "plan" && (
         <>
+          <p className="week-summary">
+            {t("weekSummary", { planned: meals.length })}
+            {weekAvg != null && <> · {t("weekKcal", { n: fmtN(weekAvg) })}</>}
+          </p>
           <ul className="plan-grid">
             {days.map((date) => {
               const today = daysFromToday(date) === 0;
@@ -229,6 +261,8 @@ export default function MealsPage() {
                   <div className="day-head">
                     <span className="day-name">{formatWeekday(date, locale)}</span>
                     <span className="day-date">{today ? t("today") : formatDayMonth(date, locale)}</span>
+                    <span className="grow" />
+                    {dayKcal(date) != null && <span className="day-kcal">{t("dayKcal", { n: fmtN(dayKcal(date)!) })}</span>}
                   </div>
                   {dayMeals.map(renderMeal)}
                   {dayMeals.length < 3 && (
@@ -257,7 +291,39 @@ export default function MealsPage() {
         </>
       )}
 
-      {view === "recipes" && <Recipes recipes={recipes} onOpen={setRecipeEditing} unitLabel={unitLabel} />}
+      {view === "recipes" && (
+        <Recipes
+          recipes={recipes}
+          onOpen={setRecipeViewing}
+          onNew={() => setRecipeEditing("new")}
+          onRestore={async () => {
+            if (!hid || !userId) return;
+            notify(t("addingRecipes"));
+            const res = await seedPlatesRecipes(hid, userId);
+            if (res.ok) notify(t("addedRecipes", { n: res.count }));
+            else notify(t("somethingWrong", { msg: res.error }));
+            loadRecipes();
+          }}
+        />
+      )}
+
+      {recipeViewing && (
+        <RecipeView
+          recipe={recipeViewing}
+          onClose={() => setRecipeViewing(null)}
+          onEdit={() => {
+            setRecipeEditing(recipeViewing);
+            setRecipeViewing(null);
+          }}
+          onPlan={() => {
+            const r = recipeViewing;
+            setRecipeViewing(null);
+            const date = days.includes(localISODate()) ? localISODate() : days[0];
+            setView("plan");
+            setEditing({ meal: null, date, slot: r.meal_type === "breakfast" ? "breakfast" : freeSlot(date), recipe: r });
+          }}
+        />
+      )}
 
       {editing && (
         <MealSheet
@@ -291,30 +357,67 @@ export default function MealsPage() {
   );
 }
 
+type Filter = "all" | "breakfast" | "main" | "healthy" | "everyday" | "comfort" | "fish" | "chicken" | "beef" | "special" | "nocook";
+
 function Recipes({
   recipes,
   onOpen,
-  unitLabel,
+  onNew,
+  onRestore,
 }: {
   recipes: Recipe[];
-  onOpen: (r: Recipe | "new") => void;
-  unitLabel: (u: string) => string;
+  onOpen: (r: Recipe) => void;
+  onNew: () => void;
+  onRestore: () => void;
 }) {
-  const { t, locale } = useApp();
+  const { t } = useApp();
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
   const q = query.trim().toLowerCase();
-  const list = q
-    ? recipes.filter((r) => r.title.toLowerCase().includes(q) || r.ingredients.some((i) => i.name.toLowerCase().includes(q)))
-    : recipes;
+  const matchFilter = (r: Recipe) => {
+    switch (filter) {
+      case "all": return true;
+      case "breakfast": return r.kind === "cook" && r.meal_type === "breakfast";
+      case "main": return r.kind === "cook" && r.meal_type === "main";
+      case "special": return r.is_special;
+      case "nocook": return r.kind !== "cook";
+      case "fish": case "chicken": case "beef": return r.protein === filter;
+      default: return r.style === filter;
+    }
+  };
+  const list = recipes
+    .filter(matchFilter)
+    .filter((r) => !q || r.title.toLowerCase().includes(q) || r.ingredients.some((i) => i.name.toLowerCase().includes(q)))
+    .sort((a, b) => Number(a.kind !== "cook") - Number(b.kind !== "cook") || a.title.localeCompare(b.title));
+  const FILTERS: [Filter, string][] = [
+    ["all", t("filterAll")],
+    ["breakfast", t("type_breakfast")],
+    ["main", t("mains")],
+    ["healthy", t("style_healthy")],
+    ["everyday", t("style_everyday")],
+    ["comfort", t("style_comfort")],
+    ["fish", t("protein_fish")],
+    ["chicken", t("protein_chicken")],
+    ["beef", t("protein_beef")],
+    ["special", t("weekendSpecial")],
+    ["nocook", t("noCooking")],
+  ];
 
   return (
     <>
-      <div className="row" style={{ marginBottom: 12 }}>
+      <div className="row" style={{ marginBottom: 10 }}>
         <input className="input grow" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("searchRecipes")} aria-label={t("searchRecipes")} />
-        <button type="button" className="btn" onClick={() => onOpen("new")}>
+        <button type="button" className="btn" onClick={onNew}>
           <Icon name="plus" size={18} stroke={2.2} />
           {t("newRecipe")}
         </button>
+      </div>
+      <div className="chips-row" role="group" aria-label={t("recipes")}>
+        {FILTERS.map(([f, label]) => (
+          <button key={f} type="button" className="cal-chip" aria-pressed={filter === f} onClick={() => setFilter(f)}>
+            {label}
+          </button>
+        ))}
       </div>
       {recipes.length === 0 && <p className="empty">{t("noRecipes")}</p>}
       {recipes.length > 0 && list.length === 0 && <p className="empty">{t("noRecipeMatch")}</p>}
@@ -322,23 +425,21 @@ function Recipes({
         {list.map((r) => (
           <li key={r.id}>
             <button type="button" className="recipe-card" onClick={() => onOpen(r)}>
-              <span className="recipe-title">{r.title}</span>
-              <span className="small muted">
-                {t("portionsShort", { n: r.servings })} · {t("ingredientsCount", { n: r.ingredients.length })}
+              <span className="recipe-pic">
+                <RecipeArt recipe={r} />
               </span>
-              {r.ingredients.length > 0 && (
-                <span className="recipe-ings">
-                  {r.ingredients
-                    .slice(0, 5)
-                    .map((i) => [fmtQty(i.qty, i.unit, locale, unitLabel), i.name].filter(Boolean).join(" "))
-                    .join(" · ")}
-                  {r.ingredients.length > 5 ? " …" : ""}
-                </span>
-              )}
+              <span className="recipe-text">
+                <span className="recipe-title">{r.title}</span>
+                <RecipeMeta recipe={r} />
+              </span>
             </button>
           </li>
         ))}
       </ul>
+      <button type="button" className="btn secondary small" style={{ marginTop: 16 }} onClick={onRestore}>
+        <Icon name="repeat" size={16} />
+        {t("addPlatesRecipes")}
+      </button>
     </>
   );
 }

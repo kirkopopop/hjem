@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
 import { IngredientEditor, PortionStepper } from "./IngredientEditor";
+import { RecipeArt, RecipeMeta } from "./RecipeBits";
 import { daysFromToday } from "@/lib/dates";
 import { cleanIngredients, scaleIngredients } from "@/lib/ingredients";
 import type { Ingredient, Meal, MealSlot, Recipe } from "@/lib/types";
@@ -63,10 +64,15 @@ export function MealSheet({
   }, [onClose]);
 
   const chosen = recipes.find((r) => r.id === recipeId) ?? (initialRecipe?.id === recipeId ? initialRecipe : null);
+  // Breakfast recipes first when planning breakfast, mains first otherwise; takeaway at the end.
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return q ? recipes.filter((r) => r.title.toLowerCase().includes(q)) : recipes;
-  }, [recipes, query]);
+    const want = slot === "breakfast" ? "breakfast" : "main";
+    const rank = (r: Recipe) => (r.kind !== "cook" ? 2 : r.meal_type === want ? 0 : 1);
+    return (q ? recipes.filter((r) => r.title.toLowerCase().includes(q)) : recipes)
+      .slice()
+      .sort((a, b) => rank(a) - rank(b) || a.title.localeCompare(b.title));
+  }, [recipes, query, slot]);
 
   function pickRecipe(r: Recipe) {
     setRecipeId(r.id);
@@ -192,8 +198,13 @@ export function MealSheet({
                   {matches.map((r) => (
                     <li key={r.id}>
                       <button type="button" onClick={() => pickRecipe(r)}>
-                        <span className="grow" style={{ fontWeight: 700 }}>{r.title}</span>
-                        <span className="small muted">{t("portionsShort", { n: r.servings })}</span>
+                        <span className="pick-thumb">
+                          <RecipeArt recipe={r} />
+                        </span>
+                        <span className="grow" style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+                          <span style={{ fontWeight: 700 }}>{r.title}</span>
+                          <RecipeMeta recipe={r} />
+                        </span>
                       </button>
                     </li>
                   ))}
@@ -206,8 +217,13 @@ export function MealSheet({
 
         {mode === "recipe" && recipeId && (
           <div className="chosen-recipe">
-            <Icon name="meals" size={20} />
-            <span className="grow" style={{ fontWeight: 800 }}>{chosen?.title ?? title}</span>
+            <span className="pick-thumb">
+              <RecipeArt recipe={chosen ?? null} title={title} />
+            </span>
+            <span className="grow" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontWeight: 800 }}>{chosen?.title ?? title}</span>
+              {chosen && <RecipeMeta recipe={chosen} />}
+            </span>
             <button type="button" className="btn small secondary" onClick={() => setRecipeId(null)}>
               {t("change")}
             </button>

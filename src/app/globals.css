@@ -488,3 +488,59 @@ h1, h2, h3 { margin: 0; }
 .recipe-title { font-size: 17px; font-weight: 800; }
 .recipe-ings { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
 .grocery-qty { font-weight: 800; color: var(--accent-ink); }
+
+/* ---------- Recipe library ---------- */
+.recipe-art { display: block; width: 100%; height: 100%; object-fit: cover; }
+.recipe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 700px) { .recipe-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .recipe-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.recipe-card { padding: 0; overflow: hidden; gap: 0; }
+.recipe-pic { display: block; aspect-ratio: 4 / 3; background: #e6ebe3; }
+.recipe-text { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; }
+.recipe-card .recipe-title { font-size: 15px; line-height: 1.25; }
+.rmeta { display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: 12px; font-weight: 600; color: var(--muted); align-items: center; }
+.rmeta .kc { color: var(--ink); font-weight: 800; }
+.rtag { font-weight: 800; }
+.rtag.healthy { color: #2c7a4b; }
+.rtag.everyday { color: var(--muted); }
+.rtag.comfort { color: #a04718; }
+.rtag.special { background: #fcefc9; color: #3a2a00; padding: 0 7px; border-radius: 999px; }
+.rtag.order { color: #6b4a99; }
+.rtag.work { color: #2f6b7c; }
+.pick-thumb { width: 56px; height: 42px; border-radius: 8px; overflow: hidden; background: #e6ebe3; flex-shrink: 0; }
+.recipe-pick { max-height: 340px; }
+.meal-thumb { width: 44px; height: 33px; border-radius: 7px; overflow: hidden; background: #e6ebe3; flex-shrink: 0; }
+.day-kcal { font-size: 12px; font-weight: 700; color: var(--muted); }
+.week-summary { margin: -4px 2px 12px; font-size: 13px; font-weight: 700; color: var(--muted); }
+/* Recipe page */
+.recipe-view { padding: 0; gap: 0; }
+.rv-hero { position: relative; background: #e6ebe3; aspect-ratio: 16 / 9; }
+.rv-hero .recipe-art { object-fit: contain; }
+.rv-close { position: absolute; top: 10px; right: 10px; background: var(--surface); box-shadow: 0 2px 8px rgba(40,60,45,.18); }
+.rv-body { padding: 16px 18px calc(20px + var(--safe-bottom)); display: flex; flex-direction: column; gap: 18px; }
+.rv-title { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.15; margin: 0 0 4px; }
+.rv-blurb { margin: 0 0 8px; color: var(--muted); font-weight: 600; }
+.rv-ings { list-style: none; margin: 0; padding: 0; }
+.rv-ings li { display: grid; grid-template-columns: 6.5em 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--ground); font-size: 15px; }
+.rv-amt { font-weight: 800; font-variant-numeric: tabular-nums; }
+.rv-steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 10px; }
+.rv-steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 10px; font-size: 15px; line-height: 1.45; }
+.rv-steps li::before {
+  content: counter(s); width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink);
+  font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; justify-content: center;
+}
+.nut { display: flex; flex-direction: column; gap: 8px; }
+.nut-kcal { font-size: 15px; color: var(--muted); font-weight: 600; }
+.nut-kcal b { font-size: 26px; color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
+.nut-macros { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; color: var(--muted); font-weight: 600; }
+.nut-macros span { display: inline-flex; align-items: center; gap: 6px; }
+.nut-macros i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.nut-macros b { color: var(--ink); }
+.nut-bar { display: flex; height: 8px; border-radius: 999px; overflow: hidden; background: var(--ground); }
+.nut-bar span { height: 100%; }
+/* Recipe editor */
+.re-thumb { width: 120px; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: #e6ebe3; flex-shrink: 0; }
+.re-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; align-items: start; }
+.nut-fields { border: 1.5px solid var(--line-strong); border-radius: 14px; padding: 10px 12px 12px; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.nut-fields legend { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 0 6px; }
+@media (max-width: 520px) { .nut-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .re-thumb { width: 84px; } }
