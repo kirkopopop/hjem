@@ -1,7 +1,7 @@
 "use client";
 
 import { useApp } from "./AppProvider";
-import { fmtTime } from "@/lib/calendar";
+import { calendarLabel, fmtTime } from "@/lib/calendar";
 import type { CalendarEvent, CalendarRow } from "@/lib/types";
 
 export function EventRow({ event, calendar, compact = false }: { event: CalendarEvent; calendar?: CalendarRow; compact?: boolean }) {
@@ -20,7 +20,7 @@ export function EventRow({ event, calendar, compact = false }: { event: Calendar
         <span className="ev-title">{event.title || "—"}</span>
         {!compact && (
           <span className="ev-sub">
-            {[calendar?.name, owner && calendar && !calendar.name.includes(owner.profile.display_name) ? owner.profile.display_name : null, event.location]
+            {[calendar ? calendarLabel(calendar, owner?.profile.display_name) : null, event.location]
               .filter(Boolean)
               .join(" · ")}
           </span>

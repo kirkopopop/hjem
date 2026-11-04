@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Avatar, Icon } from "./Icon";
-import { useCalendarData } from "@/lib/calendar";
+import { calendarLabel, useCalendarData } from "@/lib/calendar";
 import { localISODate } from "@/lib/dates";
 import type { CalendarRow } from "@/lib/types";
 
@@ -112,7 +112,7 @@ export function CalendarSettings() {
                 return (
                   <li key={c.id} className="row" style={{ minHeight: 44 }}>
                     <span className="ev-dot" style={{ background: c.color, width: 12, height: 12 }} aria-hidden="true" />
-                    <span className="grow" style={{ fontWeight: 600, overflowWrap: "anywhere" }}>{c.name}</span>
+                    <span className="grow" style={{ fontWeight: 600, overflowWrap: "anywhere" }}>{calendarLabel(c, owner?.profile.display_name)}</span>
                     <button
                       type="button"
                       role="switch"

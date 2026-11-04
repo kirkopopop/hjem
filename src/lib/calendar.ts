@@ -137,3 +137,10 @@ export function useHiddenCalendars() {
   };
   return { hidden, toggle };
 }
+
+/** A main Google calendar is named after the email; show the person's name instead. */
+export function calendarLabel(c: CalendarRow, ownerName?: string) {
+  if (c.is_primary && ownerName) return ownerName;
+  if (c.name.includes("@") && ownerName) return ownerName;
+  return c.name;
+}

@@ -6,14 +6,14 @@ import { useApp } from "@/components/AppProvider";
 import { Icon } from "@/components/Icon";
 import { EventSheet } from "@/components/EventSheet";
 import { TimeGrid } from "@/components/TimeGrid";
-import { eventsOnDay, useCalendarData, useHiddenCalendars } from "@/lib/calendar";
+import { calendarLabel, eventsOnDay, useCalendarData, useHiddenCalendars } from "@/lib/calendar";
 import { addDays, daysFromToday, formatDayMonth, formatWeekday, localISODate, mondayOf } from "@/lib/dates";
 
 type View = "day" | "week";
 const VIEW_KEY = "hjem-calendar-view";
 
 export default function CalendarPage() {
-  const { t, locale } = useApp();
+  const { t, locale, member } = useApp();
   const [view, setView] = useState<View>("day");
   const [selected, setSelected] = useState(localISODate());
   const [adding, setAdding] = useState(false);
@@ -153,7 +153,7 @@ export default function CalendarPage() {
             return (
               <button key={c.id} type="button" className="cal-chip" aria-pressed={on} onClick={() => toggle(c.id)}>
                 <span className="ev-dot" style={{ background: c.color }} aria-hidden="true" />
-                {c.name}
+                {calendarLabel(c, member(c.owner_user_id)?.profile.display_name)}
               </button>
             );
           })}

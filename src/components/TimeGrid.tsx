@@ -30,7 +30,12 @@ function layoutDay(events: CalendarEvent[], iso: string): Placed[] {
   const dayStart = localMidnight(iso);
   const dayEnd = dayStart + 86_400_000;
   const items = events
-    .filter((e) => !e.all_day)
+    .filter((e) => {
+      if (e.all_day) return false;
+      const s = new Date(e.starts_at).getTime();
+      const en = new Date(e.ends_at).getTime();
+      return s < dayEnd && (en > dayStart || s >= dayStart);
+    })
     .map((e) => {
       const s = Math.max(new Date(e.starts_at).getTime(), dayStart);
       const en = Math.min(new Date(e.ends_at).getTime(), dayEnd);
@@ -96,13 +101,16 @@ export function TimeGrid({
 
   // Start scrolled to the morning, or to just before now if that's later.
   const showsToday = days.includes(today);
+  const daysKey = days.join(",");
   useEffect(() => {
-    const el = scroller.current;
-    if (!el) return;
-    const h = new Date().getHours();
-    const target = showsToday ? Math.max(7, h - 1) : 7;
-    el.scrollTop = target * hourH;
-  }, [days, hourH, showsToday]);
+    const id = requestAnimationFrame(() => {
+      const el = scroller.current;
+      if (!el) return;
+      const h = new Date().getHours();
+      el.scrollTop = (showsToday ? Math.max(7, h - 1) : 7) * hourH;
+    });
+    return () => cancelAnimationFrame(id);
+  }, [daysKey, hourH, showsToday]);
 
   const perDay = useMemo(() => days.map((d) => ({ d, timed: layoutDay(events, d), allDay: allDayOn(events, d) })), [days, events]);
   const anyAllDay = perDay.some((x) => x.allDay.length);

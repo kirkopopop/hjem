@@ -5,9 +5,10 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
 import type { CalendarRow } from "@/lib/types";
+import { calendarLabel } from "@/lib/calendar";
 
 export function EventSheet({ date: initialDate, calendars, onClose }: { date: string; calendars: CalendarRow[]; onClose: () => void }) {
-  const { t, userId, notify } = useApp();
+  const { t, userId, notify, member } = useApp();
   const titleId = useId();
   const firstField = useRef<HTMLInputElement>(null);
   const writable = calendars.filter((c) => c.visible && c.can_write);
@@ -75,7 +76,7 @@ export function EventSheet({ date: initialDate, calendars, onClose }: { date: st
                 <select className="select" value={calendarId} onChange={(e) => setCalendarId(e.target.value)}>
                   {writable.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name}
+                      {calendarLabel(c, member(c.owner_user_id)?.profile.display_name)}
                     </option>
                   ))}
                 </select>
