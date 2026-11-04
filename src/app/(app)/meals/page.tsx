@@ -300,20 +300,20 @@ export default function MealsPage() {
             })}
             {/* Eighth cell: fills the gap next to Sunday with the week's summary. */}
             <li className="week-card" aria-labelledby="week-card-h">
-              <span className="mini-label" style={{ margin: 0 }}>{t("weekAtAGlance")}</span>
-              <h2 id="week-card-h" className="week-card-num">
-                {t("weekSummary", { planned: meals.length })}
-              </h2>
-              <div className="week-card-stats">
-                <span>
-                  <span className="bar" aria-hidden="true">
-                    <span style={{ width: `${(dinnerDays / 7) * 100}%` }} />
-                  </span>
+              <div className="week-card-text">
+                <span className="mini-label" style={{ margin: 0 }}>{t("weekAtAGlance")}</span>
+                <h2 id="week-card-h" className="week-card-num">
+                  {t("weekSummary", { planned: meals.length })}
+                </h2>
+                <span className="week-card-meta">
                   {t("dinnersPlanned", { n: dinnerDays })}
+                  {weekAvg != null && <> · {t("weekKcal", { n: fmtN(weekAvg) })}</>}
                 </span>
-                {weekAvg != null && <span>{t("weekKcal", { n: fmtN(weekAvg) })}</span>}
+                <span className="bar" aria-hidden="true">
+                  <span style={{ width: `${(dinnerDays / 7) * 100}%` }} />
+                </span>
               </div>
-              <button type="button" className="btn soft block" onClick={updateGroceries} disabled={syncing}>
+              <button type="button" className="btn" onClick={updateGroceries} disabled={syncing}>
                 <Icon name="cart" size={18} />
                 {syncing ? t("working") : t("updateGroceriesShort")}
               </button>
