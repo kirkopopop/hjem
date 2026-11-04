@@ -11,6 +11,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [asDevice, setAsDevice] = useState(false);
   const [busy, setBusy] = useState<"create" | "join" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +24,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!ready) return;
     if (!userId) window.location.assign("/login");
-    else if (household) router.replace("/tasks");
+    else if (household) router.replace("/home");
   }, [ready, userId, household, router]);
 
   async function create(e: React.FormEvent) {
@@ -43,7 +44,7 @@ export default function OnboardingPage() {
     e.preventDefault();
     setBusy("join");
     setError(null);
-    const { error } = await supabase().rpc("join_household", { p_code: code.trim() });
+    const { error } = await supabase().rpc("join_household", { p_code: code.trim(), p_as_device: asDevice });
     if (error) {
       setError(error.message);
       setBusy(null);
@@ -92,6 +93,18 @@ export default function OnboardingPage() {
             required
             style={{ letterSpacing: 2, fontWeight: 800 }}
           />
+        </label>
+        <label className="row" style={{ gap: 10, alignItems: "flex-start" }}>
+          <input
+            type="checkbox"
+            checked={asDevice}
+            onChange={(e) => setAsDevice(e.target.checked)}
+            style={{ width: 22, height: 22, marginTop: 1, accentColor: "var(--accent)", flexShrink: 0 }}
+          />
+          <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span style={{ fontWeight: 700 }}>{t("wallDisplay")}</span>
+            <span className="small muted">{t("wallDisplayHint")}</span>
+          </span>
         </label>
         <button className="btn block" type="submit" disabled={busy !== null}>
           {busy === "join" ? t("working") : t("join")}

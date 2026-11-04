@@ -5,8 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
+import { useWakeLock } from "./CalendarSettings";
 
 const LINKS = [
+  { href: "/home", icon: "home", label: "navHome" },
+  { href: "/calendar", icon: "calendar", label: "navCalendar" },
   { href: "/tasks", icon: "tasks", label: "navTasks" },
   { href: "/meals", icon: "meals", label: "navMeals" },
   { href: "/badges", icon: "medal", label: "navBadges" },
@@ -17,6 +20,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const { ready, userId, household, t } = useApp();
   const pathname = usePathname();
   const router = useRouter();
+  useWakeLock();
 
   useEffect(() => {
     if (!ready) return;

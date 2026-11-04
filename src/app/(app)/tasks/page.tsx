@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { TaskSheet } from "@/components/TaskSheet";
+import { WhoPicker } from "@/components/WhoPicker";
 import { daysFromToday, formatShortDate, startOfWeekISO } from "@/lib/dates";
 import type { Task, TaskStatus } from "@/lib/types";
 
@@ -24,6 +25,8 @@ export default function TasksPage() {
   const [tab, setTab] = useState<Tab>("todo");
   const [mineOnly, setMineOnly] = useState(false);
   const [editing, setEditing] = useState<Task | null | "new">(null);
+  const [picking, setPicking] = useState<Task | null>(null);
+  const isDevice = member(userId)?.role === "device";
   const hid = household?.id;
 
   const loadTasks = useCallback(async () => {
@@ -83,11 +86,15 @@ export default function TasksPage() {
     return true;
   }
 
-  async function toggleDone(task: Task) {
+  async function toggleDone(task: Task, by?: string) {
+    if (task.status !== "done" && isDevice && !by) {
+      setPicking(task);
+      return;
+    }
     if (task.status === "done") {
       await patch(task, { status: "todo", completed_at: null, completed_by: null });
     } else {
-      const ok = await patch(task, { status: "done", completed_at: new Date().toISOString(), completed_by: userId });
+      const ok = await patch(task, { status: "done", completed_at: new Date().toISOString(), completed_by: by ?? userId });
       if (ok) notify(t("niceDone"));
     }
   }
@@ -193,9 +200,11 @@ export default function TasksPage() {
                     {task.due_date ? formatShortDate(task.due_date, locale) : t("unclaimedHint")}
                   </span>
                 </button>
-                <button type="button" className="btn small" onClick={() => patch(task, { assignee_id: userId })}>
-                  {t("claim")}
-                </button>
+                {!isDevice && (
+                  <button type="button" className="btn small" onClick={() => patch(task, { assignee_id: userId })}>
+                    {t("claim")}
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -211,6 +220,17 @@ export default function TasksPage() {
         <Icon name="plus" size={20} stroke={2.2} />
         {t("newTask")}
       </button>
+
+      {picking && (
+        <WhoPicker
+          onClose={() => setPicking(null)}
+          onPick={(uid) => {
+            const task = picking;
+            setPicking(null);
+            toggleDone(task, uid);
+          }}
+        />
+      )}
 
       {editing && <TaskSheet task={editing === "new" ? null : editing} onClose={() => {
             setEditing(null);

@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { LangSwitch } from "@/components/LangSwitch";
+import { CalendarSettings, WallSettings } from "@/components/CalendarSettings";
 
 const COLORS = ["#2F62C8", "#C2621B", "#24695C", "#7A4FB8", "#B0306A", "#5C6B12"];
 
@@ -99,6 +100,8 @@ export default function HouseholdPage() {
           </ul>
         </section>
 
+        <CalendarSettings />
+
         <section className="card stack" aria-labelledby="invite-h">
           <h2 id="invite-h">{t("invite")}</h2>
           <p className="lead" style={{ margin: 0 }}>{t("inviteLead")}</p>
@@ -155,6 +158,8 @@ export default function HouseholdPage() {
             <LangSwitch />
           </div>
         </section>
+
+        <WallSettings />
 
         <section className="card stack" aria-labelledby="install-h">
           <h2 id="install-h">{t("install")}</h2>

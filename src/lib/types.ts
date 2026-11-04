@@ -65,3 +65,36 @@ export type BadgeRow = {
   badge_key: string;
   earned_at: string;
 };
+
+export type GoogleAccount = {
+  id: string;
+  household_id: string;
+  user_id: string;
+  google_email: string;
+  last_synced_at: string | null;
+  sync_error: string | null;
+};
+
+export type CalendarRow = {
+  id: string;
+  household_id: string;
+  account_id: string;
+  owner_user_id: string;
+  google_calendar_id: string;
+  name: string;
+  color: string;
+  visible: boolean;
+  can_write: boolean;
+  is_primary: boolean;
+};
+
+export type CalendarEvent = {
+  id: number;
+  calendar_id: string;
+  title: string;
+  location: string | null;
+  starts_at: string;
+  ends_at: string;
+  all_day: boolean;
+  html_link: string | null;
+};

@@ -284,3 +284,90 @@ h1, h2, h3 { margin: 0; }
 .badge-tile.is-earned .badge-foot { color: var(--points); }
 .bar { display: block; height: 6px; border-radius: 3px; background: var(--ground); overflow: hidden; }
 .bar > span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+
+/* ---------- Calendar ---------- */
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.card-head h2 { font-size: 18px; font-weight: 800; margin: 0; }
+.card-head a { font-weight: 700; text-decoration: none; }
+.mini-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 6px 0 0; }
+.week-strip { display: flex; align-items: center; gap: 2px; margin-bottom: 10px; }
+.week-days { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.wday {
+  min-height: 62px; border: 0; border-radius: 14px; background: transparent;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--ink);
+}
+.wday-dow { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: capitalize; }
+.wday-num { font-size: 18px; font-weight: 800; }
+.wday-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.wday.is-today .wday-num { color: var(--accent); }
+.wday.is-selected { background: var(--dark); color: #fff; }
+.wday.is-selected .wday-dow { color: var(--dark-muted); }
+.wday.is-selected .wday-num { color: #fff; }
+.wday.is-selected .wday-dot { background: #fff; }
+.chips-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+.cal-chip {
+  flex-shrink: 0; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--line-strong);
+  background: var(--surface); font-size: 13px; font-weight: 700; color: var(--muted); display: inline-flex; align-items: center; gap: 6px;
+}
+.cal-chip[aria-pressed="true"] { background: var(--dark); border-color: var(--dark); color: #fff; }
+.ev-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.ev {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--surface);
+  color: var(--ink); text-decoration: none;
+}
+.ev.compact { padding: 9px 12px; background: var(--sunken); }
+.ev-time { width: 54px; flex-shrink: 0; display: flex; flex-direction: column; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ev.compact .ev-time { width: 48px; font-size: 13px; }
+.ev-end { font-size: 12px; font-weight: 600; color: var(--muted); }
+.ev-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ev-title { font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+.ev-sub { font-size: 12px; font-weight: 600; color: var(--muted); overflow-wrap: anywhere; }
+.agenda-day { margin-bottom: 4px; }
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.account-block { border-top: 1px solid var(--ground); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.cal-list { list-style: none; margin: 0; padding: 0 0 0 4px; }
+.switch {
+  width: 52px; height: 30px; border-radius: 999px; border: 0; padding: 3px; background: #c5cdcb;
+  display: inline-flex; justify-content: flex-start; flex-shrink: 0; transition: background 0.15s;
+}
+.switch span { width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+.switch.on { background: var(--accent); justify-content: flex-end; }
+.who-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.who-btn {
+  min-height: 120px; border-radius: 18px; border: 1.5px solid var(--line-strong); background: var(--surface);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: 16px; font-weight: 800;
+}
+
+/* ---------- Home ---------- */
+.home-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.home-weekday { text-transform: uppercase; letter-spacing: 1.4px; }
+.home-date { font-size: 34px; font-weight: 800; letter-spacing: -1px; line-height: 1.05; }
+.home-clock { color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+.person-pill { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 999px; background: var(--surface); font-weight: 700; font-size: 14px; }
+.home-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.home-card { display: flex; flex-direction: column; gap: 12px; }
+.home-card.dark { background: var(--dark); color: #fff; }
+.home-side { display: flex; flex-direction: column; gap: 14px; }
+.home-task { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; border: 1.5px solid #e1e6e4; }
+.tonight-title { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.2; color: #fff; }
+.dinner-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.dinner-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border-radius: 10px; background: var(--dark-2); min-width: 0; }
+.dinner-cell.is-today { background: var(--accent); }
+.dinner-dow { font-size: 11px; font-weight: 800; color: var(--dark-muted); text-transform: capitalize; }
+.dinner-cell.is-today .dinner-dow { color: #fff; }
+.dinner-meal { font-size: 11px; font-weight: 600; color: #e6ecea; text-align: center; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-width: 100%; overflow-wrap: anywhere; }
+.badge-icon.small-badge { width: 38px; height: 38px; margin: 0; background: var(--points-soft); color: var(--points); box-shadow: inset 0 0 0 2px var(--peach); flex-shrink: 0; }
+@media (min-width: 760px) {
+  .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-side { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .content:has(.home) { max-width: none; }
+  .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .home-side { grid-column: auto; display: flex; }
+  .home-date { font-size: 42px; }
+}
+@media (max-width: 420px) {
+  .nav a { font-size: 10px; }
+}
