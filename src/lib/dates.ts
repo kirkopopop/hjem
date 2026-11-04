@@ -64,3 +64,9 @@ export function formatWeekday(iso: string, locale: Locale) {
 export function formatDayMonth(iso: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short" }).format(parseISODate(iso));
 }
+
+/** Monday of the week containing the given date. */
+export function mondayOf(iso: string) {
+  const d = parseISODate(iso);
+  return addDays(iso, -((d.getDay() + 6) % 7));
+}

@@ -100,10 +100,38 @@ export default function HomePage() {
     })
     .filter((x) => x.list.length);
 
+  // Due today or overdue; undated tasks get their own list underneath.
   const todayTasks = tasks
-    .filter((x) => !x.due_date || daysFromToday(x.due_date) <= 0)
-    .sort((a, b) => (a.due_date ?? "9999") < (b.due_date ?? "9999") ? -1 : 1)
-    .slice(0, 7);
+    .filter((x) => x.due_date && daysFromToday(x.due_date) <= 0)
+    .sort((a, b) => (a.due_date! < b.due_date! ? -1 : 1));
+  const undatedTasks = tasks
+    .filter((x) => !x.due_date)
+    .sort((a, b) => (a.created_at < b.created_at ? -1 : 1))
+    .slice(0, 8);
+
+  function renderTask(task: Task) {
+    const who = member(task.assignee_id);
+    const overdue = task.due_date && daysFromToday(task.due_date) < 0;
+    return (
+      <li key={task.id} className="home-task">
+        <button
+          type="button"
+          className={`check${task.status === "doing" ? " doing" : ""}`}
+          aria-label={t("markDone", { title: task.title })}
+          onClick={() => (isDevice ? setPicking(task) : complete(task, null))}
+        />
+        <span className="grow" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <span className="task-title" style={{ fontSize: 15 }}>{task.title}</span>
+          {overdue && <span className="small" style={{ color: "#8c1d16" }}>{t("overdue")}</span>}
+        </span>
+        {who ? (
+          <Avatar name={who.profile.display_name} color={who.profile.color} size={26} />
+        ) : (
+          <span className="chip">{t("unclaimedHint")}</span>
+        )}
+      </li>
+    );
+  }
 
   const dinner = (d: string) => meals.find((m) => m.date === d && m.slot === "dinner");
   const tonight = dinner(today);
@@ -174,30 +202,16 @@ export default function HomePage() {
             <p className="small muted" style={{ margin: 0 }}>{t("allClear")}</p>
           ) : (
             <ul className="stack" style={{ listStyle: "none", padding: 0, margin: 0, gap: 8 }}>
-              {todayTasks.map((task) => {
-                const who = member(task.assignee_id);
-                const overdue = task.due_date && daysFromToday(task.due_date) < 0;
-                return (
-                  <li key={task.id} className="home-task">
-                    <button
-                      type="button"
-                      className={`check${task.status === "doing" ? " doing" : ""}`}
-                      aria-label={t("markDone", { title: task.title })}
-                      onClick={() => (isDevice ? setPicking(task) : complete(task, null))}
-                    />
-                    <span className="grow" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                      <span className="task-title" style={{ fontSize: 15 }}>{task.title}</span>
-                      {overdue && <span className="small" style={{ color: "#8c1d16" }}>{t("overdue")}</span>}
-                    </span>
-                    {who ? (
-                      <Avatar name={who.profile.display_name} color={who.profile.color} size={26} />
-                    ) : (
-                      <span className="chip">{t("unclaimedHint")}</span>
-                    )}
-                  </li>
-                );
-              })}
+              {todayTasks.map(renderTask)}
             </ul>
+          )}
+          {undatedTasks.length > 0 && (
+            <>
+              <h3 className="mini-label home-subhead">{t("noDateTasks")}</h3>
+              <ul className="stack" style={{ listStyle: "none", padding: 0, margin: 0, gap: 8 }}>
+                {undatedTasks.map(renderTask)}
+              </ul>
+            </>
           )}
         </section>
 
