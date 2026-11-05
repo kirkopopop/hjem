@@ -263,7 +263,6 @@ export default function HomePage() {
       </section>
 
       <div className="home-grid stagger">
-        <BabyCard />
         <section className="card home-card home-agenda" aria-labelledby="h-agenda">
           <div className="card-head">
             <h2 id="h-agenda">{t("agenda")}</h2>
@@ -316,6 +315,8 @@ export default function HomePage() {
           )}
         </section>
 
+        <div className="home-side">
+        <BabyCard />
         <section className="card home-card food-card" aria-labelledby="h-food">
           <div className="card-head">
             <h2 id="h-food">{t("todaysFood")}</h2>
@@ -366,6 +367,7 @@ export default function HomePage() {
             {t("groceries")}
           </Link>
         </section>
+        </div>
       </div>
 
       {picking && (

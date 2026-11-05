@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   applicationName: "hjem",
   appleWebApp: { capable: true, title: "hjem", statusBarStyle: "default" },
   icons: {
-    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+    icon: [
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192-v2.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon-v2.png", sizes: "180x180" }],
   },
 };
 

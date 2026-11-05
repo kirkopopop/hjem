@@ -1182,15 +1182,12 @@ a.ev.compact:hover { background: var(--ground-2); }
   font-size: 13px; font-weight: 700; transition: background-color var(--dur-2), border-color var(--dur-2);
 }
 .food-add:hover { background: var(--accent-soft); border-color: var(--accent); }
-/* Home layout with four cards: pairs on tablets, agenda + tasks + a side column on wide screens */
+/* Home: agenda and tasks, plus a side column holding the baby card and today's food */
 @media (min-width: 760px) {
-  .home-grid { grid-template-areas: "agenda tasks" "baby food"; align-items: start; }
-  .home-agenda { grid-area: agenda; }
-  .home-tasks { grid-area: tasks; }
-  .home-grid > .baby-card { grid-area: baby; }
-  .food-card { grid-area: food; }
+  .home-side { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .home-side > :only-child { grid-column: 1 / -1; }
 }
 @media (min-width: 1100px) {
-  .home-grid { grid-template-areas: "agenda tasks baby" "agenda tasks food"; grid-template-rows: auto 1fr; }
-  .home-agenda, .home-tasks { align-self: stretch; }
+  .home-side { grid-column: auto; display: flex; flex-direction: column; align-items: stretch; }
 }
+
