@@ -162,6 +162,14 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M12 7v5l3 2" />
     </>
   ),
+  baby: (
+    <>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 5c0-1.4 1.2-2.3 2.6-2" />
+      <path d="M9.4 16.2c1.5 1.1 3.7 1.1 5.2 0" />
+      <path d="M9 12h.01M15 12h.01" strokeWidth="2.6" />
+    </>
+  ),
   copy: (
     <>
       <rect x="9" y="9" width="12" height="12" rx="2" />

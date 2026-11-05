@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { CalendarSettings, WallSettings } from "@/components/CalendarSettings";
 import { SettingRow, Switch } from "@/components/ui";
+import { BabyMount } from "@/components/BabyMount";
 import { canVibrate, usePrefs, type ThemePref } from "@/lib/prefs";
 
 const COLORS = ["#2F62C8", "#C2621B", "#24695C", "#7A4FB8", "#B0306A", "#5C6B12"];
@@ -121,6 +123,15 @@ export default function SettingsPage() {
           </div>
         </section>
 
+        <Link href="/badges" className="card set-link" aria-label={t("navBadges")}>
+          <span className="set-ico"><Icon name="medal" size={20} /></span>
+          <span className="set-text">
+            <span className="set-title">{t("navBadges")}</span>
+            <span className="set-hint">{t("badgesLinkHint")}</span>
+          </span>
+          <span className="set-chevron" aria-hidden="true">›</span>
+        </Link>
+
         <section className="card stack" aria-labelledby="look-h">
           <h2 id="look-h" className="card-title">
             <span className="set-ico"><Icon name="palette" size={18} /></span>
@@ -204,6 +215,15 @@ export default function SettingsPage() {
             </button>
           )}
           </div>
+        </section>
+
+        <section className="card stack" aria-labelledby="baby-h" id="baby">
+          <h2 id="baby-h" className="card-title">
+            <span className="set-ico"><Icon name="baby" size={18} /></span>
+            {t("babySettings")}
+          </h2>
+          <p className="lead" style={{ margin: 0 }}>{t("babySettingsLead")}</p>
+          <BabyMount view="settings" />
         </section>
 
         <CalendarSettings />

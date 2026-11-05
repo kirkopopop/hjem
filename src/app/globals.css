@@ -1127,3 +1127,23 @@ a.ev.compact:hover { background: var(--ground-2); }
   .week-card { grid-template-columns: minmax(0, 1fr); }
   .week-card .btn { width: 100%; }
 }
+
+/* ---------- Baby ---------- */
+.baby-head { align-items: flex-end; }
+.baby-head .eyebrow { display: block; margin-top: 4px; }
+.baby-tabs { min-width: min(100%, 320px); }
+.baby-host { display: block; }
+.set-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); padding: 14px 18px; }
+.set-link .set-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.set-link .set-hint { font-size: 13px; color: var(--muted); font-weight: 500; }
+.set-chevron { font-size: 24px; color: var(--faint); line-height: 1; }
+.set-link:active { transform: scale(0.99); }
+.baby-card-state { display: flex; align-items: center; gap: 12px; }
+.baby-card-ico { width: 42px; height: 42px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; background: var(--gold-soft); color: var(--gold); flex-shrink: 0; }
+.baby-card.is-asleep .baby-card-ico { background: #e3ecf9; color: #1c5cab; }
+:root[data-theme="dark"] .baby-card.is-asleep .baby-card-ico { background: #16305a; color: #8fb8f0; }
+.baby-card-big { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.baby-card-big span { color: var(--muted); font-weight: 700; }
+.baby-card-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.baby-card-facts span { display: flex; flex-direction: column; font-size: 12px; font-weight: 600; color: var(--muted); background: var(--sunken); border-radius: 12px; padding: 8px 10px; }
+.baby-card-facts b { font-size: 15px; color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }

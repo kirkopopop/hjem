@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "@/components/AppProvider";
 import { Avatar, Icon } from "@/components/Icon";
 import { EventRow } from "@/components/EventRow";
+import { BabyCard } from "@/components/BabyCard";
 import { EventSheet } from "@/components/EventSheet";
 import { TaskSheet } from "@/components/TaskSheet";
 import { WhoPicker } from "@/components/WhoPicker";
@@ -259,6 +260,7 @@ export default function HomePage() {
       </section>
 
       <div className="home-grid stagger">
+        <BabyCard />
         <section className="card home-card" aria-labelledby="h-agenda">
           <div className="card-head">
             <h2 id="h-agenda">{t("agenda")}</h2>
