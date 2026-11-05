@@ -11,11 +11,14 @@ import { EventSheet } from "@/components/EventSheet";
 import { TaskSheet } from "@/components/TaskSheet";
 import { WhoPicker } from "@/components/WhoPicker";
 import { RecipeArt } from "@/components/RecipeBits";
-import { EmptyState, ProgressRing, Skeleton, SkeletonRows } from "@/components/ui";
+import { EmptyState, ProgressRing, SkeletonRows } from "@/components/ui";
 import { eventsOnDay, useCalendarData, useHiddenCalendars } from "@/lib/calendar";
-import { addDays, daysFromToday, formatDayMonth, formatWeekday, localISODate, weekDates } from "@/lib/dates";
-import { BADGES, badgeName } from "@/lib/badges";
-import type { BadgeRow, Meal, Recipe, Task } from "@/lib/types";
+import { addDays, daysFromToday, formatDayMonth, formatWeekday, localISODate } from "@/lib/dates";
+import { compareTasks } from "@/lib/tasks";
+import { MealSheet } from "@/components/MealSheet";
+import type { Meal, MealSlot, Recipe, Task } from "@/lib/types";
+
+const SLOTS: MealSlot[] = ["breakfast", "lunch", "dinner"];
 
 const AGENDA_DAYS = 4;
 const MAX_EVENTS = 9;
@@ -28,11 +31,10 @@ function greetingKey(h: number) {
 }
 
 export default function HomePage() {
-  const { t, locale, userId, profile, household, members, member, notify, celebrate, badgeTick } = useApp();
+  const { t, locale, userId, profile, household, members, member, notify, celebrate } = useApp();
   const hid = household?.id;
   const [now, setNow] = useState(() => new Date());
   const today = localISODate(now);
-  const week = useMemo(() => weekDates(0), []);
   const agendaDays = useMemo(() => Array.from({ length: AGENDA_DAYS }, (_, i) => addDays(today, i)), [today]);
   const { calendars, events, loaded: calLoaded } = useCalendarData(today, agendaDays[AGENDA_DAYS - 1]);
   const { hidden } = useHiddenCalendars();
@@ -40,7 +42,7 @@ export default function HomePage() {
   const [doneToday, setDoneToday] = useState(0);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [art, setArt] = useState<Record<string, Pick<Recipe, "image_url" | "title">>>({});
-  const [badges, setBadges] = useState<BadgeRow[]>([]);
+  const [planning, setPlanning] = useState<{ meal: Meal | null; slot: MealSlot } | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [leaving, setLeaving] = useState<string[]>([]);
   const [picking, setPicking] = useState<{ task: Task; el: Element | null } | null>(null);
@@ -58,7 +60,7 @@ export default function HomePage() {
     const sb = supabase();
     const midnight = new Date();
     midnight.setHours(0, 0, 0, 0);
-    const [tk, dn, ml, bd] = await Promise.all([
+    const [tk, dn, ml] = await Promise.all([
       sb.from("tasks").select("*").eq("household_id", hid).neq("status", "done"),
       sb
         .from("tasks")
@@ -66,26 +68,24 @@ export default function HomePage() {
         .eq("household_id", hid)
         .eq("status", "done")
         .gte("completed_at", midnight.toISOString()),
-      sb.from("meals").select("*").eq("household_id", hid).gte("date", week[0]).lte("date", week[6]),
-      sb.from("badges").select("*").eq("household_id", hid).order("earned_at", { ascending: false }).limit(3),
+      sb.from("meals").select("*").eq("household_id", hid).eq("date", today).order("created_at"),
     ]);
     const mealRows = (ml.data ?? []) as Meal[];
     setTasks((tk.data ?? []) as Task[]);
     setDoneToday(dn.count ?? 0);
     setMeals(mealRows);
-    setBadges((bd.data ?? []) as BadgeRow[]);
     setLoaded(true);
     const ids = [...new Set(mealRows.map((m) => m.recipe_id).filter(Boolean))] as string[];
     if (ids.length) {
       const { data } = await sb.from("recipes").select("id, title, image_url").in("id", ids);
       setArt(Object.fromEntries((data ?? []).map((r: Pick<Recipe, "id" | "title" | "image_url">) => [r.id, r])));
     }
-  }, [hid, week]);
+  }, [hid, today]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- load on mount and when a badge arrives
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load on mount (and again after midnight)
     load();
-  }, [load, badgeTick]);
+  }, [load]);
 
   useEffect(() => {
     if (!hid) return;
@@ -142,10 +142,10 @@ export default function HomePage() {
   // Due today or overdue; undated tasks get their own list underneath.
   const todayTasks = tasks
     .filter((x) => x.due_date && daysFromToday(x.due_date) <= 0)
-    .sort((a, b) => (a.due_date! < b.due_date! ? -1 : 1));
+    .sort(compareTasks);
   const undatedTasks = tasks
     .filter((x) => !x.due_date)
-    .sort((a, b) => (a.created_at < b.created_at ? -1 : 1))
+    .sort(compareTasks)
     .slice(0, 8);
   const openToday = todayTasks.filter((x) => !leaving.includes(x.id)).length;
   const totalToday = openToday + doneToday;
@@ -166,7 +166,15 @@ export default function HomePage() {
           }}
         />
         <span className="grow" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span className="task-title" style={{ fontSize: 15 }}>{task.title}</span>
+          <span className="task-title" style={{ fontSize: 15 }}>
+            {task.priority === "high" && (
+              <span className="prio-flag" title={t("highPriority")}>
+                <Icon name="flag" size={13} stroke={2.4} />
+                <span className="sr-only">{t("highPriority")}: </span>
+              </span>
+            )}
+            {task.title}
+          </span>
           {overdue && <span className="small" style={{ color: "var(--danger-ink)" }}>{t("overdue")}</span>}
         </span>
         {who ? (
@@ -178,13 +186,10 @@ export default function HomePage() {
     );
   }
 
-  const dinners = (d: string) =>
-    meals.filter((m) => m.date === d && m.slot === "dinner").sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+  const mealsIn = (slot: MealSlot) => meals.filter((m) => m.date === today && m.slot === slot);
   const titles = (list: Meal[]) => list.map((m) => m.title).join(" + ");
-  const tonightAll = dinners(today);
+  const tonightAll = mealsIn("dinner");
   const tonight = tonightAll[0];
-  const tonightCook = member(tonight?.cook_id);
-  const tonightArt = tonight?.recipe_id ? art[tonight.recipe_id] : null;
 
   const dayLabel = (iso: string) => {
     const n = daysFromToday(iso);
@@ -192,8 +197,6 @@ export default function HomePage() {
     if (n === 1) return t("tomorrow");
     return `${formatWeekday(iso, locale)} · ${formatDayMonth(iso, locale)}`;
   };
-  const shortDow = (iso: string) =>
-    new Intl.DateTimeFormat("en-GB", { weekday: "short" }).format(new Date(`${iso}T12:00:00`));
   const clock = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(now);
   const dateLong = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" }).format(now);
   const people = members.filter((m) => m.role !== "device");
@@ -261,7 +264,7 @@ export default function HomePage() {
 
       <div className="home-grid stagger">
         <BabyCard />
-        <section className="card home-card" aria-labelledby="h-agenda">
+        <section className="card home-card home-agenda" aria-labelledby="h-agenda">
           <div className="card-head">
             <h2 id="h-agenda">{t("agenda")}</h2>
             <Link href="/calendar" className="small">{t("seeAll")}</Link>
@@ -289,7 +292,7 @@ export default function HomePage() {
           )}
         </section>
 
-        <section className="card home-card" aria-labelledby="h-tasks">
+        <section className="card home-card home-tasks" aria-labelledby="h-tasks">
           <div className="card-head">
             <h2 id="h-tasks">{t("tasksToday")}</h2>
             <Link href="/tasks" className="small">{t("openTasks", { n: tasks.length })}</Link>
@@ -313,77 +316,56 @@ export default function HomePage() {
           )}
         </section>
 
-        <div className="home-side">
-          <section className="card home-card" aria-labelledby="h-tonight">
-            <div className="tonight">
-              <div style={{ minWidth: 0 }}>
-                <h2 id="h-tonight" className="mini-label" style={{ margin: 0 }}>{t("tonight")}</h2>
-                {!loaded ? (
-                  <Skeleton h={24} w="70%" style={{ marginTop: 6 }} />
-                ) : tonight ? (
-                  <p className="tonight-title">{titles(tonightAll)}</p>
-                ) : (
-                  <Link href="/meals" className="tonight-title">
-                    + {t("nothingPlannedTonight")}
-                  </Link>
-                )}
-                {tonightCook && <span className="small muted">{t("cooks", { name: tonightCook.profile.display_name })}</span>}
-              </div>
-              {tonight && (
-                <span className="tonight-art">
-                  <RecipeArt recipe={tonightArt} title={tonight.title} />
-                </span>
-              )}
-            </div>
-            <div className="dinner-strip">
-              {week.map((d) => {
-                const list = dinners(d);
-                const m = list[0];
-                const isToday = d === today;
+        <section className="card home-card food-card" aria-labelledby="h-food">
+          <div className="card-head">
+            <h2 id="h-food">{t("todaysFood")}</h2>
+            <Link href="/meals" className="small">{t("seeAll")}</Link>
+          </div>
+          {!loaded ? (
+            <SkeletonRows n={3} h={56} />
+          ) : (
+            <ul className="food-list">
+              {SLOTS.map((slot) => {
+                const list = mealsIn(slot);
                 return (
-                  <div key={d} className={`dinner-cell${isToday ? " is-today" : ""}${m ? "" : " is-empty"}`}>
-                    <span className="dinner-dow">{shortDow(d)}</span>
-                    <span className="dinner-meal">{m ? titles(list) : "—"}</span>
-                  </div>
+                  <li key={slot} className="food-slot">
+                    <span className="mini-label" style={{ margin: 0 }}>{t(slot)}</span>
+                    {list.map((m) => {
+                      const cook = member(m.cook_id);
+                      return (
+                        <button key={m.id} type="button" className="food-row" onClick={() => setPlanning({ meal: m, slot })}>
+                          <span className="food-art">
+                            <RecipeArt recipe={m.recipe_id ? art[m.recipe_id] : null} title={m.title} />
+                          </span>
+                          <span className="grow" style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                            <span className="food-title">{m.title}</span>
+                            <span className="small muted">
+                              {t("portionsShort", { n: m.portions })}
+                              {cook ? ` · ${t("cooks", { name: cook.profile.display_name })}` : ""}
+                            </span>
+                          </span>
+                          {m.cooked && (
+                            <span className="food-done" aria-label={t("cooked")}>
+                              <Icon name="check" size={14} stroke={2.8} />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                    <button type="button" className="food-add" onClick={() => setPlanning({ meal: null, slot })}>
+                      <Icon name="plus" size={14} stroke={2.4} />
+                      {list.length ? t("addAnother") : t("addSlot", { slot: t(slot).toLowerCase() })}
+                    </button>
+                  </li>
                 );
               })}
-            </div>
-            <Link href="/meals?view=groceries" className="btn small soft" style={{ alignSelf: "flex-start" }}>
-              <Icon name="cart" size={16} />
-              {t("groceries")}
-            </Link>
-          </section>
-
-          <section className="card home-card" aria-labelledby="h-badges">
-            <div className="card-head">
-              <h2 id="h-badges">{t("latestBadges")}</h2>
-              <Link href="/badges" className="small">{t("seeAll")}</Link>
-            </div>
-            {!loaded ? (
-              <SkeletonRows n={2} h={44} />
-            ) : badges.length === 0 ? (
-              <EmptyState compact icon="medal" title={t("noBadgesYet")} />
-            ) : (
-              <ul className="stack stagger" style={{ listStyle: "none", padding: 0, margin: 0, gap: 6 }}>
-                {badges.map((b) => {
-                  const def = BADGES.find((x) => x.key === b.badge_key);
-                  const who = member(b.user_id);
-                  return (
-                    <li key={b.id} className="badge-row">
-                      <span className="badge-icon small-badge">
-                        <Icon name={def?.icon ?? "star"} size={20} stroke={1.9} />
-                      </span>
-                      <span className="grow" style={{ display: "flex", flexDirection: "column" }}>
-                        <span style={{ fontWeight: 800, fontSize: 14 }}>{t(badgeName(b.badge_key))}</span>
-                        <span className="small muted">{who ? who.profile.display_name : t("together")}</span>
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-        </div>
+            </ul>
+          )}
+          <Link href="/meals?view=groceries" className="btn small soft" style={{ alignSelf: "flex-start" }}>
+            <Icon name="cart" size={16} />
+            {t("groceries")}
+          </Link>
+        </section>
       </div>
 
       {picking && (
@@ -401,6 +383,17 @@ export default function HomePage() {
           task={null}
           onClose={() => {
             setSheet(null);
+            load();
+          }}
+        />
+      )}
+      {planning && (
+        <MealSheet
+          meal={planning.meal}
+          date={today}
+          slot={planning.slot}
+          onClose={() => {
+            setPlanning(null);
             load();
           }}
         />

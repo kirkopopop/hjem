@@ -1,5 +1,7 @@
 export type TaskStatus = "todo" | "doing" | "done";
 
+export type TaskPriority = "high" | "medium" | "low";
+
 export type Task = {
   id: string;
   household_id: string;
@@ -9,6 +11,7 @@ export type Task = {
   assignee_id: string | null;
   due_date: string | null;
   repeat: "daily" | "weekly" | "monthly" | null;
+  priority: TaskPriority;
   created_by: string | null;
   completed_by: string | null;
   completed_at: string | null;

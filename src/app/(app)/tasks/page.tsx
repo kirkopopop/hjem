@@ -21,16 +21,10 @@ import { WhoPicker } from "@/components/WhoPicker";
 import { Skeleton } from "@/components/ui";
 import { daysFromToday, formatShortDate, startOfWeekISO } from "@/lib/dates";
 import type { Task, TaskStatus } from "@/lib/types";
+import { compareTasks } from "@/lib/tasks";
 
 const COLUMNS: TaskStatus[] = ["todo", "doing", "done"];
 const DONE_PREVIEW = 6;
-
-function byDueThenCreated(a: Task, b: Task) {
-  if (a.due_date && b.due_date && a.due_date !== b.due_date) return a.due_date < b.due_date ? -1 : 1;
-  if (a.due_date && !b.due_date) return -1;
-  if (!a.due_date && b.due_date) return 1;
-  return a.created_at < b.created_at ? -1 : 1;
-}
 
 function Column({
   status,
@@ -182,8 +176,8 @@ export default function TasksPage() {
   const columns = useMemo(() => {
     const out = { todo: [] as Task[], doing: [] as Task[], done: [] as Task[] };
     for (const x of filtered) out[x.status].push(x);
-    out.todo.sort(byDueThenCreated);
-    out.doing.sort(byDueThenCreated);
+    out.todo.sort(compareTasks);
+    out.doing.sort(compareTasks);
     return out;
   }, [filtered]);
 
@@ -224,6 +218,13 @@ export default function TasksPage() {
                 {t("unclaimedHint")}
               </span>
             )}
+            {task.status !== "done" && task.priority === "high" && (
+              <span className="chip prio-high">
+                <Icon name="flag" size={12} stroke={2.2} />
+                {t("priority_high")}
+              </span>
+            )}
+            {task.status !== "done" && task.priority === "low" && <span className="chip prio-low">{t("priority_low")}</span>}
             {dueChip(task)}
             {task.repeat && <span className="chip">{t("repeats")}</span>}
           </span>

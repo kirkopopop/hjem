@@ -1147,3 +1147,50 @@ a.ev.compact:hover { background: var(--ground-2); }
 .baby-card-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .baby-card-facts span { display: flex; flex-direction: column; font-size: 12px; font-weight: 600; color: var(--muted); background: var(--sunken); border-radius: 12px; padding: 8px 10px; }
 .baby-card-facts b { font-size: 15px; color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* ---------- Task priority ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.chip.prio-high { background: var(--danger-soft); color: var(--danger-ink); border-color: transparent; }
+.chip.prio-low { color: var(--muted); background: transparent; }
+.prio-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.prio-dot.high { background: var(--danger); }
+.prio-dot.medium { background: var(--gold); }
+.prio-dot.low { background: var(--faint); }
+.prio-flag { display: inline-flex; vertical-align: -1px; margin-right: 5px; color: var(--danger); }
+
+/* ---------- Home: today's food ---------- */
+.food-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.food-slot { display: flex; flex-direction: column; gap: 6px; }
+.food-slot + .food-slot { padding-top: 12px; border-top: 1px solid var(--line); }
+.food-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 6px; margin: 0 -6px;
+  border: 0; border-radius: var(--radius-md); background: transparent; color: var(--ink);
+  transition: background-color var(--dur-2), transform var(--dur-1) var(--ease-out);
+  width: calc(100% + 12px);
+}
+.food-row:hover { background: var(--sunken); }
+.food-row:active { transform: scale(0.99); }
+.food-art { width: 56px; height: 42px; border-radius: 10px; overflow: hidden; background: var(--art-bg); flex-shrink: 0; }
+.food-title { font-size: 15px; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.food-done {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent); color: var(--on-accent);
+}
+.food-add {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; margin-left: -4px;
+  border: 1.5px dashed var(--line-strong); border-radius: 999px; background: transparent; color: var(--accent);
+  font-size: 13px; font-weight: 700; transition: background-color var(--dur-2), border-color var(--dur-2);
+}
+.food-add:hover { background: var(--accent-soft); border-color: var(--accent); }
+/* Home layout with four cards: pairs on tablets, agenda + tasks + a side column on wide screens */
+@media (min-width: 760px) {
+  .home-grid { grid-template-areas: "agenda tasks" "baby food"; align-items: start; }
+  .home-agenda { grid-area: agenda; }
+  .home-tasks { grid-area: tasks; }
+  .home-grid > .baby-card { grid-area: baby; }
+  .food-card { grid-area: food; }
+}
+@media (min-width: 1100px) {
+  .home-grid { grid-template-areas: "agenda tasks baby" "agenda tasks food"; grid-template-rows: auto 1fr; }
+  .home-agenda, .home-tasks { align-self: stretch; }
+}

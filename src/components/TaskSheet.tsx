@@ -4,7 +4,8 @@ import { useEffect, useId, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
-import type { Task, TaskStatus } from "@/lib/types";
+import type { Task, TaskPriority, TaskStatus } from "@/lib/types";
+import { PRIORITIES } from "@/lib/tasks";
 
 export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Task | null; onClose: () => void; initialStatus?: TaskStatus }) {
   const { t, userId, household, members } = useApp();
@@ -17,6 +18,7 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
   const [assignee, setAssignee] = useState<string>(task ? task.assignee_id ?? "" : "");
   const [due, setDue] = useState(task?.due_date ?? "");
   const [repeat, setRepeat] = useState<string>(task?.repeat ?? "");
+  const [priority, setPriority] = useState<TaskPriority>(task?.priority ?? "medium");
   const [status, setStatus] = useState<TaskStatus>(task?.status ?? initialStatus);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +41,7 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
       assignee_id: assignee || null,
       due_date: due || null,
       repeat: repeat || null,
+      priority,
       status,
     };
     const sb = supabase();
@@ -104,6 +107,18 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
             maxLength={200}
           />
         </label>
+
+        <div className="field">
+          <span>{t("priority")}</span>
+          <div className="segmented prio-seg" role="group" aria-label={t("priority")}>
+            {PRIORITIES.map((p) => (
+              <button key={p} type="button" aria-pressed={priority === p} onClick={() => setPriority(p)}>
+                <i className={`prio-dot ${p}`} aria-hidden="true" />
+                {t(`priority_${p}`)}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div>
           <label className="field">
