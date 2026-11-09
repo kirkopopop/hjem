@@ -15,6 +15,8 @@ export type Task = {
   priority: TaskPriority;
   /** Manual order within a column (lower = higher up). Null = not placed by hand yet. */
   position: number | null;
+  /** Private tasks are only visible to their creator. Shared (false) by default. */
+  is_private: boolean;
   created_by: string | null;
   completed_by: string | null;
   completed_at: string | null;

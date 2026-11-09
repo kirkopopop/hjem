@@ -29,6 +29,10 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
   const customOk = Number.isFinite(customNum) && customNum >= 1 && customNum <= 999;
   const [priority, setPriority] = useState<TaskPriority>(task?.priority ?? "medium");
   const [status, setStatus] = useState<TaskStatus>(task?.status ?? initialStatus);
+  const [isPrivate, setIsPrivate] = useState<boolean>(task?.is_private ?? false);
+  // The wall tablet only makes shared tasks; only the creator can change a task's privacy.
+  const isDevice = members.find((m) => m.user_id === userId)?.role === "device";
+  const canSetPrivacy = !isDevice && (isNew || task?.created_by === userId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +51,8 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
     const fields = {
       title: title.trim(),
       notes: notes.trim() || null,
-      assignee_id: assignee || null,
+      assignee_id: isPrivate ? userId : assignee || null,
+      is_private: canSetPrivacy ? isPrivate : task?.is_private ?? false,
       due_date: due || null,
       repeat: repeat === "custom" ? formatRepeat({ n: customNum, unit: customUnit }) : repeat || null,
       priority,
@@ -129,21 +134,40 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
           </div>
         </div>
 
-        <div>
-          <label className="field">
-            <span>{t("assignee")}</span>
-            <select className="select" value={assignee} onChange={(e) => setAssignee(e.target.value)}>
-              <option value="">{t("nobody")}</option>
-              {members
-                .filter((m) => m.role !== "device")
-                .map((m) => (
-                  <option key={m.user_id} value={m.user_id}>
-                    {m.profile.display_name}
-                  </option>
-                ))}
-            </select>
-          </label>
-        </div>
+        {canSetPrivacy && (
+          <div className="field">
+            <span>{t("visibility")}</span>
+            <div className="segmented" role="group" aria-label={t("visibility")}>
+              <button type="button" aria-pressed={!isPrivate} onClick={() => setIsPrivate(false)}>
+                <Icon name="people" size={16} />
+                {t("visShared")}
+              </button>
+              <button type="button" aria-pressed={isPrivate} onClick={() => setIsPrivate(true)}>
+                <Icon name="lock" size={16} />
+                {t("visPrivate")}
+              </button>
+            </div>
+            <small className="muted">{isPrivate ? t("visPrivateHint") : t("visSharedHint")}</small>
+          </div>
+        )}
+
+        {!isPrivate && (
+          <div>
+            <label className="field">
+              <span>{t("assignee")}</span>
+              <select className="select" value={assignee} onChange={(e) => setAssignee(e.target.value)}>
+                <option value="">{t("nobody")}</option>
+                {members
+                  .filter((m) => m.role !== "device")
+                  .map((m) => (
+                    <option key={m.user_id} value={m.user_id}>
+                      {m.profile.display_name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
+        )}
 
         <div className="two due-repeat">
           <label className="field">
