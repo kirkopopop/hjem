@@ -72,10 +72,6 @@ export function BabyCard() {
           <b>{cur.lastSolid ? hhmm(cur.lastSolid._s) : "–"}</b>
           Last meal
         </span>
-        <span>
-          <b>{cur.vitdToday ? "Given" : "Not yet"}</b>
-          Vitamin D
-        </span>
       </div>
       <button type="button" className={`btn block${r ? " soft" : ""}`} onClick={toggle}>
         <Icon name={r ? "sun" : "moon"} size={18} />

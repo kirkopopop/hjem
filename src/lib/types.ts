@@ -10,8 +10,11 @@ export type Task = {
   status: TaskStatus;
   assignee_id: string | null;
   due_date: string | null;
-  repeat: "daily" | "weekly" | "monthly" | null;
+  /** "daily" | "weekly" | "monthly" (legacy) or a compact rule like "2w", "3m", "10d", "1y". */
+  repeat: string | null;
   priority: TaskPriority;
+  /** Manual order within a column (lower = higher up). Null = not placed by hand yet. */
+  position: number | null;
   created_by: string | null;
   completed_by: string | null;
   completed_at: string | null;

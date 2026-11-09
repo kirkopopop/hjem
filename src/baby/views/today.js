@@ -3,12 +3,12 @@ import { esc, hhmm, dur, dayKey, addDays, hourOf } from '../util.js';
 import { events, state } from '../store.js';
 import { model, current, predictNext } from '../analytics.js';
 import { ICON, KCOLOR } from '../icons.js';
-import { entryRow, describe } from '../ui.js';
+import { entryRow } from '../ui.js';
 import { openFor, editEvent, startSleep, stopSleep, sleepSheet } from '../sheets.js';
 import { actogram } from '../charts.js';
 
 const ago = d => d ? dur(Date.now() - d) + ' ago' : '–';
-const TILES = [['sleep', 'Sleep'], ['bottle', 'Bottle'], ['solids', 'Meal'], ['nappy', 'Nappy'], ['vitd', 'Vitamin D'], ['med', 'Medicine'], ['growth', 'Growth'], ['milestone', 'Milestone']];
+const TILES = [['sleep', 'Sleep'], ['bottle', 'Bottle'], ['solids', 'Meal'], ['growth', 'Growth']];
 
 export function render(root) {
   const ev = events(); const m = model(ev, state.version, state.baby); const now = new Date();
@@ -34,14 +34,12 @@ export function render(root) {
       <button class="btn big light" data-act="start">${ICON.sleep}Start sleep</button></div>
       <p class="hint">${hint}</p></div>`;
   }
-  const lb = cur.lastBottle, ls = cur.lastSolid, ln = cur.lastNappy;
+  const lb = cur.lastBottle, ls = cur.lastSolid;
   const since = `<div class="since">
     <div><span class="l">Last bottle</span><span class="v">${lb ? hhmm(lb._s) : '–'}</span><span class="x">${lb ? `${ago(lb._s)}${lb.amount ? ` · ${Math.round(lb.amount)} ml` : ''}` : 'none yet'}</span></div>
     <div><span class="l">Last meal</span><span class="v">${ls ? hhmm(ls._s) : '–'}</span><span class="x">${ls ? esc(`${ago(ls._s)} · ${ls.foods.slice(0, 2).join(', ')}`) : 'none yet'}</span></div>
-    <div><span class="l">Last nappy</span><span class="v">${ln ? hhmm(ln._s) : '–'}</span><span class="x">${ln ? `${ago(ln._s)} · ${esc(describe(ln).title.replace('Nappy · ', ''))}` : 'none logged'}</span></div>
-    <div><span class="l">Vitamin D</span><span class="v">${cur.vitdToday ? 'Given' : 'Not yet'}</span><span class="x">${cur.vitdToday ? `today at ${hhmm(cur.lastVitD._s)}` : cur.lastVitD ? `last ${dayKey(cur.lastVitD._s) === dayKey(addDays(now, -1)) ? 'yesterday' : cur.lastVitD._s.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}` : 'not logged yet'}</span></div>
   </div>`;
-  const quick = `<div class="quick">${TILES.map(([k, l]) => `<button class="qbtn" data-log="${k}" style="--k:${KCOLOR[k]}"><span class="ic">${ICON[k]}</span>${l}${k === 'vitd' && cur.vitdToday ? '<span class="badge">✓ today</span>' : ''}</button>`).join('')}</div>`;
+  const quick = `<div class="quick">${TILES.map(([k, l]) => `<button class="qbtn" data-log="${k}" style="--k:${KCOLOR[k]}"><span class="ic">${ICON[k]}</span>${l}</button>`).join('')}</div>`;
   // totals: last night (ending today) + today
   const ln0 = m.nights.get(dayKey(addDays(now, -1))); const lastNight = ln0?.segs.length ? ln0 : null;
   const td = m.days.get(tk);
@@ -50,7 +48,7 @@ export function render(root) {
     <div><span class="l">Last night</span><span class="v">${lastNight ? `${lastNight.tot.toFixed(1)} h` : '–'}</span><span class="small muted">${lastNight ? `${hhmm(lastNight.bed)}–${hhmm(lastNight.wake)}${lastNight.wakes ? ` · woke ${lastNight.wakes}×` : ' · straight through'}` : ''}</span></div>
     <div><span class="l">Naps today</span><span class="v">${td || runNap ? `${((td?.napH || 0) + runNap).toFixed(1)} h` : '–'}</span><span class="small muted">${(td?.naps.length || 0) + (runNap ? 1 : 0)} nap${((td?.naps.length || 0) + (runNap ? 1 : 0)) === 1 ? '' : 's'}</span></div>
     <div><span class="l">Milk today</span><span class="v">${td?.ml ? `${Math.round(td.ml)} ml` : '–'}</span><span class="small muted">${td?.bottles || 0} bottle${td?.bottles === 1 ? '' : 's'}</span></div>
-    <div><span class="l">Meals today</span><span class="v">${td?.solids.length || 0}</span><span class="small muted">${td?.nappyN ? `${td.nappyN} nappies` : ''}</span></div>
+    <div><span class="l">Meals today</span><span class="v">${td?.solids.length || 0}</span><span class="small muted">${(td?.solids.length || 0) === 1 ? 'meal' : 'meals'}</span></div>
   </div>`;
   // entries for today (incl. the night that ended today)
   const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -61,7 +59,7 @@ export function render(root) {
     <section><div class="sec-head"><h2>Log</h2></div>${quick}</section>
     <section><div class="sec-head"><h2>Today so far</h2><p>${now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p></div>${totals}
       <div class="panel"><div class="chart" id="t-acto"></div>
-      <div class="legend"><span><i class="sw" style="background:var(--night)"></i>Night</span><span><i class="sw" style="background:var(--nap)"></i>Nap</span><span><i class="sw dot" style="background:var(--bottle)"></i>Bottle</span><span><i class="sw dia" style="background:var(--solid)"></i>Meal</span><span><i class="sw dot" style="background:var(--nappy)"></i>Nappy</span></div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--night)"></i>Night</span><span><i class="sw" style="background:var(--nap)"></i>Nap</span><span><i class="sw dot" style="background:var(--bottle)"></i>Bottle</span><span><i class="sw dia" style="background:var(--solid)"></i>Meal</span></div></div>
     </section>
     <section><div class="sec-head"><h2>Entries</h2><p>Tap one to edit</p></div>
       <div class="panel" style="padding:4px 12px">${list.length ? `<div class="entries">${list.map(entryRow).join('')}</div>` : `<p class="empty">Nothing logged yet today. Use the buttons above.</p>`}</div></section>`;
@@ -69,7 +67,7 @@ export function render(root) {
   root.querySelector('[data-act="stop"]')?.addEventListener('click', () => stopSleep(cur.running));
   root.querySelectorAll('[data-log]').forEach(b => b.addEventListener('click', () => b.dataset.log === 'sleep' ? openSleepChoice(cur) : openFor(b.dataset.log)));
   root.querySelectorAll('.entry').forEach(b => b.addEventListener('click', () => editEvent(state.events.get(b.dataset.id))));
-  actogram(root.querySelector('#t-acto'), dayRows(ev, [addDays(now, -1), now], now), { nowH: hourOf(now), label: 'Yesterday and today' });
+  actogram(root.querySelector('#t-acto'), dayRows(ev.filter(e => e.kind !== 'nappy'), [now, addDays(now, -1)], now), { nowH: hourOf(now), label: 'Today and yesterday' });
 }
 
 // The Sleep tile opens the manual form (or the running sleep); the hero button handles start/stop.

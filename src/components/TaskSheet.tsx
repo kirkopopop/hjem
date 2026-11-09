@@ -5,7 +5,9 @@ import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
 import type { Task, TaskPriority, TaskStatus } from "@/lib/types";
-import { PRIORITIES } from "@/lib/tasks";
+import { PRIORITIES, REPEAT_PRESETS, formatRepeat, parseRepeat, repeatLabel, type RepeatUnit } from "@/lib/tasks";
+
+const isPreset = (r: string) => (REPEAT_PRESETS as readonly string[]).includes(r);
 
 export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Task | null; onClose: () => void; initialStatus?: TaskStatus }) {
   const { t, userId, household, members } = useApp();
@@ -17,7 +19,14 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
   const [notes, setNotes] = useState(task?.notes ?? "");
   const [assignee, setAssignee] = useState<string>(task ? task.assignee_id ?? "" : "");
   const [due, setDue] = useState(task?.due_date ?? "");
-  const [repeat, setRepeat] = useState<string>(task?.repeat ?? "");
+  // Repeat menu: "" (none), one of the presets, or "custom" with its own number + unit.
+  const initialRule = parseRepeat(task?.repeat);
+  const initialRepeat = initialRule ? formatRepeat(initialRule) : "";
+  const [repeat, setRepeat] = useState<string>(initialRepeat && !isPreset(initialRepeat) ? "custom" : initialRepeat);
+  const [customN, setCustomN] = useState<string>(String(initialRule?.n && !isPreset(initialRepeat) ? initialRule.n : 2));
+  const [customUnit, setCustomUnit] = useState<RepeatUnit>(initialRule && !isPreset(initialRepeat) ? initialRule.unit : "w");
+  const customNum = Math.round(Number(customN));
+  const customOk = Number.isFinite(customNum) && customNum >= 1 && customNum <= 999;
   const [priority, setPriority] = useState<TaskPriority>(task?.priority ?? "medium");
   const [status, setStatus] = useState<TaskStatus>(task?.status ?? initialStatus);
   const [busy, setBusy] = useState(false);
@@ -40,7 +49,7 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
       notes: notes.trim() || null,
       assignee_id: assignee || null,
       due_date: due || null,
-      repeat: repeat || null,
+      repeat: repeat === "custom" ? formatRepeat({ n: customNum, unit: customUnit }) : repeat || null,
       priority,
       status,
     };
@@ -136,7 +145,7 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
           </label>
         </div>
 
-        <div className="two">
+        <div className="two due-repeat">
           <label className="field">
             <span>{t("due")}</span>
             <input className="input" type="date" value={due} onChange={(e) => setDue(e.target.value)} />
@@ -145,12 +154,41 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
             <span>{t("repeat")}</span>
             <select className="select" value={repeat} onChange={(e) => setRepeat(e.target.value)}>
               <option value="">{t("repeatNone")}</option>
-              <option value="daily">{t("repeatDaily")}</option>
-              <option value="weekly">{t("repeatWeekly")}</option>
-              <option value="monthly">{t("repeatMonthly")}</option>
+              {REPEAT_PRESETS.map((p) => (
+                <option key={p} value={p}>
+                  {repeatLabel(p)}
+                </option>
+              ))}
+              <option value="custom">{t("repeatCustom")}</option>
             </select>
           </label>
         </div>
+
+        {repeat === "custom" && (
+          <div className="field">
+            <span>{t("repeatEvery")}</span>
+            <div className="repeat-custom">
+              <input
+                className="input"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={999}
+                value={customN}
+                onChange={(e) => setCustomN(e.target.value)}
+                aria-label={t("repeatCount")}
+                aria-invalid={!customOk}
+              />
+              <select className="select" value={customUnit} onChange={(e) => setCustomUnit(e.target.value as RepeatUnit)} aria-label={t("repeatUnit")}>
+                <option value="d">{customNum === 1 ? "day" : "days"}</option>
+                <option value="w">{customNum === 1 ? "week" : "weeks"}</option>
+                <option value="m">{customNum === 1 ? "month" : "months"}</option>
+                <option value="y">{customNum === 1 ? "year" : "years"}</option>
+              </select>
+            </div>
+          </div>
+        )}
+
 
         <label className="field">
           <span>{t("notes")}</span>
@@ -166,7 +204,7 @@ export function TaskSheet({ task, onClose, initialStatus = "todo" }: { task: Tas
             </button>
           )}
           <span className="grow" />
-          <button type="submit" className="btn" disabled={busy || !title.trim()}>
+          <button type="submit" className="btn" disabled={busy || !title.trim() || (repeat === "custom" && !customOk)}>
             {busy ? t("working") : t("save")}
           </button>
         </div>

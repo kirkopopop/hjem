@@ -7,16 +7,28 @@ import { editEvent } from '../sheets.js';
 import { actogram } from '../charts.js';
 import { dayRows } from './today.js';
 
-const FILTERS = [['all', 'All'], ['sleep', 'Sleep'], ['feed', 'Milk'], ['solids', 'Meals'], ['nappy', 'Nappies'], ['med', 'Meds'], ['growth', 'Growth'], ['milestone', 'Milestones'], ['other', 'Other']];
-const match = (f, e) => f === 'all' || (f === 'feed' ? (e.kind === 'bottle' || e.kind === 'nursing' || e.kind === 'pump') : f === 'other' ? ['bath', 'walk', 'note'].includes(e.kind) : e.kind === f);
-const ui = { filter: 'all', days: 7, end: null };
+// Multi-select filters: none selected = everything. "Other" catches kinds that are no longer logged
+// from the quick buttons (nappies, vitamin D, medicine, milestones, baths, walks, notes).
+const FILTERS = [['sleep', 'Sleep'], ['feed', 'Milk'], ['solids', 'Food'], ['growth', 'Growth'], ['other', 'Other']];
+const MAIN = new Set(['sleep', 'bottle', 'nursing', 'pump', 'solids', 'growth']);
+const match1 = (f, e) => f === 'feed' ? (e.kind === 'bottle' || e.kind === 'nursing' || e.kind === 'pump') : f === 'other' ? !MAIN.has(e.kind) : e.kind === f;
+const ui = { filters: new Set(), days: 7, end: null };
+const match = e => !ui.filters.size || [...ui.filters].some(f => match1(f, e));
+
+const on = f => !ui.filters.size || ui.filters.has(f);
+const legend = () => [
+  on('sleep') && '<span><i class="sw" style="background:var(--night)"></i>Night</span><span><i class="sw" style="background:var(--nap)"></i>Nap</span>',
+  on('feed') && '<span><i class="sw dot" style="background:var(--bottle)"></i>Bottle</span>',
+  on('solids') && '<span><i class="sw dia" style="background:var(--solid)"></i>Food</span>',
+  on('other') && '<span><i class="sw dot" style="background:var(--nappy)"></i>Nappy</span>',
+].filter(Boolean).join('') || '<span class="faint">Growth isn’t drawn on the timeline</span>';
 
 export function render(root) {
   const ev = events(); const m = model(ev, state.version, state.baby);
   const endKey = ui.end || dayKey(new Date());
   const keys = [...Array(ui.days).keys()].map(i => keyAdd(endKey, -i));
   const byDay = new Map(keys.map(k => [k, []]));
-  for (const e of ev) { const k = dayKey(e._s); if (byDay.has(k) && match(ui.filter, e)) byDay.get(k).push(e); }
+  for (const e of ev) { const k = dayKey(e._s); if (byDay.has(k) && match(e)) byDay.get(k).push(e); }
   const first = ev[0] ? dayKey(ev[0]._s) : endKey;
   const blocks = keys.map(k => {
     const list = byDay.get(k).slice().reverse(); const d = m.days.get(k); const n0 = m.nights.get(k); const n = n0?.segs.length ? n0 : null;
@@ -26,22 +38,29 @@ export function render(root) {
     if (d?.ml) bits.push(`${Math.round(d.ml)} ml`);
     if (d?.solids.length) bits.push(`${d.solids.length} meal${d.solids.length > 1 ? 's' : ''}`);
     return `<div class="daylabel"><span>${esc(dayLabel(k))}</span><span class="faint">${esc(bits.join(' · '))}</span></div>
-      <div class="panel" style="padding:2px 12px">${list.length ? `<div class="entries">${list.map(entryRow).join('')}</div>` : `<p class="empty">Nothing logged${ui.filter !== 'all' ? ' for this filter' : ''}.</p>`}</div>`;
+      <div class="panel" style="padding:2px 12px">${list.length ? `<div class="entries">${list.map(entryRow).join('')}</div>` : `<p class="empty">Nothing logged${ui.filters.size ? ' for this filter' : ''}.</p>`}</div>`;
   }).join('');
   root.innerHTML = `
     <section style="margin-top:0"><div class="sec-head"><div class="row"><label class="small muted" for="h-date">Jump to</label><input type="date" id="h-date" value="${endKey}" max="${dayKey(new Date())}" min="${first}" style="width:auto"></div></div>
-      <div class="chips" role="group" aria-label="Filter">${FILTERS.map(([k, l]) => `<button class="chip-btn" data-f="${k}" aria-pressed="${ui.filter === k}">${l}</button>`).join('')}</div>
+      <div class="chips" role="group" aria-label="Filter (pick one or more)"><button class="chip-btn" data-f="all" aria-pressed="${!ui.filters.size}">All</button>${FILTERS.map(([k, l]) => `<button class="chip-btn" data-f="${k}" aria-pressed="${ui.filters.has(k)}">${l}</button>`).join('')}</div>
     </section>
     <section><div class="panel"><h3>Two weeks, hour by hour</h3><div class="sub">Ending ${esc(dayLabel(endKey).toLowerCase() === 'today' ? 'today' : dayLabel(endKey))}. Tap a block to edit it.</div><div class="chart" id="h-acto"></div>
-      <div class="legend"><span><i class="sw" style="background:var(--night)"></i>Night</span><span><i class="sw" style="background:var(--nap)"></i>Nap</span><span><i class="sw dot" style="background:var(--bottle)"></i>Bottle</span><span><i class="sw dia" style="background:var(--solid)"></i>Meal</span></div></div></section>
+      <div class="legend">${legend()}</div></div></section>
     <section style="gap:0">${blocks}
       <div class="row" style="justify-content:center;margin-top:16px">${keys[keys.length - 1] > first ? `<button class="btn secondary" data-more>Show 7 earlier days</button>` : `<p class="faint small">Start of the log</p>`}${ui.end ? `<button class="btn ghost" data-today>Back to today</button>` : ''}</div>
     </section>`;
-  root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => { ui.filter = b.dataset.f; render(root); }));
+  root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => {
+    const f = b.dataset.f;
+    if (f === 'all') ui.filters.clear();
+    else if (ui.filters.has(f)) ui.filters.delete(f);
+    else ui.filters.add(f);
+    if (ui.filters.size === FILTERS.length) ui.filters.clear(); // everything picked = All
+    render(root);
+  }));
   root.querySelectorAll('.entry').forEach(b => b.addEventListener('click', () => editEvent(state.events.get(b.dataset.id))));
   root.querySelector('[data-more]')?.addEventListener('click', () => { ui.days += 7; render(root); });
   root.querySelector('[data-today]')?.addEventListener('click', () => { ui.end = null; ui.days = 7; render(root); });
   root.querySelector('#h-date').addEventListener('change', e => { if (e.target.value) { ui.end = e.target.value === dayKey(new Date()) ? null : e.target.value; ui.days = 7; render(root); } });
-  const days = [...Array(14).keys()].map(i => addDays(fromKey(endKey), -13 + i));
-  actogram(root.querySelector('#h-acto'), dayRows(ev, days), { label: 'Sleep and feeds, two weeks' });
+  const days = [...Array(14).keys()].map(i => addDays(fromKey(endKey), -i)); // newest day on top
+  actogram(root.querySelector('#h-acto'), dayRows(ev.filter(match), days), { label: 'Sleep and feeds, two weeks' });
 }
