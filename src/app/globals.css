@@ -1144,7 +1144,7 @@ a.ev.compact:hover { background: var(--ground-2); }
 :root[data-theme="dark"] .baby-card.is-asleep .baby-card-ico { background: #16305a; color: #8fb8f0; }
 .baby-card-big { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .baby-card-big span { color: var(--muted); font-weight: 700; }
-.baby-card-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.baby-card-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .baby-card-facts span { display: flex; flex-direction: column; font-size: 12px; font-weight: 600; color: var(--muted); background: var(--sunken); border-radius: 12px; padding: 8px 10px; }
 .baby-card-facts b { font-size: 15px; color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
 
@@ -1191,3 +1191,28 @@ a.ev.compact:hover { background: var(--ground-2); }
   .home-side { grid-column: auto; display: flex; flex-direction: column; align-items: stretch; }
 }
 
+
+/* ---------- Task sheet: due + repeat ---------- */
+/* iOS Safari gives date inputs an intrinsic min width and its own height, which pushed the
+   Due field under the Repeats select on iPhone. Let both fields shrink and match heights. */
+.two > * { min-width: 0; }
+.input[type="date"] {
+  -webkit-appearance: none; appearance: none;
+  display: block; min-width: 0; max-width: 100%; height: 48px; line-height: 1.2; text-align: left;
+}
+.input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+.input[type="date"]::-webkit-calendar-picker-indicator { margin-left: 4px; }
+.due-repeat .select { height: 48px; }
+.repeat-custom { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; }
+.repeat-custom .input[aria-invalid="true"] { border-color: var(--danger); }
+
+/* ---------- Task drag-to-reorder ---------- */
+.board-list > li { position: relative; }
+.board-list > li.drop-before::before,
+.board-list > li.drop-after::after {
+  content: ""; position: absolute; left: 6px; right: 6px; height: 3px; border-radius: 3px;
+  background: var(--accent); pointer-events: none;
+}
+.board-list > li.drop-before::before { top: -6px; }
+.board-list > li.drop-after::after { bottom: -6px; }
+.order-reset { background: none; border: 0; padding: 0; color: var(--accent-ink); font-weight: 700; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
