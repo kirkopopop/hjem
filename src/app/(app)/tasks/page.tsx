@@ -298,7 +298,7 @@ export default function TasksPage() {
   }
 
   function cardBody(task: Task) {
-    const unclaimed = task.status !== "done" && !task.assignee_id;
+    const unclaimed = task.status !== "done" && !task.assignee_id && !task.is_private;
     const who = member(task.status === "done" ? task.completed_by ?? task.assignee_id : task.assignee_id);
     const done = task.status === "done";
     return (
@@ -323,6 +323,12 @@ export default function TasksPage() {
               <span className="chip unclaimed-chip">
                 <Icon name="star" size={12} stroke={2} />
                 {t("unclaimedHint")}
+              </span>
+            )}
+            {task.is_private && (
+              <span className="chip private-chip" title={t("privateTask")}>
+                <Icon name="lock" size={12} stroke={2.2} />
+                {t("privateTask")}
               </span>
             )}
             {task.status !== "done" && task.priority === "high" && (

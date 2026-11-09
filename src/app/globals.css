@@ -1216,3 +1216,4 @@ a.ev.compact:hover { background: var(--ground-2); }
 .board-list > li.drop-before::before { top: -6px; }
 .board-list > li.drop-after::after { bottom: -6px; }
 .order-reset { background: none; border: 0; padding: 0; color: var(--accent-ink); font-weight: 700; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.private-chip { display: inline-flex; align-items: center; gap: 4px; }

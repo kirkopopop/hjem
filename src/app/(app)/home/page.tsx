@@ -173,6 +173,12 @@ export default function HomePage() {
                 <span className="sr-only">{t("highPriority")}: </span>
               </span>
             )}
+            {task.is_private && (
+              <span className="prio-flag" title={t("privateTask")} style={{ color: "var(--muted)" }}>
+                <Icon name="lock" size={13} stroke={2.4} />
+                <span className="sr-only">{t("privateTask")}: </span>
+              </span>
+            )}
             {task.title}
           </span>
           {overdue && <span className="small" style={{ color: "var(--danger-ink)" }}>{t("overdue")}</span>}
