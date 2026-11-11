@@ -1217,3 +1217,99 @@ a.ev.compact:hover { background: var(--ground-2); }
 .board-list > li.drop-after::after { bottom: -6px; }
 .order-reset { background: none; border: 0; padding: 0; color: var(--accent-ink); font-weight: 700; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .private-chip { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ---------- Things: wishlist + purchases ---------- */
+.things-page { padding-bottom: 72px; }
+.things-tabs { width: 240px; }
+@media (max-width: 420px) { .things-tabs { width: 100%; } }
+
+.wish-filter { margin-bottom: 10px; }
+.wish-filter.segmented button { font-size: 13px; padding: 0 4px; }
+.wish-summary { margin: 0 2px 4px; }
+.task.wish { align-items: center; }
+.task.wish .check { margin-top: 0; }
+.wish-link { color: var(--ink-2); }
+.for-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+.money-row { display: flex; align-items: flex-end; gap: 10px; }
+.currency-field { width: 104px; flex-shrink: 0; }
+.money-preview { margin-top: -8px; padding-left: 2px; }
+.link-input { display: flex; align-items: center; gap: 6px; }
+.link-input .icon-btn { color: var(--accent-ink); }
+.input.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.02em; }
+
+.warranty-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.pick {
+  min-height: 40px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--line-strong);
+  background: var(--surface); font-size: 14px; font-weight: 700; color: var(--ink-2);
+  transition: background-color var(--dur-2), border-color var(--dur-2), color var(--dur-2), transform var(--dur-1) var(--ease-out);
+}
+.pick:hover { border-color: var(--accent); }
+.pick:active { transform: scale(0.95); }
+.pick[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); font-weight: 800; }
+
+.field-group { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: var(--radius-md); background: var(--sunken); }
+.field-group-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.file-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; }
+.file-row { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 12px; min-height: 52px; }
+.file-row + .file-row { border-top: 1px solid var(--line); }
+.file-row.is-pending { background: var(--accent-soft); }
+.file-ico { color: var(--ink-2); display: inline-flex; }
+.file-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+a.file-name { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+.kind-select { width: auto; min-height: 36px; padding: 4px 8px; font-size: 13px; }
+.add-file { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; }
+
+.bought-prompt { align-items: center; text-align: center; gap: 10px; }
+.bought-prompt h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.bought-prompt p { margin: 0 0 6px; line-height: 1.45; max-width: 36ch; }
+.bought-prompt .row { width: 100%; }
+.bought-prompt .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; padding: 0 12px; }
+.bought-ico {
+  width: 64px; height: 64px; border-radius: 22px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--warm-soft); color: var(--warm); animation: pop-in var(--dur-3) var(--ease-spring);
+}
+
+.stat-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.stat-tile {
+  display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 14px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+}
+button.stat-tile { cursor: pointer; transition: border-color var(--dur-2), box-shadow var(--dur-2); }
+button.stat-tile:disabled { cursor: default; }
+button.stat-tile[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.stat-tile.is-warn { background: var(--gold-soft); border-color: transparent; }
+.stat-label { font-size: 12px; font-weight: 700; color: var(--muted); }
+.stat-tile.is-warn .stat-label { color: color-mix(in srgb, var(--gold) 70%, var(--ink) 30%); }
+.stat-value { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+
+.purchase-tools { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.search-field { position: relative; display: flex; align-items: center; }
+.search-field > svg { position: absolute; left: 14px; color: var(--muted); pointer-events: none; }
+.search-field .input { padding-left: 42px; }
+.sort-seg { width: 200px; flex-shrink: 0; }
+.sort-seg button { font-size: 13px; padding: 0 4px; }
+@media (max-width: 480px) { .sort-seg { width: 168px; } .purchase-tools .select { font-size: 15px; padding-right: 8px; } }
+
+.purchase {
+  width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-align: left;
+  border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+  transition: border-color var(--dur-2), transform var(--dur-1) var(--ease-out);
+}
+.purchase:hover { border-color: var(--line-strong); }
+.purchase:active { transform: scale(0.99); }
+.purchase-ico {
+  width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-ink);
+}
+.purchase-ico.cat-baby, .purchase-ico.cat-clothing { background: var(--warm-soft); color: var(--warm); }
+.purchase-ico.cat-kitchen, .purchase-ico.cat-appliance { background: var(--gold-soft); color: color-mix(in srgb, var(--gold) 70%, var(--ink) 30%); }
+.purchase-ico.cat-other, .purchase-ico.cat-tools, .purchase-ico.cat-vehicle { background: var(--sunken); color: var(--ink-2); }
+.purchase-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.purchase-title { font-size: 16px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+.purchase-sub { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.chip.w-ok { background: var(--success-soft); color: var(--success); border-color: transparent; }
+.chip.w-soon { background: var(--gold-soft); color: color-mix(in srgb, var(--gold) 65%, var(--ink) 35%); border-color: transparent; }
+.chip.w-expired { color: var(--muted); background: transparent; }
+.chip.icon-chip { padding: 3px 6px; }

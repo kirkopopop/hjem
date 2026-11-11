@@ -7,13 +7,14 @@ import { useApp } from "./AppProvider";
 import { Avatar, Icon, Logo, LogoMark } from "./Icon";
 import { useWakeLock } from "./CalendarSettings";
 
-// Five sections in the bottom bar; Settings (with Badges) sits behind your avatar on phones.
+// Six sections in the bottom bar; Settings (with Badges) sits behind your avatar on phones.
 const LINKS = [
   { href: "/home", icon: "home", label: "navHome" },
   { href: "/calendar", icon: "calendar", label: "navCalendar" },
   { href: "/baby", icon: "baby", label: "navBaby" },
   { href: "/tasks", icon: "tasks", label: "navTasks" },
   { href: "/meals", icon: "meals", label: "navMeals" },
+  { href: "/things", icon: "bag", label: "navThings" },
 ] as const;
 
 export function Shell({ children }: { children: React.ReactNode }) {

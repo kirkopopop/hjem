@@ -17,6 +17,7 @@ export const BADGES: BadgeDef[] = [
   { key: "team_500", scope: "together", icon: "people", metric: "teamDone", target: 500 },
   { key: "full_week", scope: "together", icon: "calendarCheck" },
   { key: "clean_slate", scope: "together", icon: "sparkle" },
+  { key: "paper_trail", scope: "together", icon: "receipt" },
 
   { key: "first_task", scope: "me", icon: "flag", metric: "myDone", target: 1 },
   { key: "tasks_10", scope: "me", icon: "medal", metric: "myDone", target: 10 },
@@ -31,6 +32,7 @@ export const BADGES: BadgeDef[] = [
   { key: "chef_5", scope: "me", icon: "pan", metric: "myCooked", target: 5 },
   { key: "chef_20", scope: "me", icon: "pan", metric: "myCooked", target: 20 },
   { key: "shopper", scope: "me", icon: "cart", metric: "myTicked", target: 25 },
+  { key: "wish_granted", scope: "me", icon: "gift" },
 ];
 
 export const badgeName = (key: string) => `b_${key}` as Key;
