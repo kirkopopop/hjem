@@ -10,9 +10,9 @@ import { useWakeLock } from "./CalendarSettings";
 // Six sections in the bottom bar; Settings (with Badges) sits behind your avatar on phones.
 const LINKS = [
   { href: "/home", icon: "home", label: "navHome" },
-  { href: "/calendar", icon: "calendar", label: "navCalendar" },
   { href: "/baby", icon: "baby", label: "navBaby" },
   { href: "/tasks", icon: "tasks", label: "navTasks" },
+  { href: "/calendar", icon: "calendar", label: "navCalendar" },
   { href: "/meals", icon: "meals", label: "navMeals" },
   { href: "/things", icon: "bag", label: "navThings" },
 ] as const;
