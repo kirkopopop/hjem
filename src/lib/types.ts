@@ -142,3 +142,68 @@ export type CalendarEvent = {
   all_day: boolean;
   html_link: string | null;
 };
+
+export type WishStatus = "wanted" | "bought";
+
+export type WishItem = {
+  id: string;
+  household_id: string;
+  title: string;
+  /** Who it's for. Null = the home. */
+  for_user_id: string | null;
+  /** Private items (e.g. gift ideas) are only visible to whoever added them. */
+  is_private: boolean;
+  priority: TaskPriority;
+  price_estimate: number | null;
+  currency: string;
+  url: string | null;
+  notes: string | null;
+  status: WishStatus;
+  bought_at: string | null;
+  bought_by: string | null;
+  purchase_id: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PurchaseCategory =
+  | "electronics"
+  | "appliance"
+  | "kitchen"
+  | "furniture"
+  | "baby"
+  | "sports"
+  | "tools"
+  | "clothing"
+  | "vehicle"
+  | "other";
+
+export type PurchaseFileKind = "receipt" | "manual" | "photo" | "other";
+
+export type PurchaseFile = { path: string; name: string; kind: PurchaseFileKind; size: number; type: string };
+
+export type Purchase = {
+  id: string;
+  household_id: string;
+  name: string;
+  brand: string | null;
+  model: string | null;
+  category: PurchaseCategory;
+  /** Whose it is. Null = the household. */
+  owner_id: string | null;
+  store: string | null;
+  price: number | null;
+  currency: string;
+  purchased_on: string | null;
+  warranty_until: string | null;
+  serial_number: string | null;
+  manual_url: string | null;
+  product_url: string | null;
+  receipt_url: string | null;
+  notes: string | null;
+  files: PurchaseFile[];
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
