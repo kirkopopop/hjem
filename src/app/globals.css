@@ -1331,7 +1331,7 @@ button.stat-tile[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0
 .chip.icon-chip { padding: 3px 6px; }
 
 /* =====================================================================
-   "Daylight" layer: the day ribbon, navigation and sheet motion, sliders,
+   "Daylight" layer: navigation and sheet motion, sliders,
    toggle rows, and the refinements that came with the redesign.
    Sits last so it settles the look of everything above.
    ===================================================================== */
@@ -1378,44 +1378,25 @@ b, strong { font-weight: 650; }
   .nav-ico::before { display: block; }
 }
 
-/* ---------- Home hero and the day ribbon ---------- */
+/* ---------- Home hero ---------- */
 .hero { grid-template-columns: minmax(0, 1fr) auto; align-items: start; padding: 20px 20px 18px; gap: 14px; border-radius: 30px; }
 .hero-people { display: flex; align-self: start; padding-top: 2px; }
 .hero-people .avatar + .avatar { margin-left: -10px; }
-.ribbon { grid-column: 1 / -1; display: block; text-decoration: none; color: inherit; padding: 6px 0 2px; border-radius: 14px; -webkit-tap-highlight-color: transparent; }
-.ribbon:focus-visible { outline: 2.5px solid #8fe0c9; outline-offset: 4px; }
-.ribbon-track { position: relative; display: block; height: 30px; border-radius: 10px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07); overflow: hidden; }
-.ribbon.two .ribbon-track { height: 42px; }
-.ribbon-tick { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255, 255, 255, 0.09); }
-.ribbon-sleep { position: absolute; bottom: 0; height: 6px; background: rgba(160, 196, 255, 0.5); border-radius: 3px 3px 0 0; }
-.ribbon-sleep.night { background: rgba(120, 160, 240, 0.55); }
-.ribbon-sleep.live { animation: pulse-soft 2.4s ease-in-out infinite; transform-origin: center bottom; }
-.ribbon-block {
-  position: absolute; top: 5px; height: 14px; min-width: 6px; border-radius: 5px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28), 0 1px 3px rgba(0, 0, 0, 0.25);
-  transform-origin: left center; animation: ribbon-grow 520ms var(--ease-out) backwards;
-}
-.ribbon.two .ribbon-block.lane-1 { top: 22px; }
-.ribbon-block.past { opacity: 0.45; }
-@keyframes ribbon-grow { from { transform: scaleX(0); opacity: 0; } }
-.ribbon-meal { position: absolute; bottom: 9px; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%; background: #f3b48a; box-shadow: 0 0 0 2px rgba(19, 48, 42, 0.9); }
-.ribbon.two .ribbon-meal { bottom: 2px; }
-.ribbon-meal.past { opacity: 0.5; }
-.ribbon-now { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; border-radius: 1px; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16), 0 0 12px rgba(255, 255, 255, 0.6); transition: left 1s linear; }
-.ribbon-scale { position: relative; display: block; height: 16px; margin-top: 5px; }
-.ribbon-scale span { position: absolute; transform: translateX(-50%); font-size: 10.5px; font-weight: 500; color: var(--hero-muted); font-variant-numeric: tabular-nums; }
-.ribbon-scale span:first-child { transform: none; }
+.hero-next { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
+.hero-next a { min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); color: #fff; text-decoration: none; font-size: 14.5px; font-weight: 500; line-height: 1.25; transition: background-color var(--dur-2); }
+.hero-next a:hover { background: rgba(255, 255, 255, 0.13); }
+.hero-next a:active { background: rgba(255, 255, 255, 0.16); }
+.hero-next a:focus-visible { outline: 2.5px solid #8fe0c9; outline-offset: 2px; }
+.hero-next svg { flex: none; opacity: 0.8; }
+.hero-next span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .quick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; overflow: visible; margin: 0; padding: 0; }
 .quick-btn { flex-direction: column; justify-content: center; gap: 5px; min-height: 62px; padding: 8px 4px; border-radius: 18px; font-size: 12px; font-weight: 600; text-align: center; line-height: 1.15; }
 .quick-btn.primary { background: #f3f7f5; color: #13302a; }
 @media (min-width: 640px) {
   .hero { padding: 26px 28px 22px; }
+  .hero-next { display: flex; flex-wrap: wrap; gap: 8px; }
   .quick { display: flex; }
   .quick-btn { flex-direction: row; min-height: 44px; padding: 0 16px 0 12px; border-radius: 999px; font-size: 14px; }
-  .ribbon-track { height: 36px; }
-  .ribbon.two .ribbon-track { height: 50px; }
-  .ribbon-block { top: 7px; height: 16px; }
-  .ribbon.two .ribbon-block.lane-1 { top: 27px; }
 }
 
 /* things going on for several days: said once */
@@ -1478,10 +1459,9 @@ b, strong { font-weight: 650; }
 .board-hint[hidden] { display: none; }
 
 /* ---------- Respect "reduce motion" for everything added here ---------- */
-:root[data-motion="reduced"] .nav-thumb, :root[data-motion="reduced"] .ribbon-now { transition: none; }
-:root[data-motion="reduced"] .ribbon-block, :root[data-motion="reduced"] .slider-value, :root[data-motion="reduced"] .ribbon-sleep.live,
+:root[data-motion="reduced"] .nav-thumb { transition: none; }
+:root[data-motion="reduced"] .slider-value,
 :root[data-motion="reduced"] .nav-link[aria-current="page"] .nav-ico svg { animation: none; }
 @media (prefers-reduced-motion: reduce) {
-  .nav-thumb, .ribbon-now { transition: none; }
-  .ribbon-block, .slider-value, .ribbon-sleep.live, .nav-link[aria-current="page"] .nav-ico svg { animation: none; }
+  .nav-thumb { transition: none; }
 }

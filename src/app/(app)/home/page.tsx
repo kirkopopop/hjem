@@ -12,7 +12,6 @@ import { TaskSheet } from "@/components/TaskSheet";
 import { WhoPicker } from "@/components/WhoPicker";
 import { RecipeArt } from "@/components/RecipeBits";
 import { EmptyState, SkeletonRows } from "@/components/ui";
-import { DayRibbon, type RibbonSleep } from "@/components/DayRibbon";
 import { useBaby } from "@/baby/useBaby";
 import { events as babyEvents } from "@/baby/store";
 import { eventsOnDay, useCalendarData, useHiddenCalendars } from "@/lib/calendar";
@@ -137,13 +136,27 @@ export default function HomePage() {
   const ongoing = eventsOnDay(shownEvents, today).filter(multiDay);
   const ongoingIds = new Set(ongoing.map((e) => e.id));
   const todayTimed = eventsOnDay(shownEvents, today).filter((e) => !e.all_day);
-  const dayStart = new Date(now);
-  dayStart.setHours(0, 0, 0, 0);
-  const sleeps: RibbonSleep[] = baby.baby
-    ? (babyEvents() as { kind: string; subtype: string | null; _s: Date; _e: Date | null }[])
-        .filter((e) => e.kind === "sleep" && (e._e ?? now) > dayStart && e._s <= now)
-        .map((e) => ({ start: e._s, end: e._e, night: e.subtype === "night" }))
+  // What is on now or next today, and how Oscar is doing, said in words.
+  const hm = (d: Date | string) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(new Date(d));
+  const nowEvent = todayTimed.find((e) => new Date(e.starts_at) <= now && new Date(e.ends_at) > now);
+  const nextEvent = todayTimed.filter((e) => new Date(e.starts_at) > now).sort((x, y) => +new Date(x.starts_at) - +new Date(y.starts_at))[0];
+  const eventLine = nowEvent
+    ? t("heroNow", { title: nowEvent.title, time: hm(nowEvent.ends_at) })
+    : nextEvent
+      ? t("heroNext", { title: nextEvent.title, time: hm(nextEvent.starts_at) })
+      : t("heroNoEvents");
+  const sleepLog = baby.baby
+    ? (babyEvents() as { kind: string; _s: Date; _e: Date | null }[]).filter((e) => e.kind === "sleep" && e._s <= now).sort((x, y) => +y._s - +x._s)
     : [];
+  const lastSleep = sleepLog[0];
+  const babyName = baby.baby?.name ?? "";
+  const babyLine = !lastSleep
+    ? null
+    : !lastSleep._e || lastSleep._e > now
+      ? t("heroAsleep", { name: babyName, time: hm(lastSleep._s) })
+      : now.getTime() - lastSleep._e.getTime() < 20 * 3_600_000
+        ? t("heroAwake", { name: babyName, time: hm(lastSleep._e) })
+        : null;
   let budget = MAX_EVENTS;
   const agenda = agendaDays
     .map((d) => {
@@ -253,14 +266,18 @@ export default function HomePage() {
             <Avatar key={m.user_id} name={m.profile.display_name} color={m.profile.color} size={34} />
           ))}
         </div>
-        <DayRibbon
-          now={now}
-          events={todayTimed}
-          calendars={byCal}
-          meals={meals}
-          sleeps={sleeps}
-          label={t("ribbonLabel", { n: todayTimed.length })}
-        />
+        <div className="hero-next">
+          <Link href="/calendar">
+            <Icon name="calendar" size={16} stroke={2} />
+            <span>{loaded ? eventLine : t("loading")}</span>
+          </Link>
+          {babyLine && (
+            <Link href="/baby">
+              <Icon name={lastSleep && (!lastSleep._e || lastSleep._e > now) ? "moon" : "sun"} size={16} stroke={2} />
+              <span>{babyLine}</span>
+            </Link>
+          )}
+        </div>
         <div className="quick" role="group" aria-label={t("quickActions")}>
           <button type="button" className="quick-btn primary" onClick={() => setSheet("task")}>
             <Icon name="plus" size={18} stroke={2.3} />
