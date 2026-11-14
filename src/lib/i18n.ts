@@ -2,7 +2,11 @@ export type Locale = "en";
 
 const en = {
   appName: "hjem",
-  ribbonLabel: "Today on a timeline, {n} events. Open the calendar",
+  heroNow: "Now: {title}, until {time}",
+  heroNext: "Next: {title} at {time}",
+  heroNoEvents: "Nothing else on the calendar today",
+  heroAsleep: "{name} asleep since {time}",
+  heroAwake: "{name} awake since {time}",
   ongoing: "Going on now",
   untilDate: "until {date}",
   dragHintGot: "Got it",
