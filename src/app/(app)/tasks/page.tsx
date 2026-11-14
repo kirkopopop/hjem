@@ -101,6 +101,20 @@ export default function TasksPage() {
   const { t, locale, userId, household, member, notify, celebrate } = useApp();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loaded, setLoaded] = useState(false);
+  // The how-to-drag line is shown until it's dismissed once on this device.
+  const [hintSeen, setHintSeen] = useState(true);
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- read a device preference after mount
+      setHintSeen(localStorage.getItem("hjem-drag-hint") === "1");
+    } catch {}
+  }, []);
+  const dismissHint = () => {
+    setHintSeen(true);
+    try {
+      localStorage.setItem("hjem-drag-hint", "1");
+    } catch {}
+  };
   const [mineOnly, setMineOnly] = useState(false);
   const [editing, setEditing] = useState<Task | null | "new">(null);
   const [newStatus, setNewStatus] = useState<TaskStatus>("todo");
@@ -390,8 +404,13 @@ export default function TasksPage() {
           </button>
         </div>
       </div>
-      <p className="small muted" style={{ margin: "-4px 2px 12px" }}>
-        {t("dragHint")}
+      <p className="small muted board-hint" style={{ margin: "-4px 2px 12px" }} hidden={hintSeen && !(hasManualOrder && !isDevice)}>
+        {!hintSeen && (
+          <>
+            {t("dragHint")}{" "}
+            <button type="button" className="order-reset" onClick={dismissHint}>{t("dragHintGot")}</button>
+          </>
+        )}
         {hasManualOrder && !isDevice && (
           <>
             {" "}

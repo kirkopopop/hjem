@@ -3,8 +3,9 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
+import { Slider, ToggleRow } from "./ui";
 import { Icon } from "./Icon";
-import { IngredientEditor, PortionStepper } from "./IngredientEditor";
+import { IngredientEditor } from "./IngredientEditor";
 import { RecipeArt, RecipeMeta } from "./RecipeBits";
 import { daysFromToday } from "@/lib/dates";
 import { cleanIngredients, scaleIngredients } from "@/lib/ingredients";
@@ -240,9 +241,8 @@ export function MealSheet({
         {showDetails && (
           <>
             <div className="row" style={{ alignItems: "flex-end", flexWrap: "wrap" }}>
-              <div className="field">
-                <span>{t("servings")}</span>
-                <PortionStepper value={portions} onChange={changePortions} />
+              <div className="field" style={{ flex: "1 1 100%" }}>
+                <Slider label={t("servings")} value={portions} onChange={changePortions} min={1} max={8} ticks={[1, 2, 4, 6, 8]} />
               </div>
               <label className="field grow" style={{ minWidth: 160 }}>
                 <span>{t("cook")}</span>
@@ -270,16 +270,10 @@ export function MealSheet({
             </label>
 
             {mode === "new" && (
-              <label className="row" style={{ gap: 10, fontWeight: 700 }}>
-                <input type="checkbox" checked={saveAsRecipe} onChange={(e) => setSaveAsRecipe(e.target.checked)} style={{ width: 22, height: 22, accentColor: "var(--accent)" }} />
-                {t("saveAsRecipe")}
-              </label>
+              <ToggleRow icon="book" title={t("saveAsRecipe")} on={saveAsRecipe} onChange={setSaveAsRecipe} />
             )}
             {canBeCooked && (
-              <label className="row" style={{ gap: 10, fontWeight: 700 }}>
-                <input type="checkbox" checked={cooked} onChange={(e) => setCooked(e.target.checked)} style={{ width: 22, height: 22, accentColor: "var(--accent)" }} />
-                {t("cooked")}
-              </label>
+              <ToggleRow icon="check" title={t("cooked")} on={cooked} onChange={setCooked} />
             )}
           </>
         )}

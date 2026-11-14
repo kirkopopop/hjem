@@ -1,6 +1,8 @@
 "use client";
 
+import { useId } from "react";
 import { Icon } from "./Icon";
+import { buzz } from "@/lib/prefs";
 
 /** Accessible on/off toggle. */
 export function Switch({
@@ -132,5 +134,97 @@ export function ProgressRing({
       </svg>
       <span className="ring-center">{children}</span>
     </span>
+  );
+}
+
+/**
+ * A range slider with a large live value, a filled track and optional tick labels.
+ * Arrow keys and dragging both work; each step gives a light buzz on phones.
+ */
+export function Slider({
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+  label,
+  format = (v) => String(v),
+  ticks,
+}: {
+  value: number;
+  onChange: (next: number) => void;
+  min: number;
+  max: number;
+  step?: number;
+  label: string;
+  format?: (v: number) => string;
+  /** Values to label under the track; tapping one jumps to it. */
+  ticks?: number[];
+}) {
+  const id = useId();
+  const clamped = Math.min(max, Math.max(min, value));
+  const fill = ((clamped - min) / (max - min)) * 100;
+  const set = (v: number) => {
+    if (v !== value) {
+      buzz(6);
+      onChange(v);
+    }
+  };
+  return (
+    <div className="slider">
+      <div className="slider-head">
+        <label htmlFor={id}>{label}</label>
+        <output htmlFor={id} className="slider-value" key={clamped}>{format(clamped)}</output>
+      </div>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={clamped}
+        style={{ ["--fill" as string]: `${fill}%` }}
+        onChange={(e) => set(Number(e.target.value))}
+      />
+      {ticks && (
+        <div className="slider-ticks">
+          {ticks.map((v) => (
+            <button key={v} type="button" tabIndex={-1} aria-hidden="true" className={v === clamped ? "on" : undefined} style={{ left: `${((v - min) / (max - min)) * 100}%` }} onClick={() => set(v)}>
+              {format(v)}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** A labelled on/off row for forms: icon, title and hint on the left, the switch on the right. The whole row toggles. */
+export function ToggleRow({
+  icon,
+  title,
+  hint,
+  on,
+  onChange,
+}: {
+  icon: string;
+  title: string;
+  hint?: string;
+  on: boolean;
+  onChange: (next: boolean) => void;
+}) {
+  return (
+    <div className={`toggle-row${on ? " on" : ""}`} onClick={() => onChange(!on)}>
+      <span className="set-ico">
+        <Icon name={icon} size={18} />
+      </span>
+      <span className="set-text">
+        <span className="set-title">{title}</span>
+        {hint && <span className="set-hint">{hint}</span>}
+      </span>
+      <span onClick={(e) => e.stopPropagation()}>
+        <Switch on={on} onChange={onChange} label={title} />
+      </span>
+    </div>
   );
 }

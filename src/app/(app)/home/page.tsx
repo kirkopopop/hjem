@@ -11,7 +11,10 @@ import { EventSheet } from "@/components/EventSheet";
 import { TaskSheet } from "@/components/TaskSheet";
 import { WhoPicker } from "@/components/WhoPicker";
 import { RecipeArt } from "@/components/RecipeBits";
-import { EmptyState, ProgressRing, SkeletonRows } from "@/components/ui";
+import { EmptyState, SkeletonRows } from "@/components/ui";
+import { DayRibbon, type RibbonSleep } from "@/components/DayRibbon";
+import { useBaby } from "@/baby/useBaby";
+import { events as babyEvents } from "@/baby/store";
 import { eventsOnDay, useCalendarData, useHiddenCalendars } from "@/lib/calendar";
 import { addDays, daysFromToday, formatDayMonth, formatWeekday, localISODate } from "@/lib/dates";
 import { compareTasks } from "@/lib/tasks";
@@ -48,6 +51,7 @@ export default function HomePage() {
   const [picking, setPicking] = useState<{ task: Task; el: Element | null } | null>(null);
   const [sheet, setSheet] = useState<"task" | "event" | null>(null);
   const isDevice = member(userId)?.role === "device";
+  const baby = useBaby();
 
   // Clock: refresh every 20 seconds.
   useEffect(() => {
@@ -128,10 +132,22 @@ export default function HomePage() {
   // ----- Derived views -----
   const byCal = useMemo(() => new Map(calendars.map((c) => [c.id, c])), [calendars]);
   const shownEvents = events.filter((e) => byCal.get(e.calendar_id)?.visible && !hidden.includes(e.calendar_id));
+  // All-day events that run for several days are shown once ("until Friday"), not repeated under every day.
+  const multiDay = (e: (typeof events)[number]) => e.all_day && new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime() > 36 * 3_600_000;
+  const ongoing = eventsOnDay(shownEvents, today).filter(multiDay);
+  const ongoingIds = new Set(ongoing.map((e) => e.id));
+  const todayTimed = eventsOnDay(shownEvents, today).filter((e) => !e.all_day);
+  const dayStart = new Date(now);
+  dayStart.setHours(0, 0, 0, 0);
+  const sleeps: RibbonSleep[] = baby.baby
+    ? (babyEvents() as { kind: string; subtype: string | null; _s: Date; _e: Date | null }[])
+        .filter((e) => e.kind === "sleep" && (e._e ?? now) > dayStart && e._s <= now)
+        .map((e) => ({ start: e._s, end: e._e, night: e.subtype === "night" }))
+    : [];
   let budget = MAX_EVENTS;
   const agenda = agendaDays
     .map((d) => {
-      let list = eventsOnDay(shownEvents, d);
+      let list = eventsOnDay(shownEvents, d).filter((e) => !ongoingIds.has(e.id));
       if (d === today) list = list.filter((e) => e.all_day || new Date(e.ends_at) > now);
       list = list.slice(0, Math.max(budget, 0));
       budget -= list.length;
@@ -232,15 +248,19 @@ export default function HomePage() {
             </span>
           </p>
         </div>
-        <ProgressRing
-          value={totalToday ? doneToday / totalToday : loaded ? 1 : 0}
-          size={84}
-          stroke={8}
-          label={t("ringLabel", { done: doneToday, total: totalToday })}
-        >
-          <span className="hero-ring-num">{loaded ? (totalToday ? `${doneToday}/${totalToday}` : "✓") : "–"}</span>
-          <span className="hero-ring-sub">{t("ringToday")}</span>
-        </ProgressRing>
+        <div className="hero-people" aria-hidden="true">
+          {people.map((m) => (
+            <Avatar key={m.user_id} name={m.profile.display_name} color={m.profile.color} size={34} />
+          ))}
+        </div>
+        <DayRibbon
+          now={now}
+          events={todayTimed}
+          calendars={byCal}
+          meals={meals}
+          sleeps={sleeps}
+          label={t("ribbonLabel", { n: todayTimed.length })}
+        />
         <div className="quick" role="group" aria-label={t("quickActions")}>
           <button type="button" className="quick-btn primary" onClick={() => setSheet("task")}>
             <Icon name="plus" size={18} stroke={2.3} />
@@ -261,11 +281,6 @@ export default function HomePage() {
             {t("groceries")}
           </Link>
         </div>
-        <div className="hero-people" aria-hidden="true">
-          {people.map((m) => (
-            <Avatar key={m.user_id} name={m.profile.display_name} color={m.profile.color} size={36} />
-          ))}
-        </div>
       </section>
 
       <div className="home-grid stagger">
@@ -283,17 +298,30 @@ export default function HomePage() {
               title={t("noCalendarsYet")}
               action={!isDevice ? <Link href="/settings#calendars" className="btn small soft">{t("connectGoogle")}</Link> : undefined}
             />
-          ) : agenda.length === 0 ? (
+          ) : agenda.length === 0 && ongoing.length === 0 ? (
             <EmptyState compact icon="sun" title={t("noEvents")} />
           ) : (
-            agenda.map(({ d, list }) => (
+            <>
+            {ongoing.length > 0 && (
+              <ul className="ongoing" aria-label={t("ongoing")}>
+                {ongoing.map((e) => (
+                  <li key={e.id}>
+                    <span className="ev-dot" style={{ background: byCal.get(e.calendar_id)?.color ?? "#8a9693" }} aria-hidden="true" />
+                    <span className="grow">{e.title || "—"}</span>
+                    <span className="ongoing-until">{t("untilDate", { date: formatDayMonth(addDays(e.ends_at.slice(0, 10), -1), locale) })}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {agenda.map(({ d, list }) => (
               <div key={d} className="stack" style={{ gap: 6 }}>
                 <h3 className="mini-label">{dayLabel(d)}</h3>
                 {list.map((e) => (
                   <EventRow key={`${e.id}-${d}`} event={e} calendar={byCal.get(e.calendar_id)} compact />
                 ))}
               </div>
-            ))
+            ))}
+            </>
           )}
         </section>
 

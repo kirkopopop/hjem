@@ -2,6 +2,10 @@ export type Locale = "en";
 
 const en = {
   appName: "hjem",
+  ribbonLabel: "Today on a timeline, {n} events. Open the calendar",
+  ongoing: "Going on now",
+  untilDate: "until {date}",
+  dragHintGot: "Got it",
   // auth
   signIn: "Sign in",
   createAccount: "Create account",
