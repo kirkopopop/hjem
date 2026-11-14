@@ -272,13 +272,26 @@ export default function MealsPage() {
             {days.map((date) => {
               const today = daysFromToday(date) === 0;
               const groups = SLOTS.map((s) => mealsAt(date, s));
+              // Days gone by with nothing on them shrink to one line, so today is near the top.
+              const past = daysFromToday(date) < 0;
+              const empty = groups.every((g) => g.length === 0);
               return (
-                <li key={date} className={`day-card${today ? " is-today" : ""}`}>
+                <li key={date} className={`day-card${today ? " is-today" : ""}${past ? " is-past" : ""}${past && empty ? " is-empty" : ""}`}>
                   <div className="day-head">
                     <span className="day-name">{formatWeekday(date, locale)}</span>
                     <span className="day-date">{today ? t("today") : formatDayMonth(date, locale)}</span>
                     <span className="grow" />
                     {dayKcal(date) != null && <span className="day-kcal">{t("dayKcal", { n: fmtN(dayKcal(date)!) })}</span>}
+                    {past && empty && (
+                      <button
+                        type="button"
+                        className="icon-btn small day-add"
+                        aria-label={t("addSlotOn", { slot: t("dinner"), day: formatWeekday(date, locale) })}
+                        onClick={() => setEditing({ meal: null, date, slot: "dinner" })}
+                      >
+                        <Icon name="plus" size={16} stroke={2.2} />
+                      </button>
+                    )}
                   </div>
                   {groups.map((list) => list.map((m, i) => renderMeal(m, i === 0)))}
                   <div className="plan-add" role="group" aria-label={t("planMeals")}>

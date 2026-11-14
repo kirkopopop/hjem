@@ -48,10 +48,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }
 
   const onSettings = pathname.startsWith("/settings") || pathname.startsWith("/badges");
+  // which tab the sliding indicator sits under (-1 = none: settings and badges live behind the avatar)
+  const tabIndex = LINKS.findIndex((l) => pathname.startsWith(l.href));
 
   return (
     <div className="frame">
-      <nav className="nav" aria-label="Sections">
+      <nav className={`nav${tabIndex < 0 ? " no-tab" : ""}`} aria-label="Sections" style={{ ["--tab" as string]: Math.max(tabIndex, 0), ["--tabs" as string]: LINKS.length }}>
+        <span className="nav-thumb" aria-hidden="true" />
         <Link href="/home" className="brand" aria-label="hjem">
           <LogoMark size={40} />
         </Link>

@@ -97,6 +97,76 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
 
+  // Phones: pull a sheet down by its top edge (or from anywhere once it's scrolled to the top) to close it.
+  useEffect(() => {
+    let sheet: HTMLElement | null = null;
+    let startY = 0, lastY = 0, lastT = 0, velocity = 0, dragging = false;
+    const mobile = () => window.matchMedia("(max-width: 639px)").matches;
+    const down = (e: TouchEvent) => {
+      if (!mobile() || e.touches.length !== 1) return;
+      const target = e.target as HTMLElement;
+      const el = target.closest?.<HTMLElement>(".sheet");
+      if (!el) return;
+      const y = e.touches[0].clientY;
+      const fromHandle = y - el.getBoundingClientRect().top < 48;
+      const interactive = target.closest("input, textarea, select, .segmented, .slider");
+      if (!fromHandle && (el.scrollTop > 0 || interactive)) return;
+      sheet = el;
+      startY = lastY = y;
+      lastT = e.timeStamp;
+      velocity = 0;
+      dragging = false;
+    };
+    const move = (e: TouchEvent) => {
+      if (!sheet) return;
+      const y = e.touches[0].clientY;
+      const dy = y - startY;
+      if (!dragging) {
+        if (dy < 8) {
+          if (dy < -8) sheet = null; // scrolling up: leave it alone
+          return;
+        }
+        dragging = true;
+        sheet.classList.add("is-dragging");
+      }
+      velocity = (y - lastY) / Math.max(1, e.timeStamp - lastT);
+      lastY = y;
+      lastT = e.timeStamp;
+      sheet.style.transform = `translateY(${Math.max(0, dy)}px)`;
+      sheet.parentElement?.style.setProperty("--drag", String(Math.min(1, Math.max(0, dy) / 320)));
+      if (e.cancelable) e.preventDefault(); // we're moving the sheet, not scrolling
+    };
+    const up = () => {
+      if (!sheet) return;
+      const el = sheet;
+      sheet = null;
+      if (!dragging) return;
+      const dy = lastY - startY;
+      el.classList.remove("is-dragging");
+      if (dy > 120 || velocity > 0.6) {
+        el.style.transition = "transform 200ms cubic-bezier(0.4, 0, 1, 1)";
+        el.style.transform = "translateY(100%)";
+        buzz(8);
+        setTimeout(() => el.parentElement?.click(), 170);
+      } else {
+        el.style.transition = "transform 320ms cubic-bezier(0.34, 1.4, 0.64, 1)";
+        el.style.transform = "";
+        el.parentElement?.style.removeProperty("--drag");
+        setTimeout(() => (el.style.transition = ""), 340);
+      }
+    };
+    document.addEventListener("touchstart", down, { passive: true });
+    document.addEventListener("touchmove", move, { passive: false });
+    document.addEventListener("touchend", up);
+    document.addEventListener("touchcancel", up);
+    return () => {
+      document.removeEventListener("touchstart", down);
+      document.removeEventListener("touchmove", move);
+      document.removeEventListener("touchend", up);
+      document.removeEventListener("touchcancel", up);
+    };
+  }, []);
+
   const reload = useCallback(async () => {
     const sb = supabase();
     const { data: userData } = await sb.auth.getUser();

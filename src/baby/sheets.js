@@ -96,13 +96,27 @@ export function bottleSheet(existing) {
     title: existing ? 'Edit bottle' : 'Bottle', kind: 'bottle',
     body: `${timeField('Time', existing?._s || new Date())}
       <div class="field"><label for="f-amt">Amount (ml)</label><div class="stepper"><button type="button" data-step="-10" aria-label="10 ml less">−</button><input type="number" inputmode="numeric" id="f-amt" value="${Math.round(amt)}" min="0" max="500" step="5"><button type="button" data-step="10" aria-label="10 ml more">+</button></div>
+      <input type="range" class="range" id="f-amt-range" min="0" max="300" step="10" value="${Math.min(300, Math.round(amt))}" aria-label="Amount in millilitres">
+      <div class="range-ticks" aria-hidden="true"><span>0</span><span>100</span><span>200</span><span>300</span></div>
       <div class="chips">${[60, 90, 120, 150, 180, 210].map(v => `<button type="button" class="chip-btn" data-amt="${v}">${v}</button>`).join('')}</div></div>
       <div class="field"><span class="lbl">Milk</span>${seg('type', [['formula', 'Formula'], ['breast_milk', 'Breast milk']], existing?.subtype || last?.subtype || 'formula')}</div>
       ${noteField(existing?.note)}${actions(existing, existing ? 'Save' : 'Log bottle')}`,
     onMount(root, close) {
       const inp = root.querySelector('#f-amt');
-      root.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => { inp.value = Math.max(0, (Number(inp.value) || 0) + Number(b.dataset.step)); }));
-      root.querySelectorAll('[data-amt]').forEach(b => b.addEventListener('click', () => { inp.value = b.dataset.amt; }));
+      // the number, the slider and the quick amounts all show the same value
+      const range = root.querySelector('#f-amt-range');
+      const sync = (v, from) => {
+        const n = Math.max(0, Math.min(500, Math.round(Number(v) || 0)));
+        if (from !== inp) inp.value = n;
+        if (from !== range) range.value = Math.min(300, n);
+        range.style.setProperty('--fill', (Math.min(300, n) / 300 * 100) + '%');
+        root.querySelectorAll('[data-amt]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.amt) === n)));
+      };
+      sync(inp.value);
+      range.addEventListener('input', () => { sync(range.value, range); try { navigator.vibrate?.(5); } catch { /* no haptics */ } });
+      inp.addEventListener('input', () => sync(inp.value, inp));
+      root.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => sync((Number(inp.value) || 0) + Number(b.dataset.step))));
+      root.querySelectorAll('[data-amt]').forEach(b => b.addEventListener('click', () => sync(b.dataset.amt)));
       bindCommon(root, close, existing, () => {
         const t = timeOf(root); const a = num(root, 'f-amt');
         if (!t) return 'Add a time.'; if (a == null || isNaN(a) || a < 0 || a > 500) return 'Enter an amount between 0 and 500 ml.';

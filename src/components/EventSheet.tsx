@@ -1,5 +1,6 @@
 "use client";
 
+import { ToggleRow } from "./ui";
 import { useEffect, useId, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
@@ -82,10 +83,7 @@ export function EventSheet({ date: initialDate, calendars, onClose }: { date: st
                 </select>
               </label>
             </div>
-            <label className="row" style={{ gap: 10, fontWeight: 700 }}>
-              <input type="checkbox" checked={allDay} onChange={(e) => setAllDay(e.target.checked)} style={{ width: 22, height: 22, accentColor: "var(--accent)" }} />
-              {t("allDay")}
-            </label>
+            <ToggleRow icon="calendar" title={t("allDay")} on={allDay} onChange={setAllDay} />
             {!allDay && (
               <div className="two">
                 <label className="field">

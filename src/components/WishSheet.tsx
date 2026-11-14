@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useApp } from "./AppProvider";
 import { Icon } from "./Icon";
+import { ToggleRow } from "./ui";
 import type { TaskPriority, WishItem } from "@/lib/types";
 import { CURRENCIES, formatMoney, normalizeUrl, parseMoney } from "@/lib/things";
 
@@ -181,20 +182,13 @@ export function WishSheet({
         </div>
 
         {canSetPrivacy && (
-          <div className="field">
-            <span>{t("visibility")}</span>
-            <div className="segmented" role="group" aria-label={t("visibility")}>
-              <button type="button" aria-pressed={!isPrivate} onClick={() => setIsPrivate(false)}>
-                <Icon name="people" size={16} />
-                {t("visShared")}
-              </button>
-              <button type="button" aria-pressed={isPrivate} onClick={() => setIsPrivate(true)}>
-                <Icon name="lock" size={16} />
-                {t("visPrivate")}
-              </button>
-            </div>
-            <small className="muted">{isPrivate ? t("wishPrivateHint") : t("wishSharedHint")}</small>
-          </div>
+          <ToggleRow
+            icon="lock"
+            title={t("visPrivate")}
+            hint={isPrivate ? t("wishPrivateHint") : t("wishSharedHint")}
+            on={isPrivate}
+            onChange={setIsPrivate}
+          />
         )}
 
         <div className="money-row">
