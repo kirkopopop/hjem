@@ -91,11 +91,11 @@ export function dayLabel(k) {
 // Two tiles over a timeline: average wake-up and bedtime across the last 7 days, with the shift from the week before.
 export function rhythmStrip(r) {
   const shift = (now, before) => {
-    if (now == null || before == null) return 'no earlier week to compare';
+    if (now == null || before == null) return '';
     const min = Math.round((now - before) * 60);
-    if (Math.abs(min) < 5) return 'same as the week before';
-    return `${Math.abs(min)} min ${min > 0 ? 'later' : 'earlier'} than the week before`;
+    if (Math.abs(min) < 5) return 'Same as before';
+    return `${Math.abs(min)} min ${min > 0 ? 'later' : 'earlier'} than before`;
   };
-  const tile = (label, h, n, before) => `<div class="kpi"><span class="label">${label}</span><span class="val">${hToHHMM(h)}</span><span class="delta">${n ? `${n} day${n === 1 ? '' : 's'} logged · ${shift(h, before)}` : 'nothing logged in the last 7 days'}</span></div>`;
-  return `<div class="kpis rhythm">${tile('Avg wake-up, last 7 days', r.wake, r.wakeN, r.prevWake)}${tile('Avg bedtime, last 7 days', r.bed, r.bedN, r.prevBed)}</div>`;
+  const tile = (label, h, before) => `<div class="kpi"><span class="label">${label}</span><span class="val">${hToHHMM(h)}</span>${h == null ? '' : `<span class="delta">${shift(h, before)}</span>`}</div>`;
+  return `<div class="kpis rhythm">${tile('Average wake-up', r.wake, r.prevWake)}${tile('Average bedtime', r.bed, r.prevBed)}</div>`;
 }
