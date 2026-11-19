@@ -1,9 +1,9 @@
 // Today: live status, quick log, today's totals, timeline and entries.
 import { esc, hhmm, dur, dayKey, addDays, hourOf } from '../util.js';
 import { events, state } from '../store.js';
-import { model, current, predictNext } from '../analytics.js';
+import { model, current, predictNext, rhythm } from '../analytics.js';
 import { ICON, KCOLOR } from '../icons.js';
-import { entryRow } from '../ui.js';
+import { entryRow, rhythmStrip } from '../ui.js';
 import { openFor, editEvent, startSleep, stopSleep, sleepSheet } from '../sheets.js';
 import { actogram } from '../charts.js';
 
@@ -58,7 +58,7 @@ export function render(root) {
     <section style="margin-top:12px">${since}</section>
     <section><div class="sec-head"><h2>Log</h2></div>${quick}</section>
     <section><div class="sec-head"><h2>Today so far</h2><p>${now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p></div>${totals}
-      <div class="panel"><div class="chart" id="t-acto"></div>
+      <div class="panel">${rhythmStrip(rhythm(m, tk))}<div class="chart" id="t-acto"></div>
       <div class="legend"><span><i class="sw" style="background:var(--night)"></i>Night</span><span><i class="sw" style="background:var(--nap)"></i>Nap</span><span><i class="sw dot" style="background:var(--bottle)"></i>Bottle</span><span><i class="sw dia" style="background:var(--solid)"></i>Meal</span></div></div>
     </section>
     <section><div class="sec-head"><h2>Entries</h2><p>Tap one to edit</p></div>

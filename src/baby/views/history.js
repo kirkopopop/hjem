@@ -1,8 +1,8 @@
 // History: day-by-day entries with filters, a two-week timeline and a jump-to-date.
 import { esc, dayKey, keyAdd, fromKey, addDays, hhmm } from '../util.js';
 import { events, state } from '../store.js';
-import { model } from '../analytics.js';
-import { entryRow, dayLabel } from '../ui.js';
+import { model, rhythm } from '../analytics.js';
+import { entryRow, dayLabel, rhythmStrip } from '../ui.js';
 import { editEvent } from '../sheets.js';
 import { actogram } from '../charts.js';
 import { dayRows } from './today.js';
@@ -44,7 +44,7 @@ export function render(root) {
     <section style="margin-top:0"><div class="sec-head"><div class="row"><label class="small muted" for="h-date">Jump to</label><input type="date" id="h-date" value="${endKey}" max="${dayKey(new Date())}" min="${first}" style="width:auto"></div></div>
       <div class="chips" role="group" aria-label="Filter (pick one or more)"><button class="chip-btn" data-f="all" aria-pressed="${!ui.filters.size}">All</button>${FILTERS.map(([k, l]) => `<button class="chip-btn" data-f="${k}" aria-pressed="${ui.filters.has(k)}">${l}</button>`).join('')}</div>
     </section>
-    <section><div class="panel"><h3>Two weeks, hour by hour</h3><div class="sub">Ending ${esc(dayLabel(endKey).toLowerCase() === 'today' ? 'today' : dayLabel(endKey))}. Tap a block to edit it.</div><div class="chart" id="h-acto"></div>
+    <section><div class="panel"><h3>Two weeks, hour by hour</h3><div class="sub">Ending ${esc(dayLabel(endKey).toLowerCase() === 'today' ? 'today' : dayLabel(endKey))}. Tap a block to edit it.</div>${rhythmStrip(rhythm(m, endKey))}<div class="chart" id="h-acto"></div>
       <div class="legend">${legend()}</div></div></section>
     <section style="gap:0">${blocks}
       <div class="row" style="justify-content:center;margin-top:16px">${keys[keys.length - 1] > first ? `<button class="btn secondary" data-more>Show 7 earlier days</button>` : `<p class="faint small">Start of the log</p>`}${ui.end ? `<button class="btn ghost" data-today>Back to today</button>` : ''}</div>

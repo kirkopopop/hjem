@@ -69,7 +69,7 @@ function overview(m, st, prev, from, to) {
       <div class="panel score">
       ${groups.map(g => `<div class="grp eyebrow">${g}</div>` + sc.rows.filter(r => r.group === g).map(r => `<div class="item"><b>${esc(r.label)}</b><span class="vals">${esc(r.now)} <span>· target</span> ${esc(r.target)}</span><span class="chip ${r.status}">${esc(r.txt)}</span></div>`).join('')).join('')}
       </div></section>
-    <section><div class="panel"><h3>Three weeks, hour by hour</h3><div class="sub">Tap a block or dot to edit it.</div><div class="chart" id="c-acto"></div>
+    <section><div class="panel"><h3>Three weeks, hour by hour</h3><div class="sub">Newest day on top. Tap a block or dot to edit it.</div><div class="chart" id="c-acto"></div>
       <div class="legend"><span><i class="sw" style="background:var(--night)"></i>Night</span><span><i class="sw" style="background:var(--nap)"></i>Nap</span><span><i class="sw dot" style="background:var(--bottle)"></i>Bottle (size = ml)</span><span><i class="sw dia" style="background:var(--solid)"></i>Meal</span></div></div></section>`;
 }
 
@@ -144,7 +144,7 @@ function draw(root, m, from, to, ev) {
   const W = series(m, from, to, 'week');
   const xl = W.map(w => fmtDate(fromKey(w.key)));
   const tipX = i => `Week of ${fmtDate(fromKey(W[i].key))}`;
-  if (q('c-acto')) actogram(q('c-acto'), dayRows(ev, [...Array(21).keys()].map(i => addDays(new Date(), -20 + i))), { nowH: new Date().getHours() + new Date().getMinutes() / 60, label: 'Last three weeks' });
+  if (q('c-acto')) actogram(q('c-acto'), dayRows(ev, [...Array(21).keys()].map(i => addDays(new Date(), -i))) /* today on top, then back day by day */, { nowH: new Date().getHours() + new Date().getMinutes() / 60, label: 'Last three weeks' });
   if (q('c-clock')) {
     const t = targets(m.baby, stats(m, ...lastWindow(14)));
     const vals = W.flatMap(w => [w.bedH, w.lastNapH]).filter(v => v != null);

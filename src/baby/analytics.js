@@ -253,3 +253,18 @@ export function scorecard(m, st, now = new Date()) {
   S('Vitamin D', `${st.vitdDays} of ${st.nDays} days`, '10 µg every day', st.vitdDays >= st.nDays - 1 ? 'good' : st.vitdDays ? 'warn' : 'info', st.vitdDays >= st.nDays - 1 ? 'On track' : st.vitdDays ? 'Some days missed' : 'Not logged', 'Feeding');
   return { rows, t };
 }
+
+// Rolling 7-day averages of wake-up and bedtime, ending on endKey (a day key), plus the 7 days before for comparison.
+// Wake-ups: the mornings of the 7 days up to endKey. Bedtimes: the evenings of the same 7 days (tonight once he's down).
+export function rhythm(m, endKey) {
+  const win = (shift) => {
+    const wake = [], bed = [];
+    for (let i = 0; i < 7; i++) {
+      const w = m.nights.get(keyAdd(endKey, -1 - i - shift)); if (w?.segs.length && w.wake) wake.push(w.wakeH);
+      const b = m.nights.get(keyAdd(endKey, -i - shift)); if (b?.segs.length && b.bed) bed.push(b.bedH);
+    }
+    return { wake: mean(wake), bed: mean(bed), wakeN: wake.length, bedN: bed.length };
+  };
+  const cur = win(0), prev = win(7);
+  return { ...cur, prevWake: prev.wake, prevBed: prev.bed };
+}
