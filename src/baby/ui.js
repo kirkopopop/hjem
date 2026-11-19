@@ -1,5 +1,5 @@
 // Sheets (bottom drawers), toasts and small shared renderers.
-import { esc, hhmm, dur, fmtDateDow, dayKey, addDays } from './util.js';
+import { esc, hhmm, dur, fmtDateDow, dayKey, addDays, hToHHMM } from './util.js';
 import { ICON, KCOLOR } from './icons.js';
 import { state } from './store.js';
 
@@ -86,4 +86,16 @@ export function dayLabel(k) {
   const today = dayKey(new Date()), yest = dayKey(addDays(new Date(), -1));
   if (k === today) return 'Today'; if (k === yest) return 'Yesterday';
   const [y, m, d] = k.split('-').map(Number); return fmtDateDow(new Date(y, m - 1, d));
+}
+
+// Two tiles over a timeline: average wake-up and bedtime across the last 7 days, with the shift from the week before.
+export function rhythmStrip(r) {
+  const shift = (now, before) => {
+    if (now == null || before == null) return 'no earlier week to compare';
+    const min = Math.round((now - before) * 60);
+    if (Math.abs(min) < 5) return 'same as the week before';
+    return `${Math.abs(min)} min ${min > 0 ? 'later' : 'earlier'} than the week before`;
+  };
+  const tile = (label, h, n, before) => `<div class="kpi"><span class="label">${label}</span><span class="val">${hToHHMM(h)}</span><span class="delta">${n ? `${n} day${n === 1 ? '' : 's'} logged · ${shift(h, before)}` : 'nothing logged in the last 7 days'}</span></div>`;
+  return `<div class="kpis rhythm">${tile('Avg wake-up, last 7 days', r.wake, r.wakeN, r.prevWake)}${tile('Avg bedtime, last 7 days', r.bed, r.bedN, r.prevBed)}</div>`;
 }
