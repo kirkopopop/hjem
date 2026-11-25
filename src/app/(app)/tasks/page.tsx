@@ -98,7 +98,7 @@ function Draggable({ task, className, children }: { task: Task; className: strin
 }
 
 export default function TasksPage() {
-  const { t, locale, userId, household, member, notify, celebrate } = useApp();
+  const { t, locale, userId, household, member, members, notify, celebrate } = useApp();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loaded, setLoaded] = useState(false);
   // The how-to-drag line is shown until it's dismissed once on this device.
@@ -115,7 +115,8 @@ export default function TasksPage() {
       localStorage.setItem("hjem-drag-hint", "1");
     } catch {}
   };
-  const [mineOnly, setMineOnly] = useState(false);
+  // Whose tasks to show: null = everyone, "unclaimed", or a member's user id ("Mine" on phones).
+  const [who, setWho] = useState<string | null>(null);
   const [editing, setEditing] = useState<Task | null | "new">(null);
   const [newStatus, setNewStatus] = useState<TaskStatus>("todo");
   const [picking, setPicking] = useState<Task | null>(null);
@@ -293,7 +294,13 @@ export default function TasksPage() {
     placeIn(task, dest.status, dest.overId, dest.after, from);
   }
 
-  const filtered = useMemo(() => tasks.filter((x) => !mineOnly || x.assignee_id === userId), [tasks, mineOnly, userId]);
+  const people = useMemo(() => members.filter((m) => m.role !== "device"), [members]);
+  const filtered = useMemo(() => {
+    if (!who) return tasks;
+    if (who === "unclaimed") return tasks.filter((x) => x.status !== "done" && !x.assignee_id);
+    // Done tasks belong to whoever finished them; open ones to whoever they're assigned to.
+    return tasks.filter((x) => (x.status === "done" ? (x.completed_by ?? x.assignee_id) : x.assignee_id) === who);
+  }, [tasks, who]);
   const columns = useMemo(() => {
     const out = { todo: [] as Task[], doing: [] as Task[], done: [] as Task[] };
     for (const x of filtered) out[x.status].push(x);
@@ -395,14 +402,34 @@ export default function TasksPage() {
     <div className="tasks-page">
       <div className="page-head">
         <h1 className="page-title">{t("tasks")}</h1>
-        <div className="segmented" role="group" aria-label={t("assignee")} style={{ width: 200 }}>
-          <button type="button" aria-pressed={!mineOnly} onClick={() => setMineOnly(false)}>
-            {t("everyone")}
-          </button>
-          <button type="button" aria-pressed={mineOnly} onClick={() => setMineOnly(true)}>
-            {t("mine")}
-          </button>
-        </div>
+        {isDevice ? (
+          // Wall tablet: filter by any household member (plus unclaimed when it fits).
+          <div className="segmented" role="group" aria-label={t("assignee")} style={{ minWidth: 200 }}>
+            <button type="button" aria-pressed={!who} onClick={() => setWho(null)}>
+              {t("everyone")}
+            </button>
+            {people.map((m) => (
+              <button key={m.user_id} type="button" aria-pressed={who === m.user_id} onClick={() => setWho(m.user_id)}>
+                <Avatar name={m.profile.display_name} color={m.profile.color} size={20} />
+                {m.profile.display_name}
+              </button>
+            ))}
+            {people.length <= 2 && (
+              <button type="button" aria-pressed={who === "unclaimed"} onClick={() => setWho("unclaimed")}>
+                {t("unclaimed")}
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="segmented" role="group" aria-label={t("assignee")} style={{ width: 200 }}>
+            <button type="button" aria-pressed={!who} onClick={() => setWho(null)}>
+              {t("everyone")}
+            </button>
+            <button type="button" aria-pressed={who === userId} onClick={() => setWho(userId)}>
+              {t("mine")}
+            </button>
+          </div>
+        )}
       </div>
       <p className="small muted board-hint" style={{ margin: "-4px 2px 12px" }} hidden={hintSeen && !(hasManualOrder && !isDevice)}>
         {!hintSeen && (

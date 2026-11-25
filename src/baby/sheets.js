@@ -134,7 +134,9 @@ export function solidsSheet(existing) {
   const freq = new Map(); for (const e of events()) if (e.kind === 'solids') for (const f of e.foods) freq.set(f, (freq.get(f) || 0) + 1 + (Date.now() - e._s < 21 * 864e5 ? 3 : 0));
   const common = [...freq.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0]).slice(0, 24);
   const chosen = new Set(existing?.foods || []);
-  for (const f of chosen) if (!common.includes(f)) common.unshift(f);
+  for (const f of chosen) if (!common.includes(f)) common.push(f);
+  const byName = (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' });
+  common.sort(byName);
   const d = existing?.detail || {};
   openSheet({
     title: existing ? 'Edit meal' : 'Meal', kind: 'solids',
@@ -154,7 +156,11 @@ export function solidsSheet(existing) {
         raw.split(/[,+]/).map(s => s.trim()).filter(Boolean).forEach(s => {
           const name = s.charAt(0).toUpperCase() + s.slice(1);
           let b = [...box.children].find(x => x.dataset.food.toLowerCase() === name.toLowerCase());
-          if (!b) { box.insertAdjacentHTML('afterbegin', `<button type="button" class="chip-btn" data-food="${esc(name)}" aria-pressed="true">${esc(name)}</button>`); }
+          if (!b) {
+            const html = `<button type="button" class="chip-btn" data-food="${esc(name)}" aria-pressed="true">${esc(name)}</button>`;
+            const next = [...box.children].find(x => byName(x.dataset.food, name) > 0);
+            if (next) next.insertAdjacentHTML('beforebegin', html); else box.insertAdjacentHTML('beforeend', html);
+          }
           else b.setAttribute('aria-pressed', 'true');
         });
         inp.value = '';
